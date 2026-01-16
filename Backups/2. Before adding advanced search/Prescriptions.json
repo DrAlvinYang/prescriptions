@@ -2983,7 +2983,7 @@
       ],
       "indication": "",
       "dose_text": "1 application",
-      "route": "top",
+      "route": "topical",
       "frequency": "TID",
       "duration": "2 week",
       "dispense": "1 tube",
@@ -4739,7 +4739,7 @@
       "brands": [
         "Eliquis"
       ],
-      "indication": "VTE",
+      "indication": "VTE (PE/DVT)",
       "dose_text": "",
       "route": "",
       "frequency": "",
@@ -4754,7 +4754,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "cardiac & heme | adult | vte | apixaban | eliquis | 10mg po bid for 7 days, then 5mg po bid thereafter. dispense 4 weeks. lu code = 444. avoid in crcl <15ml/min or dialysis."
+      "search_text": "cardiac & heme | adult | vte (pe/dvt) | apixaban | eliquis | 10mg po bid for 7 days, then 5mg po bid thereafter. dispense 4 weeks. lu code = 444. avoid in crcl <15ml/min or dialysis."
     },
     {
       "specialty": "Cardiac & Heme",
@@ -4762,7 +4762,7 @@
       "brands": [
         "Xarelto"
       ],
-      "indication": "VTE",
+      "indication": "VTE (PE/DVT)",
       "dose_text": "",
       "route": "",
       "frequency": "",
@@ -4777,7 +4777,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "cardiac & heme | adult | vte | rivaroxaban | xarelto | 15mg po bid for 21 days, then 20mg po od thereafter. dispense 4 weeks. take with food. lu code = 444. avoid in crcl <15ml/min or dialysis."
+      "search_text": "cardiac & heme | adult | vte (pe/dvt) | rivaroxaban | xarelto | 15mg po bid for 21 days, then 20mg po od thereafter. dispense 4 weeks. take with food. lu code = 444. avoid in crcl <15ml/min or dialysis."
     },
     {
       "specialty": "Cardiac & Heme",

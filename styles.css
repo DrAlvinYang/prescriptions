@@ -378,6 +378,8 @@ details[open] > .subfolder-summary .subfolder-arrow {
   cursor: pointer;
   line-height: 1.4;
   transition: background 0.1s;
+  scroll-margin-top: 10px;    /* Optional: padding for upward navigation */
+  scroll-margin-bottom: 80px; /* Adjust this value to get the "past the item" look */
 }
 .med-item:last-child { border-bottom: none; }
 .med-item:hover { background: #f7f9fc; }
@@ -408,13 +410,15 @@ details[open] > .subfolder-summary .subfolder-arrow {
 /* --- Search View --- */
 .hidden { display: none !important; }
 .search-container {
-  max-width: 900px;
-  margin: 0 auto;
+  overflow: visible;
+  padding: 0;
 }
 .section-title {
   font-size: 18px;
   margin-bottom: 15px;
   color: var(--text);
+  /* Optional: Align the title with the new margins of the results */
+  margin-left: 60px; 
 }
 .med-list-flat {
   background: var(--panel);
@@ -672,4 +676,58 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 .edit-btn:hover {
   color: #003d80;
+}
+
+.med-item.is-active {
+  background-color: #eef3f8;
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* Create a 'lane' for the hint on the right of the search results */
+#searchResults {
+  margin-right: 60px; 
+  margin-left: 60px;  /* Added matching margin to the left */
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/* Anchor for the hint */
+.med-item.is-sole-match {
+  position: relative;
+  border: 2px solid var(--accent) !important;
+}
+
+/* The small floating Enter box */
+.med-item.is-sole-match::after {
+  content: "⏎ ENTER";
+  position: absolute;
+  
+  /* Place outside the box on the right */
+  left: calc(100% + 10px); 
+  
+  /* Perfect vertical center regardless of text wrapping */
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* Rectangular "square" styling */
+  background: #ffffff;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  
+  /* Smaller footprint */
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 3px;
+  
+  /* Visual properties */
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }

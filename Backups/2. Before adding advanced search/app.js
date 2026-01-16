@@ -83,6 +83,7 @@ let customLocations = [];
 let currentLocationName = DEFAULT_LOCATION_NAME;
 let editingId = null;
 let tabbingUnlocked = false;
+let activeSearchIndex = -1; 
 
 // -----------------------
 // Helpers
@@ -332,15 +333,24 @@ function calculateDoseDisplay(m, weight) {
 // Cart Logic
 // -----------------------
 function generateUid() { return crypto.randomUUID(); }
-function toggleCart(m) {
-  // Check if a PURE (unedited) version of this template is already in cart
-  // This allows the "selected" blue highlight to work for unedited templates.
+function toggleCart(m, el = null) {
+  // Clear any existing keyboard highlights (yellow)
+  document.querySelectorAll("#searchResults .med-item").forEach(item => {
+    item.classList.remove("is-active");
+  });
+
+  // If this was triggered by a click/keypress on a search item, update the index and focus
+  if (el && !document.getElementById("searchView").classList.contains("hidden")) {
+    const results = Array.from(document.querySelectorAll("#searchResults .med-item"));
+    activeSearchIndex = results.indexOf(el);
+    el.focus(); 
+  }
+
   const templateKey = cartKey(m);
   const idx = cart.findIndex(x => !x.wasEdited && cartKey(x) === templateKey);
 
   if (idx >= 0) {
-    cart.splice(idx, 1);
-    renderCart(); markSelectedInLists();
+    removeFromCartById(cart[idx].uid);
     return;
   }
 
@@ -436,21 +446,41 @@ function openWeightModal(m) {
   modal.classList.remove("hidden");
   document.getElementById("modalWeightInput").focus();
 }
-function closeWeightModal() { document.getElementById("weightModal").classList.add("hidden"); pendingMed = null; }
+function closeWeightModal() { 
+  document.getElementById("weightModal").classList.add("hidden"); 
+  
+  // Return focus to the active search item for keyboard navigation
+  const results = document.querySelectorAll("#searchResults .med-item");
+  if (activeSearchIndex >= 0 && results[activeSearchIndex]) {
+    results[activeSearchIndex].focus();
+  }
+}
 function saveModalWeight() {
-  const val = parseFloat(document.getElementById("modalWeightInput").value);
+  const input = document.getElementById("modalWeightInput");
+  const val = parseFloat(input.value);
+
   if (!isNaN(val) && val > 0) {
+    // 1. Update global weight state
     currentWeight = val;
     document.getElementById("weightInput").value = val.toFixed(2);
-    if (pendingMed) addToCart(pendingMed); // Use addToCart to generate UID
-  } else if (pendingMed) { 
-    alert("Please enter valid weight or Skip."); 
-    return; 
+    
+    // 2. Immediately add the pending med to cart
+    if (pendingMed) {
+      addToCart(pendingMed);
+      pendingMed = null; // Clear state after successful add
+    }
+    
+    closeWeightModal();
+  } else {
+    alert("Please enter a valid weight (kg) to calculate the dose.");
   }
-  closeWeightModal();
 }
 function skipModalWeight() {
-  if (pendingMed) addToCart(pendingMed); // Use addToCart to generate UID
+  // Add the medication even if weight calculation is bypassed
+  if (pendingMed) {
+    addToCart(pendingMed);
+    pendingMed = null;
+  }
   closeWeightModal();
 }
 
@@ -553,9 +583,16 @@ function getSubOrder(s) { return SUBCAT_ORDER[s] || 99; }
 function createMedItemElement(m, showPop = false, highlightTerms = []) {
   const div = document.createElement("div");
   div.className = "med-item";
+  div.tabIndex = 0; // Enables focus and keyboard interaction
   div.dataset.key = cartKey(m);
   div.innerHTML = renderMedHTML(m, showPop, highlightTerms);
-  div.onclick = () => toggleCart(m);
+  
+  // Pass the element itself to toggleCart to manage focus/indices
+  div.onclick = (e) => {
+    e.stopPropagation();
+    toggleCart(m, div);
+  };
+  
   return div;
 }
 
@@ -634,6 +671,7 @@ function renderDashboard() {
 }
 
 function renderSearchResults(q) {
+  activeSearchIndex = -1;
   const d = document.getElementById("dashboardView"), 
         s = document.getElementById("searchView"), 
         r = document.getElementById("searchResults");
@@ -648,7 +686,12 @@ function renderSearchResults(q) {
   s.classList.remove("hidden"); 
   r.innerHTML = "";
   
-  const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const terms = q.toLowerCase().split(/\s+/).filter(Boolean).map(term => {
+    return term.replace(/>=|≥/g, "greater than")
+               .replace(/<=|≤/g, "less than")
+               .replace(/>/g, "greater than")
+               .replace(/</g, "less than");
+  });
   
   // List of terms that should strictly match Pediatric items
   const pedsSynonyms = "pediatric paediatric pediatrics paediatrics child children infant toddler peds ped paeds";
@@ -657,14 +700,18 @@ function renderSearchResults(q) {
   const rawHits = MEDS.filter(m => {
     let t = m.search_text || [m.med, m.dose_text, m.comments, m.indication, m.prn, m.specialty].join(" ");
     
-    // If this is a pediatric med, inject the synonyms into the search string
-    // so that searching "child", "infant", etc. will return true for this item.
+    // Normalize the med data text to match the normalized search terms
+    let normalizedT = t.toLowerCase()
+      .replace(/>=|≥/g, "greater than")
+      .replace(/<=|≤/g, "less than")
+      .replace(/>/g, "greater than")
+      .replace(/</g, "less than");
+
     if ((m.population || "").toLowerCase() === "pediatric") {
-      t += " " + pedsSynonyms;
+      normalizedT += " pediatric paediatric pediatrics paediatrics child children infant toddler peds ped paeds";
     }
 
-    t = t.toLowerCase();
-    return terms.every(term => t.includes(term));
+    return terms.every(term => normalizedT.includes(term));
   });
 
   // 2. Deduplicate matches
@@ -722,7 +769,10 @@ function renderSearchResults(q) {
   renderGroup("Adult", adultMatches);
   renderGroup("Pediatric", pedsMatches);
   renderGroup("Other", otherMatches);
-  
+  if (uniqueHits.length === 1) {
+    const onlyItem = r.querySelector(".med-item");
+    if (onlyItem) onlyItem.classList.add("is-sole-match");
+  }
   markSelectedInLists();
 }
 
@@ -738,18 +788,30 @@ function renderCart() {
 
   el.innerHTML = cart.map((m) => {
     let d = m.dose_text;
+    let isCalculated = false;
+
+    // 1. Calculate the dose if weight is available
     if (m.weight_based && currentWeight && !m.wasEdited) {
       const c = calculateDoseDisplay(m, currentWeight);
-      if (c) d = c;
+      if (c) {
+        d = c;
+        isCalculated = true;
+      }
     }
     
-    const details = getMedDetailsArray(m, d).join(", ");
+    // 2. Escape parts individually to preserve HTML in the dose
+    const detailsParts = getMedDetailsArray(m, d);
+    const safeDetails = detailsParts.map(part => {
+      // If this specific part is the calculated HTML dose, do not escape it
+      if (isCalculated && part === d) return part;
+      return escapeHtml(part);
+    }).join(", ");
 
     return `
       <div class="cart-item">
         <div class="cart-med-name">${escapeHtml(m.med)}</div>
         <button class="icon-btn" onclick="removeFromCartById('${m.uid}')">×</button>
-        <div class="cart-med-details">${escapeHtml(details)}</div>
+        <div class="cart-med-details">${safeDetails}</div>
         <button class="edit-btn" onclick="openEditModal('${m.uid}')">Edit</button>
       </div>`;
   }).join("");
@@ -782,7 +844,8 @@ function printCart() {
     dateStr,
     items: cart.map(m => {
       let d = m.dose_text;
-      if (m.weight_based && currentWeight) {
+      // ONLY recalculate if it's weight-based AND has NOT been manually edited
+      if (m.weight_based && currentWeight && !m.wasEdited) {
         const c = calculateDoseDisplay(m, currentWeight);
         if (c) d = c;
       }
@@ -849,7 +912,6 @@ function printCart() {
       function strip(h){let t=document.createElement("div");t.innerHTML=h;return t.textContent||t.innerText||"";}
       function expand(s,d){
         if(!s)return"";
-        // Create a single regex for all keys to prevent double-replacement
         const keys = Object.keys(d).sort((a,b)=>b.length-a.length).join("|");
         const pattern = new RegExp("\\\\b("+keys+")\\\\b", "gi");
         return s.replace(pattern, m => d[m.toUpperCase()] || m);
@@ -884,11 +946,8 @@ function printCart() {
         }
         let finalDose = dose.includes("<span") ? dose : esc(expandedDose);
         
-        // 1. Calculate PRN Suffix
         let prnSuffix = "";
         if (m.prn) {
-           // If freq is explicitly 'PRN', text is already 'as needed', so just add ' for ...'
-           // Otherwise add ' as needed for ...'
            if ((m.frequency||"").toUpperCase() === "PRN") {
               prnSuffix = "for " + esc(m.prn);
            } else {
@@ -896,28 +955,24 @@ function printCart() {
            }
         }
 
-        // 2. Build the SIG (Instructions) Line
         let sig=[
           finalDose, 
           esc(line2), 
           esc(expand(m.route||"",ROUTES)), 
           esc(expand(m.frequency||"",FREQS)), 
-          prnSuffix, // Added PRN here
+          prnSuffix, 
           fmtDur(m.duration)
         ].filter(Boolean).join(" ");
 
-        // 3. Build the META (Disp/Refill) Line - PRN REMOVED
         let metaParts = [];
         if(m.dispense) metaParts.push(\`Dispense: <strong>\${esc(m.dispense)}</strong>\`);
         if(m.refill) metaParts.push(\`Refills: <strong>\${esc(m.refill)}</strong>\`);
 
         let meta = metaParts.join(" &nbsp;|&nbsp; ");
 
-        // 4. Construct HTML
         return \`<div class="rx-item"><div class="rx-title">\${i+1}. \${esc(m.med)}</div><div class="rx-details"><div>\${sig}</div>\${meta?\`<div class="rx-meta">\${meta}</div>\`:""}\${m.comments?\`<div class="rx-comments">Note: \${esc(m.comments)}</div>\`:""}</div></div>\`;
       }
       
-      // Init
       document.getElementById("header-container").innerHTML = getHead();
       
       const tbody = document.getElementById("med-list-body");
@@ -942,7 +997,6 @@ function printCart() {
   const d = f.contentWindow.document;
   d.open(); d.write(html); d.close();
   
-  // Clean up
   currentWeight = null;
   document.getElementById("weightInput").value = "";
   renderCart();
@@ -954,50 +1008,92 @@ function printCart() {
 (async function init() {
   loadLocations(); 
 
-  // Event Listeners
-  document.getElementById("locationBtn").addEventListener("click", (e) => {
-    e.stopPropagation();
-    toggleLocationMenu();
-  });
-  
-  document.addEventListener("click", (e) => {
-    const menu = document.getElementById("locationMenu");
-    const btn = document.getElementById("locationBtn");
-    if (!menu.contains(e.target) && !btn.contains(e.target)) {
-      menu.classList.add("hidden");
-    }
-  });
-
-  document.getElementById("openAddLocationBtn").addEventListener("click", openAddLocationModal);
-  document.getElementById("cancelLocBtn").addEventListener("click", closeLocationModal);
-  document.getElementById("saveLocBtn").addEventListener("click", saveNewLocation);
-
-  // Allow Enter key to save new location
-  ["newLocName", "newLocAddress"].forEach(id => {
-    document.getElementById(id).addEventListener("keydown", (e) => {
-      if (e.key === "Enter") saveNewLocation();
-    });
-  });
-
+  currentWeight = null; 
+  document.getElementById("weightInput").value = "";
   const searchInput = document.getElementById("searchInput");
   const clearSearchBtn = document.getElementById("clearSearchBtn");
   
+  searchInput.value = ""; 
+  searchInput.focus();
+
+  // --- Search Logic ---
   searchInput.addEventListener("input", (e) => {
     renderSearchResults(e.target.value);
     if(e.target.value.trim().length > 0) clearSearchBtn.classList.add("visible");
     else clearSearchBtn.classList.remove("visible");
   });
 
-  // NEW: Search Input ESC Handler
-  searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
+  // --- Global Keyboard Listener ---
+  document.addEventListener("keydown", (e) => {
+    const searchView = document.getElementById("searchView");
+    const isSearchVisible = !searchView.classList.contains("hidden");
+    const results = document.querySelectorAll("#searchResults .med-item");
+    const searchInput = document.getElementById("searchInput");
+
+    // Standard Cmd+F / Cmd+P Logic
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+      e.preventDefault(); 
+      searchInput.focus();
+      searchInput.select();
+      return;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+      e.preventDefault(); 
+      printCart();
+      return;
+    }
+
+    // Search View Specific Navigation
+    if (isSearchVisible) {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
+      activeSearchIndex = Math.min(activeSearchIndex + 1, results.length - 1);
+      updateKeyboardSelection(results);
+    } 
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      activeSearchIndex = Math.max(activeSearchIndex - 1, 0);
+      updateKeyboardSelection(results);
+    } 
+    else if (e.key === "Enter") {
+      if (document.activeElement.classList.contains("med-item")) {
+        document.activeElement.click();
+      } 
+      else if (results.length === 1) {
+        e.preventDefault();
+        results[0].click(); 
+          
+        // Clear search to prepare for next med
+        searchInput.value = "";
+        renderSearchResults("");
+        document.getElementById("clearSearchBtn").classList.remove("visible");
+        searchInput.focus();        
+      }
+      else if (activeSearchIndex >= 0) {
+        results[activeSearchIndex].click();
+      }
+    }
+    else if (e.key === "Escape") {
       searchInput.value = "";
       renderSearchResults("");
+      const clearSearchBtn = document.getElementById("clearSearchBtn");
       clearSearchBtn.classList.remove("visible");
+      searchInput.focus();
     }
-  });
-  
+  }
+});
+
+  function updateKeyboardSelection(results) {
+    results.forEach((el, idx) => {
+      if (idx === activeSearchIndex) {
+        el.classList.add("is-active");
+        el.focus(); // Move focus so next arrows originate from here
+        el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else {
+        el.classList.remove("is-active");
+      }
+    });
+  }
   clearSearchBtn.addEventListener("click", () => {
     searchInput.value = ""; renderSearchResults("");
     clearSearchBtn.classList.remove("visible"); searchInput.focus();
@@ -1020,16 +1116,40 @@ function printCart() {
       renderCart();
     }
   });
-
-  document.getElementById("modalSaveBtn").addEventListener("click", saveModalWeight);
-  document.getElementById("modalSkipBtn").addEventListener("click", skipModalWeight);
-  document.getElementById("modalWeightInput").addEventListener("keydown", (e) => { if (e.key === "Enter") saveModalWeight(); });
+  document.getElementById("modalSaveBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    saveModalWeight();
+  });
+  document.getElementById("modalSkipBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    skipModalWeight();
+  });
+  document.getElementById("modalWeightInput").addEventListener("keydown", (e) => { 
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      saveModalWeight();
+    } 
+  });
   
-  // Updated Global Keydown
+  // Global Keydown
   document.addEventListener("keydown", (e) => {
-  const weightModal = document.getElementById("weightModal");
-  const locationModal = document.getElementById("locationModal");
-  const editModal = document.getElementById("editModal");
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+      e.preventDefault(); 
+      const sInput = document.getElementById("searchInput");
+      sInput.focus();
+      sInput.select();
+      return;
+    }
+
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+      e.preventDefault(); 
+      printCart();
+      return;
+    }
+    const weightModal = document.getElementById("weightModal");
+    const locationModal = document.getElementById("locationModal");
+    const editModal = document.getElementById("editModal");
 
   // --- Edit Modal Specific Logic ---
   if (!editModal.classList.contains("hidden")) {
@@ -1081,6 +1201,7 @@ function printCart() {
     saveNewLocation();
   }
 
+// Location jump-to-letter logic inside the global keydown listener
   const locMenu = document.getElementById("locationMenu");
   if (!locMenu.classList.contains("hidden") && e.key.length === 1 && e.key.match(/[a-z]/i)) {
     e.preventDefault();
@@ -1096,18 +1217,46 @@ function printCart() {
   }
 });
 
-  document.getElementById("printBtn").addEventListener("click", printCart);
-  document.getElementById("clearCartBtn").addEventListener("click", clearCart);
-  document.getElementById("cancelEditBtn").addEventListener("click", closeEditModal);
-  document.getElementById("saveEditBtn").addEventListener("click", saveEdit);
-  document.getElementById("resetViewBtn").addEventListener("click", () => {
-    document.querySelectorAll("details").forEach(el => el.open = false);
-    currentWeight = null; document.getElementById("weightInput").value = "";
-    searchInput.value = ""; renderSearchResults(""); clearSearchBtn.classList.remove("visible");
-    clearCart();
+// Helper to manage visual selection and focus during arrow navigation
+function updateKeyboardSelection(results) {
+  results.forEach((el, idx) => {
+    if (idx === activeSearchIndex) {
+      el.classList.add("is-active");
+      el.focus(); // Move focus so next arrows originate from here
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } else {
+      el.classList.remove("is-active");
+    }
   });
+}
 
-  await loadMeds();
-  renderDashboard();
-  renderCart();
+// Action Button Listeners
+document.getElementById("printBtn").addEventListener("click", printCart);
+document.getElementById("clearCartBtn").addEventListener("click", clearCart);
+document.getElementById("cancelEditBtn").addEventListener("click", closeEditModal);
+document.getElementById("saveEditBtn").addEventListener("click", saveEdit);
+
+document.getElementById("resetViewBtn").addEventListener("click", () => {
+  // Clear layout and data
+  document.querySelectorAll("details").forEach(el => el.open = false);
+  currentWeight = null; 
+  activeSearchIndex = -1; // Reset search highlight index
+  
+  // Clear inputs and search state
+  document.getElementById("weightInput").value = "";
+  searchInput.value = ""; 
+  renderSearchResults(""); 
+  document.getElementById("clearSearchBtn").classList.remove("visible");
+  
+  clearCart();
+  searchInput.focus();
+});
+
+// Final App Initialization
+await loadMeds();
+renderDashboard();
+renderCart();
+
+// Ensure the search bar is ready for immediate input on load
+document.getElementById("searchInput").focus();
 })();
