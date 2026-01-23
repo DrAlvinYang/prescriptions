@@ -1235,7 +1235,20 @@ document.getElementById("printBtn").addEventListener("click", printCart);
 document.getElementById("clearCartBtn").addEventListener("click", clearCart);
 document.getElementById("cancelEditBtn").addEventListener("click", closeEditModal);
 document.getElementById("saveEditBtn").addEventListener("click", saveEdit);
-
+document.getElementById("locationBtn").addEventListener("click", (e) => {
+  e.stopPropagation(); // Prevents immediate closing if you have global click listeners
+  toggleLocationMenu();
+});
+document.addEventListener("click", (e) => {
+  const menu = document.getElementById("locationMenu");
+  const btn = document.getElementById("locationBtn");
+  if (!menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.add("hidden");
+  }
+});
+document.getElementById("openAddLocationBtn").addEventListener("click", openAddLocationModal);
+document.getElementById("cancelLocBtn").addEventListener("click", closeLocationModal);
+document.getElementById("saveLocBtn").addEventListener("click", saveNewLocation);
 document.getElementById("resetViewBtn").addEventListener("click", () => {
   // Clear layout and data
   document.querySelectorAll("details").forEach(el => el.open = false);
