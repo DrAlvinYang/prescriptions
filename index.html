@@ -14,6 +14,12 @@
           <div class="brand">ED Prescriptions</div>
         </div>
 
+        <div class="provider-wrapper">
+          <button id="providerBtn" class="provider-btn" type="button" title="Click to edit provider information">
+            <span id="providerLabel" class="provider-label">Loading...</span>
+          </button>
+        </div>
+
         <div class="location-wrapper">
           <button id="locationBtn" class="location-btn" type="button">
             <span class="loc-label">Loading...</span> 
@@ -102,6 +108,24 @@
       <div class="modal-actions">
         <button id="cancelLocBtn" class="btn btn-secondary">Cancel</button>
         <button id="saveLocBtn" class="btn">Save Location</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="providerModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 style="margin-top:0;">Edit Provider Information</h3>
+      <div class="modal-input-group">
+        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Full Name</label>
+        <input id="newProviderName" type="text" placeholder="e.g. John Smith" />
+      </div>
+      <div class="modal-input-group">
+        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">CPSO Number</label>
+        <input id="newProviderCpso" type="text" placeholder="111111" maxlength="6" />
+      </div>
+      <div class="modal-actions">
+        <button id="cancelProviderBtn" class="btn btn-secondary">Cancel</button>
+        <button id="saveProviderBtn" class="btn">Save</button>
       </div>
     </div>
   </div>

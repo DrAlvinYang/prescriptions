@@ -10,7 +10,8 @@ const CONFIG = {
   defaultLocation: "Michael Garron Hospital",
   storage: {
     locations: "rx_custom_locations",
-    currentLocation: "rx_current_location"
+    currentLocation: "rx_current_location",
+    provider: "edprescriptions_provider"
   }
 };
 
@@ -448,6 +449,60 @@ class LocationManager {
     if (this.state.currentLocationName === name) {
       this.selectLocation(CONFIG.defaultLocation);
     }
+  }
+}
+
+// ============================================================================
+// PROVIDER MANAGER
+// ============================================================================
+
+class ProviderManager {
+  constructor() {
+    this.currentProvider = { ...CONFIG.prescriber };
+  }
+
+  load() {
+    try {
+      const stored = localStorage.getItem(CONFIG.storage.provider);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.name && parsed.cpso) {
+          this.currentProvider = parsed;
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load provider info:", error);
+    }
+  }
+
+  getProvider() {
+    return { ...this.currentProvider };
+  }
+
+  updateProvider(name, cpso) {
+    const cleanName = Utils.normalize(name);
+    const cleanCpso = Utils.normalize(cpso);
+    
+    if (!cleanName) {
+      throw new Error("Provider name is required");
+    }
+    
+    if (!cleanCpso) {
+      throw new Error("CPSO number is required");
+    }
+    
+    // Validate CPSO format: must be numeric and 5 or 6 digits
+    if (!/^\d{5,6}$/.test(cleanCpso)) {
+      throw new Error("CPSO number must be 5 or 6 digits");
+    }
+    
+    this.currentProvider = { name: cleanName, cpso: cleanCpso };
+    localStorage.setItem(CONFIG.storage.provider, JSON.stringify(this.currentProvider));
+  }
+
+  reset() {
+    this.currentProvider = { ...CONFIG.prescriber };
+    localStorage.removeItem(CONFIG.storage.provider);
   }
 }
 

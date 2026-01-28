@@ -57,15 +57,18 @@ class Application {
     
     // Create managers
     this.managers.location = new LocationManager(this.state);
+    this.managers.provider = new ProviderManager();
     this.managers.data = new DataLoader();
     this.managers.modal = new ModalManager(this.state);
     
-    // Load locations
+    // Load locations and provider
     this.managers.location.load();
+    this.managers.provider.load();
     
     // Expose for global access
     window.appState = this.state;
     window.locationManager = this.managers.location;
+    window.providerManager = this.managers.provider;
     window.modalManager = this.managers.modal;
   }
 
@@ -77,11 +80,13 @@ class Application {
       dashboard: new DashboardRenderer(this.state, medRenderer),
       search: new SearchResultsRenderer(this.state, medRenderer),
       cart: new CartRenderer(this.state),
-      location: new LocationUIRenderer(this.managers.location)
+      location: new LocationUIRenderer(this.managers.location),
+      provider: new ProviderUIRenderer(this.managers.provider)
     };
     
-    // Update location header
+    // Update location and provider headers
     this.renderers.location.updateHeader();
+    this.renderers.provider.updateHeader();
     
     // Expose cart renderer globally
     window.cartRenderer = this.renderers.cart;
@@ -108,6 +113,12 @@ class Application {
       this.managers.modal
     );
 
+    this.controllers.provider = new ProviderController(
+      this.managers.provider,
+      this.renderers.provider,
+      this.managers.modal
+    );
+
     this.controllers.weight = new WeightController(
       this.state,
       this.controllers.cart
@@ -116,7 +127,8 @@ class Application {
     this.controllers.print = new PrintController(
       this.state,
       this.managers.location,
-      this.controllers.weight
+      this.controllers.weight,
+      this.managers.provider
     );
 
     this.controllers.reset = new ResetController(
@@ -135,6 +147,7 @@ class Application {
     // Expose globally for onclick handlers
     window.cartController = this.controllers.cart;
     window.locationController = this.controllers.location;
+    window.providerController = this.controllers.provider;
     window.cartActions = {
       remove: (uid) => this.controllers.cart.remove(uid),
       edit: (uid) => this.managers.modal.openEdit(uid)
@@ -146,6 +159,7 @@ class Application {
     this.setupWeightListeners();
     this.setupModalListeners();
     this.setupLocationListeners();
+    this.setupProviderListeners();
     this.setupActionButtons();
     this.setupGlobalKeyboard();
   }
@@ -282,6 +296,7 @@ class Application {
         const weightModal = Utils.getElement("weightModal");
         const editModal = Utils.getElement("editModal");
         const locationModal = Utils.getElement("locationModal");
+        const providerModal = Utils.getElement("providerModal");
 
         // Close whichever modal is currently open
         if (weightModal && !weightModal.classList.contains("hidden")) {
@@ -290,6 +305,8 @@ class Application {
           this.managers.modal.closeEdit();
         } else if (locationModal && !locationModal.classList.contains("hidden")) {
           this.managers.modal.closeLocation();
+        } else if (providerModal && !providerModal.classList.contains("hidden")) {
+          this.managers.modal.closeProvider();
         }
       }
     });
@@ -310,6 +327,7 @@ class Application {
     setupModalClickOutside("weightModal", () => this.managers.modal.closeWeight());
     setupModalClickOutside("editModal", () => this.managers.modal.closeEdit());
     setupModalClickOutside("locationModal", () => this.managers.modal.closeLocation());
+    setupModalClickOutside("providerModal", () => this.managers.modal.closeProvider());
   }
 
   setupLocationListeners() {
@@ -332,6 +350,52 @@ class Application {
         locationMenu.classList.add("hidden");
       }
     });
+  }
+
+  setupProviderListeners() {
+    const providerBtn = Utils.getElement("providerBtn");
+    const saveProviderBtn = Utils.getElement("saveProviderBtn");
+    const cancelProviderBtn = Utils.getElement("cancelProviderBtn");
+    const providerNameInput = Utils.getElement("newProviderName");
+    const providerCpsoInput = Utils.getElement("newProviderCpso");
+
+    if (!providerBtn) {
+      console.error("Provider button not found");
+      return;
+    }
+
+    providerBtn.addEventListener("click", () => {
+      this.controllers.provider.openEditModal();
+    });
+
+    if (saveProviderBtn && cancelProviderBtn) {
+      saveProviderBtn.addEventListener("click", () => {
+        this.controllers.provider.saveProvider();
+      });
+
+      cancelProviderBtn.addEventListener("click", () => {
+        this.managers.modal.closeProvider();
+      });
+    }
+
+    // Enter key to save in provider modal
+    if (providerNameInput) {
+      providerNameInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          this.controllers.provider.saveProvider();
+        }
+      });
+    }
+
+    if (providerCpsoInput) {
+      providerCpsoInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          this.controllers.provider.saveProvider();
+        }
+      });
+    }
   }
 
   setupActionButtons() {

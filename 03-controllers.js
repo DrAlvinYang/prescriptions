@@ -211,6 +211,28 @@ class LocationController {
 }
 
 // ============================================================================
+// PROVIDER CONTROLLER
+// ============================================================================
+
+class ProviderController {
+  constructor(providerManager, providerUIRenderer, modalManager) {
+    this.providerManager = providerManager;
+    this.providerUIRenderer = providerUIRenderer;
+    this.modalManager = modalManager;
+  }
+
+  openEditModal() {
+    this.modalManager.openProvider();
+  }
+
+  saveProvider() {
+    this.modalManager.saveProvider(this.providerManager, () => {
+      this.providerUIRenderer.updateHeader();
+    });
+  }
+}
+
+// ============================================================================
 // WEIGHT CONTROLLER
 // ============================================================================
 
@@ -431,10 +453,11 @@ class ResetController {
 // ============================================================================
 
 class PrintController {
-  constructor(state, locationManager, weightController) {
+  constructor(state, locationManager, weightController, providerManager) {
     this.state = state;
     this.locationManager = locationManager;
     this.weightController = weightController;
+    this.providerManager = providerManager;
   }
 
   print() {
@@ -447,11 +470,12 @@ class PrintController {
     });
 
     const location = this.locationManager.getCurrentLocation();
+    const provider = this.providerManager.getProvider();
 
     const payload = {
       prescriber: {
-        name: CONFIG.prescriber.name,
-        cpso: CONFIG.prescriber.cpso,
+        name: provider.name,
+        cpso: provider.cpso,
         address: location.address
       },
       dateStr,
@@ -756,7 +780,7 @@ class PrintController {
           <div class="sticker-box"></div>
           <div class="provider-col">
             <div class="provider-info">
-              <div class="provider-name">\${esc(DATA.prescriber.name)}</div>
+              <div class="provider-name">Dr. \${esc(DATA.prescriber.name)}</div>
               <div class="provider-meta">CPSO: \${esc(DATA.prescriber.cpso)}</div>
               <div class="provider-meta">\${esc(DATA.prescriber.address)}</div>
               <div class="provider-meta" style="margin-top:8px;">
@@ -842,6 +866,7 @@ class PrintController {
 window.CartController = CartController;
 window.SearchController = SearchController;
 window.LocationController = LocationController;
+window.ProviderController = ProviderController;
 window.WeightController = WeightController;
 window.KeyboardController = KeyboardController;
 window.ResetController = ResetController;

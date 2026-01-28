@@ -491,6 +491,27 @@ class LocationUIRenderer {
 }
 
 // ============================================================================
+// PROVIDER UI RENDERER
+// ============================================================================
+
+class ProviderUIRenderer {
+  constructor(providerManager) {
+    this.providerManager = providerManager;
+  }
+
+  updateHeader() {
+    const btn = document.getElementById("providerBtn");
+    const label = document.getElementById("providerLabel");
+    
+    if (!btn || !label) return;
+    
+    const provider = this.providerManager.getProvider();
+    label.textContent = `Dr. ${provider.name}`;
+    btn.title = `${provider.name} (CPSO: ${provider.cpso})`;
+  }
+}
+
+// ============================================================================
 // MODAL MANAGER
 // ============================================================================
 
@@ -698,6 +719,37 @@ class ModalManager {
       alert(error.message);
     }
   }
+
+  // Provider Modal
+  openProvider() {
+    document.getElementById("newProviderName").value = "";
+    document.getElementById("newProviderCpso").value = "";
+    
+    const modal = document.getElementById("providerModal");
+    modal.classList.remove("hidden");
+    document.getElementById("newProviderName").focus();
+    
+    // Trap focus in modal
+    this.trapFocus(modal);
+  }
+
+  closeProvider() {
+    this.removeFocusTrap();
+    document.getElementById("providerModal").classList.add("hidden");
+  }
+
+  saveProvider(providerManager, onSuccess) {
+    const name = document.getElementById("newProviderName").value;
+    const cpso = document.getElementById("newProviderCpso").value;
+
+    try {
+      providerManager.updateProvider(name, cpso);
+      onSuccess();
+      this.closeProvider();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
 }
 
 // ============================================================================
@@ -710,4 +762,5 @@ window.DashboardRenderer = DashboardRenderer;
 window.SearchResultsRenderer = SearchResultsRenderer;
 window.CartRenderer = CartRenderer;
 window.LocationUIRenderer = LocationUIRenderer;
+window.ProviderUIRenderer = ProviderUIRenderer;
 window.ModalManager = ModalManager;
