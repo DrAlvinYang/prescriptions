@@ -270,6 +270,34 @@ class KeyboardController {
   }
 
   handleGlobalKeydown(event) {
+    // Handle Tab key for brand name display (only when no modal is active)
+    if (event.key === "Tab") {
+      const anyModalOpen = this.isAnyModalOpen();
+      
+      if (!anyModalOpen) {
+        event.preventDefault();
+        
+        if (!this.state.showingBrands) {
+          this.state.showingBrands = true;
+          this.reRenderAll();
+          
+          // Set up keyup listener to restore generic names when Tab is released
+          const handleKeyUp = (e) => {
+            if (e.key === "Tab") {
+              this.state.showingBrands = false;
+              this.reRenderAll(); // This will preserve the highlight using the same logic
+              document.removeEventListener("keyup", handleKeyUp);
+            }
+          };
+          
+          // Bind the context properly using arrow function (already done above)
+          document.addEventListener("keyup", handleKeyUp);
+        }
+        
+        return;
+      }
+    }
+    
     // Cmd/Ctrl + F: Focus search
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f') {
       event.preventDefault();
@@ -294,6 +322,84 @@ class KeyboardController {
 
     // Handle location menu jump-to-letter
     this.handleLocationJump(event);
+  }
+
+  isAnyModalOpen() {
+    const weightModal = document.getElementById("weightModal");
+    const locationModal = document.getElementById("locationModal");
+    const providerModal = document.getElementById("providerModal");
+    const editModal = document.getElementById("editModal");
+    
+    return (
+      !weightModal.classList.contains("hidden") ||
+      !locationModal.classList.contains("hidden") ||
+      !providerModal.classList.contains("hidden") ||
+      !editModal.classList.contains("hidden")
+    );
+  }
+
+  reRenderAll() {
+    // Save the state of all open folders before re-rendering
+    const openFolders = new Set();
+    document.querySelectorAll('details[open]').forEach(details => {
+      // Create a unique identifier for this folder
+      const summary = details.querySelector('summary');
+      if (summary) {
+        openFolders.add(summary.textContent.trim());
+      }
+    });
+    
+    // Save active search index - critical to save BEFORE calling search()
+    const savedActiveSearchIndex = this.state.activeSearchIndex;
+    
+    // Re-render dashboard
+    window.app.renderers.dashboard.render(
+      {
+        col1: SPECIALTY_COLUMNS.col1,
+        col2: SPECIALTY_COLUMNS.col2,
+        col3: SPECIALTY_COLUMNS.col3
+      },
+      (med, element) => window.cartController.toggle(med, element)
+    );
+    
+    // Restore open state for folders
+    document.querySelectorAll('details').forEach(details => {
+      const summary = details.querySelector('summary');
+      if (summary && openFolders.has(summary.textContent.trim())) {
+        details.open = true;
+      }
+    });
+    
+    // Re-render search results if search is active
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput && searchInput.value.trim()) {
+      // Call search() which will reset activeSearchIndex to -1
+      this.searchController.search(searchInput.value);
+      
+      // Immediately restore the saved index
+      this.state.activeSearchIndex = savedActiveSearchIndex;
+      
+      // Restore the active search item highlight if there was one
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      if (savedActiveSearchIndex >= 0) {
+        requestAnimationFrame(() => {
+          const results = document.querySelectorAll("#searchResults .med-item");
+          if (results.length > 0 && savedActiveSearchIndex < results.length) {
+            results.forEach((element, index) => {
+              if (index === savedActiveSearchIndex) {
+                element.classList.add("is-active");
+                element.scrollIntoView({ block: "nearest", behavior: "instant" });
+              } else {
+                element.classList.remove("is-active");
+              }
+            });
+          }
+        });
+      }
+    }
+    
+    // Re-render cart
+    window.cartController.render();
   }
 
   handleModalKeys(event) {

@@ -65,8 +65,13 @@ class MedicationRenderer {
       indicationHtml = `<div class="med-indication">${format(med.indication)}</div>`;
     }
 
-    // Med name and details
-    const medNameHtml = format(med.med);
+    // Med name - append brands if state.showingBrands is true
+    let medNameHtml = format(med.med);
+    if (this.state.showingBrands && med.brands && med.brands.length > 0) {
+      const brandText = MedicationUtils.formatBrandNames(med.brands);
+      medNameHtml += ` <span class="brand-name">${Utils.escapeHtml(brandText)}</span>`;
+    }
+    
     const detailsHtml = format(detailsString);
     
     // Population label
@@ -74,9 +79,9 @@ class MedicationRenderer {
       ? `<span style="font-weight:normal; color:#666; font-size:0.9em; margin-left:4px;">(${Utils.escapeHtml(med.population)})</span>` 
       : "";
 
-    // Brand matching hint
+    // Brand matching hint (only show when NOT showing brands)
     let brandHint = "";
-    if (highlightTerms.length > 0 && Array.isArray(med.brands)) {
+    if (!this.state.showingBrands && highlightTerms.length > 0 && Array.isArray(med.brands)) {
       const matchedBrand = med.brands.find(brand => 
         highlightTerms.some(term => brand.toLowerCase().includes(term))
       );
@@ -404,9 +409,16 @@ class CartRenderer {
       return Utils.escapeHtml(part);
     }).join(", ");
 
+    // Build med name display - append brands if showing
+    let medNameDisplay = Utils.escapeHtml(med.med);
+    if (this.state.showingBrands && med.brands && med.brands.length > 0) {
+      const brandText = MedicationUtils.formatBrandNames(med.brands);
+      medNameDisplay += ` <span class="brand-name">${Utils.escapeHtml(brandText)}</span>`;
+    }
+
     return `
       <div class="cart-item">
-        <div class="cart-med-name">${Utils.escapeHtml(med.med)}</div>
+        <div class="cart-med-name">${medNameDisplay}</div>
         <button class="icon-btn" onclick="cartActions.remove('${med.uid}')">×</button>
         <div class="cart-med-details">${safeDetails}</div>
         <button class="edit-btn" onclick="cartActions.edit('${med.uid}')">Edit</button>

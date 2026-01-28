@@ -94,6 +94,7 @@ class AppState {
     this.editingId = null;
     this.tabbingUnlocked = false;
     this.activeSearchIndex = -1;
+    this.showingBrands = false;
   }
 
   addToCart(medication) {
@@ -262,6 +263,13 @@ const MedicationUtils = {
       'duration', 'dispense', 'refill', 'prn', 'form', 'comments'
     ];
     return fields.map(field => Utils.normalize(med[field])).join("||");
+  },
+
+  formatBrandNames(brands) {
+    if (!brands || !Array.isArray(brands) || brands.length === 0) {
+      return "";
+    }
+    return `[${brands.join(" | ")}]`;
   },
 
   compareByIndication(a, b) {
