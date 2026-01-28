@@ -80,7 +80,7 @@ body {
   
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   
   color: #333;
   font-size: 14px;
@@ -99,7 +99,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   flex: 1; 
-  text-align: center;
+  text-align: left;
 }
 
 /* Location Dropdown */
@@ -357,6 +357,9 @@ body {
   border-radius: 6px;
   font-size: 14px;
   height: 35px;
+}
+.searchbar input::placeholder {
+  color: #999;
 }
 
 .search-clear-btn {
