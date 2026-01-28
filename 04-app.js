@@ -14,17 +14,40 @@ class Application {
     try {
       await this.initializeCore();
       this.initializeRenderers();
+      await this.loadData(); // Load data BEFORE controllers/listeners to avoid race conditions
       this.initializeControllers();
       this.setupEventListeners();
       this.setupGlobalActions();
-      await this.loadData();
       this.render();
       this.focus();
       
       console.log("✓ Application initialized successfully");
     } catch (error) {
       console.error("Failed to initialize application:", error);
-      alert("Failed to load application. Please refresh the page.");
+      
+      // Show user-friendly error message
+      const errorMsg = error.message || "An unknown error occurred";
+      alert(`Failed to load application.\n\n${errorMsg}\n\nPlease refresh the page or contact support if the problem persists.`);
+      
+      // Show error state in UI instead of blank page
+      document.body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#f4f6f8;font-family:sans-serif;">
+          <div style="background:white;padding:30px;border-radius:8px;max-width:500px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            <h2 style="color:#d32f2f;margin-top:0;">⚠️ Application Error</h2>
+            <p style="color:#666;line-height:1.6;">${errorMsg}</p>
+            <p style="color:#666;line-height:1.6;">Please try:</p>
+            <ul style="color:#666;line-height:1.8;">
+              <li>Refreshing the page</li>
+              <li>Clearing your browser cache</li>
+              <li>Checking your internet connection</li>
+              <li>Ensuring Prescriptions.json is in the same directory</li>
+            </ul>
+            <button onclick="location.reload()" style="background:#0056b3;color:white;border:none;padding:10px 20px;border-radius:4px;cursor:pointer;font-size:14px;">
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -69,7 +92,8 @@ class Application {
       this.state,
       this.renderers.cart,
       this.renderers.dashboard,
-      this.renderers.search
+      this.renderers.search,
+      this.managers.modal
     );
 
     this.controllers.search = new SearchController(
@@ -86,7 +110,7 @@ class Application {
 
     this.controllers.weight = new WeightController(
       this.state,
-      this.renderers.cart
+      this.controllers.cart
     );
 
     this.controllers.print = new PrintController(
@@ -108,9 +132,6 @@ class Application {
       this.controllers.print
     );
 
-    // Link modal manager to cart controller
-    this.controllers.cart.setModalManager(this.managers.modal);
-
     // Expose globally for onclick handlers
     window.cartController = this.controllers.cart;
     window.locationController = this.controllers.location;
@@ -130,8 +151,13 @@ class Application {
   }
 
   setupSearchListeners() {
-    const searchInput = document.getElementById("searchInput");
-    const clearBtn = document.getElementById("clearSearchBtn");
+    const searchInput = Utils.getElement("searchInput");
+    const clearBtn = Utils.getElement("clearSearchBtn");
+
+    if (!searchInput || !clearBtn) {
+      console.error("Search elements not found");
+      return;
+    }
 
     searchInput.value = "";
     
@@ -145,7 +171,12 @@ class Application {
   }
 
   setupWeightListeners() {
-    const weightInput = document.getElementById("weightInput");
+    const weightInput = Utils.getElement("weightInput");
+
+    if (!weightInput) {
+      console.error("Weight input not found");
+      return;
+    }
 
     weightInput.value = "";
 
@@ -162,68 +193,114 @@ class Application {
 
   setupModalListeners() {
     // Weight Modal
-    const modalSaveBtn = document.getElementById("modalSaveBtn");
-    const modalSkipBtn = document.getElementById("modalSkipBtn");
-    const modalWeightInput = document.getElementById("modalWeightInput");
+    const modalSaveBtn = Utils.getElement("modalSaveBtn");
+    const modalSkipBtn = Utils.getElement("modalSkipBtn");
+    const modalWeightInput = Utils.getElement("modalWeightInput");
 
-    modalSaveBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.managers.modal.saveWeight((med) => {
-        this.controllers.cart.add(med);
-      });
-    });
-
-    modalSkipBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.managers.modal.skipWeight((med) => {
-        this.controllers.cart.add(med);
-      });
-    });
-
-    modalWeightInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+    if (modalSaveBtn && modalSkipBtn && modalWeightInput) {
+      modalSaveBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        e.stopPropagation();
         this.managers.modal.saveWeight((med) => {
           this.controllers.cart.add(med);
         });
+      });
+
+      modalSkipBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.managers.modal.skipWeight((med) => {
+          this.controllers.cart.add(med);
+        });
+      });
+
+      modalWeightInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          e.stopPropagation();
+          this.managers.modal.saveWeight((med) => {
+            this.controllers.cart.add(med);
+          });
+        }
+      });
+    }
+
+    // Edit Modal
+    const saveEditBtn = Utils.getElement("saveEditBtn");
+    const cancelEditBtn = Utils.getElement("cancelEditBtn");
+
+    if (saveEditBtn && cancelEditBtn) {
+      saveEditBtn.addEventListener("click", () => {
+        this.managers.modal.saveEdit();
+        this.controllers.cart.render();
+      });
+
+      cancelEditBtn.addEventListener("click", () => {
+        this.managers.modal.closeEdit();
+      });
+    }
+
+    // Location Modal
+    const saveLocBtn = Utils.getElement("saveLocBtn");
+    const cancelLocBtn = Utils.getElement("cancelLocBtn");
+    const openAddLocationBtn = Utils.getElement("openAddLocationBtn");
+
+    if (saveLocBtn && cancelLocBtn && openAddLocationBtn) {
+      saveLocBtn.addEventListener("click", () => {
+        this.controllers.location.saveNewLocation();
+      });
+
+      cancelLocBtn.addEventListener("click", () => {
+        this.managers.modal.closeLocation();
+      });
+
+      openAddLocationBtn.addEventListener("click", () => {
+        this.controllers.location.openAddModal();
+      });
+    }
+
+    // Escape key handler for all modals
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        const weightModal = Utils.getElement("weightModal");
+        const editModal = Utils.getElement("editModal");
+        const locationModal = Utils.getElement("locationModal");
+
+        // Close whichever modal is currently open
+        if (weightModal && !weightModal.classList.contains("hidden")) {
+          this.managers.modal.closeWeight();
+        } else if (editModal && !editModal.classList.contains("hidden")) {
+          this.managers.modal.closeEdit();
+        } else if (locationModal && !locationModal.classList.contains("hidden")) {
+          this.managers.modal.closeLocation();
+        }
       }
     });
 
-    // Edit Modal
-    const saveEditBtn = document.getElementById("saveEditBtn");
-    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    // Click-outside-to-close handler for all modals
+    const setupModalClickOutside = (modalId, closeMethod) => {
+      const modal = Utils.getElement(modalId);
+      if (modal) {
+        modal.addEventListener("click", (e) => {
+          // Only close if clicking the overlay itself, not the modal content
+          if (e.target === modal) {
+            closeMethod();
+          }
+        });
+      }
+    };
 
-    saveEditBtn.addEventListener("click", () => {
-      this.managers.modal.saveEdit();
-      this.controllers.cart.render();
-    });
-
-    cancelEditBtn.addEventListener("click", () => {
-      this.managers.modal.closeEdit();
-    });
-
-    // Location Modal
-    const saveLocBtn = document.getElementById("saveLocBtn");
-    const cancelLocBtn = document.getElementById("cancelLocBtn");
-    const openAddLocationBtn = document.getElementById("openAddLocationBtn");
-
-    saveLocBtn.addEventListener("click", () => {
-      this.controllers.location.saveNewLocation();
-    });
-
-    cancelLocBtn.addEventListener("click", () => {
-      this.managers.modal.closeLocation();
-    });
-
-    openAddLocationBtn.addEventListener("click", () => {
-      this.controllers.location.openAddModal();
-    });
+    setupModalClickOutside("weightModal", () => this.managers.modal.closeWeight());
+    setupModalClickOutside("editModal", () => this.managers.modal.closeEdit());
+    setupModalClickOutside("locationModal", () => this.managers.modal.closeLocation());
   }
 
   setupLocationListeners() {
-    const locationBtn = document.getElementById("locationBtn");
-    const locationMenu = document.getElementById("locationMenu");
+    const locationBtn = Utils.getElement("locationBtn");
+    const locationMenu = Utils.getElement("locationMenu");
+
+    if (!locationBtn || !locationMenu) {
+      console.error("Location elements not found");
+      return;
+    }
 
     locationBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -239,21 +316,27 @@ class Application {
   }
 
   setupActionButtons() {
-    const printBtn = document.getElementById("printBtn");
-    const clearCartBtn = document.getElementById("clearCartBtn");
-    const resetViewBtn = document.getElementById("resetViewBtn");
+    const printBtn = Utils.getElement("printBtn");
+    const clearCartBtn = Utils.getElement("clearCartBtn");
+    const resetViewBtn = Utils.getElement("resetViewBtn");
 
-    printBtn.addEventListener("click", () => {
-      this.controllers.print.print();
-    });
+    if (printBtn) {
+      printBtn.addEventListener("click", () => {
+        this.controllers.print.print();
+      });
+    }
 
-    clearCartBtn.addEventListener("click", () => {
-      this.controllers.cart.clear();
-    });
+    if (clearCartBtn) {
+      clearCartBtn.addEventListener("click", () => {
+        this.controllers.cart.clear();
+      });
+    }
 
-    resetViewBtn.addEventListener("click", () => {
-      this.controllers.reset.reset();
-    });
+    if (resetViewBtn) {
+      resetViewBtn.addEventListener("click", () => {
+        this.controllers.reset.reset();
+      });
+    }
   }
 
   setupGlobalKeyboard() {
@@ -294,10 +377,17 @@ class Application {
     this.state.medications = await this.managers.data.loadMedications();
     
     if (this.state.medications.length === 0) {
-      console.warn("No medications loaded");
-    } else {
-      console.log(`✓ Loaded ${this.state.medications.length} medications`);
+      console.error("No medications loaded - medication data file may be missing or invalid");
+      throw new Error("Failed to load medication data. Please check that Prescriptions.json exists and is valid.");
     }
+    
+    console.log(`✓ Loaded ${this.state.medications.length} medications`);
+
+    // Create SearchManager now that medications are loaded
+    this.managers.search = new SearchManager(this.state.medications);
+    
+    // Update the search renderer with the SearchManager
+    this.renderers.search.setSearchManager(this.managers.search);
   }
 
   render() {
@@ -317,7 +407,7 @@ class Application {
 
   focus() {
     // Focus search input for immediate use
-    document.getElementById("searchInput").focus();
+    Utils.safeFocus("searchInput");
   }
 }
 

@@ -279,9 +279,14 @@ class DashboardRenderer {
 // ============================================================================
 
 class SearchResultsRenderer {
-  constructor(state, medRenderer) {
+  constructor(state, medRenderer, searchManager = null) {
     this.state = state;
     this.medRenderer = medRenderer;
+    this.searchManager = searchManager;
+  }
+
+  setSearchManager(searchManager) {
+    this.searchManager = searchManager;
   }
 
   render(query, onMedClick) {
@@ -301,7 +306,8 @@ class SearchResultsRenderer {
     searchView.classList.remove("hidden");
     resultsContainer.innerHTML = "";
 
-    const searchManager = new SearchManager(this.state.medications);
+    // Use provided searchManager or create new one as fallback
+    const searchManager = this.searchManager || new SearchManager(this.state.medications);
     const terms = searchManager.normalizeSearchTerms(query);
     const groups = searchManager.search(query);
 
@@ -491,6 +497,50 @@ class LocationUIRenderer {
 class ModalManager {
   constructor(state) {
     this.state = state;
+    this.focusTrapHandler = null; // Store handler for cleanup
+  }
+
+  // Focus Trap Helper
+  trapFocus(modalElement) {
+    // Remove any existing trap handler
+    if (this.focusTrapHandler) {
+      document.removeEventListener("keydown", this.focusTrapHandler);
+    }
+
+    // Get all focusable elements in the modal
+    const focusableElements = modalElement.querySelectorAll(
+      'button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    );
+    
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    
+    // Create and store the handler
+    this.focusTrapHandler = (e) => {
+      if (e.key !== "Tab") return;
+
+      // If shift+tab on first element, go to last
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } 
+      // If tab on last element, go to first
+      else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    };
+    
+    document.addEventListener("keydown", this.focusTrapHandler);
+  }
+
+  removeFocusTrap() {
+    if (this.focusTrapHandler) {
+      document.removeEventListener("keydown", this.focusTrapHandler);
+      this.focusTrapHandler = null;
+    }
   }
 
   // Weight Modal
@@ -502,9 +552,13 @@ class ModalManager {
     input.value = "";
     modal.classList.remove("hidden");
     input.focus();
+    
+    // Trap focus in modal
+    this.trapFocus(modal);
   }
 
   closeWeight() {
+    this.removeFocusTrap();
     document.getElementById("weightModal").classList.add("hidden");
     
     // Return focus to active search item
@@ -518,7 +572,7 @@ class ModalManager {
     const input = document.getElementById("modalWeightInput");
     const value = parseFloat(input.value);
 
-    if (!isNaN(value) && value > 0) {
+    if (!isNaN(value) && value >= 0.01) {
       this.state.setWeight(value);
       document.getElementById("weightInput").value = value.toFixed(2);
       
@@ -529,7 +583,7 @@ class ModalManager {
       
       this.closeWeight();
     } else {
-      alert("Please enter a valid weight (kg) to calculate the dose.");
+      alert("Please enter a valid weight greater than 0 kg.");
     }
   }
 
@@ -579,7 +633,11 @@ class ModalManager {
       };
     });
 
-    document.getElementById("editModal").classList.remove("hidden");
+    const modal = document.getElementById("editModal");
+    modal.classList.remove("hidden");
+    
+    // Trap focus in modal
+    this.trapFocus(modal);
   }
 
   saveEdit() {
@@ -600,6 +658,7 @@ class ModalManager {
   }
 
   closeEdit() {
+    this.removeFocusTrap();
     document.getElementById("editModal").classList.add("hidden");
     this.state.editingId = null;
   }
@@ -609,11 +668,17 @@ class ModalManager {
     document.getElementById("locationMenu").classList.add("hidden");
     document.getElementById("newLocName").value = "";
     document.getElementById("newLocAddress").value = "";
-    document.getElementById("locationModal").classList.remove("hidden");
+    
+    const modal = document.getElementById("locationModal");
+    modal.classList.remove("hidden");
     document.getElementById("newLocName").focus();
+    
+    // Trap focus in modal
+    this.trapFocus(modal);
   }
 
   closeLocation() {
+    this.removeFocusTrap();
     document.getElementById("locationModal").classList.add("hidden");
   }
 

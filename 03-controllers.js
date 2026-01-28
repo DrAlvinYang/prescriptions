@@ -3,11 +3,12 @@
 // ============================================================================
 
 class CartController {
-  constructor(state, cartRenderer, dashboardRenderer, searchRenderer) {
+  constructor(state, cartRenderer, dashboardRenderer, searchRenderer, modalManager) {
     this.state = state;
     this.cartRenderer = cartRenderer;
     this.dashboardRenderer = dashboardRenderer;
     this.searchRenderer = searchRenderer;
+    this.modalManager = modalManager;
   }
 
   toggle(medication, element = null) {
@@ -62,10 +63,6 @@ class CartController {
     );
     this.cartRenderer.updateSelectedIndicators();
   }
-
-  setModalManager(modalManager) {
-    this.modalManager = modalManager;
-  }
 }
 
 // ============================================================================
@@ -80,32 +77,40 @@ class SearchController {
   }
 
   search(query) {
+    // Reset active index when search changes to prevent out-of-bounds issues
+    this.state.activeSearchIndex = -1;
+    
     this.searchRenderer.render(
       query,
       (med, element) => this.cartController.toggle(med, element)
     );
 
-    const clearBtn = document.getElementById("clearSearchBtn");
-    if (query.trim().length > 0) {
-      clearBtn.classList.add("visible");
-    } else {
-      clearBtn.classList.remove("visible");
+    const clearBtn = Utils.getElement("clearSearchBtn");
+    if (clearBtn) {
+      if (query.trim().length > 0) {
+        clearBtn.classList.add("visible");
+      } else {
+        clearBtn.classList.remove("visible");
+      }
     }
   }
 
   clear() {
-    const searchInput = document.getElementById("searchInput");
-    searchInput.value = "";
+    const searchInput = Utils.getElement("searchInput");
+    if (searchInput) {
+      searchInput.value = "";
+    }
+    
     this.search("");
-    document.getElementById("clearSearchBtn").classList.remove("visible");
-    searchInput.focus();
+    Utils.safeRemoveClass("clearSearchBtn", "visible");
+    Utils.safeFocus("searchInput");
   }
 
   navigateResults(direction) {
-    const searchView = document.getElementById("searchView");
-    if (searchView.classList.contains("hidden")) return;
+    const searchView = Utils.getElement("searchView");
+    if (!searchView || searchView.classList.contains("hidden")) return;
 
-    const results = document.querySelectorAll("#searchResults .med-item");
+    const results = Utils.queryElements("#searchResults .med-item");
     if (results.length === 0) return;
 
     if (direction === "down") {
@@ -124,10 +129,10 @@ class SearchController {
   }
 
   selectActiveResult() {
-    const results = document.querySelectorAll("#searchResults .med-item");
+    const results = Utils.queryElements("#searchResults .med-item");
     
     // If focused on a med item, click it
-    if (document.activeElement.classList.contains("med-item")) {
+    if (document.activeElement && document.activeElement.classList.contains("med-item")) {
       document.activeElement.click();
       return true;
     }
@@ -210,15 +215,15 @@ class LocationController {
 // ============================================================================
 
 class WeightController {
-  constructor(state, cartRenderer) {
+  constructor(state, cartController) {
     this.state = state;
-    this.cartRenderer = cartRenderer;
+    this.cartController = cartController;
   }
 
   update(value) {
     const parsed = parseFloat(value);
     this.state.setWeight(parsed);
-    this.cartRenderer.render();
+    this.cartController.render();
   }
 
   format(value) {
@@ -226,7 +231,7 @@ class WeightController {
     if (formatted) {
       document.getElementById("weightInput").value = formatted;
       this.state.setWeight(parseFloat(formatted));
-      this.cartRenderer.render();
+      this.cartController.render();
     }
   }
 }
