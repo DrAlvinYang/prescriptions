@@ -180,23 +180,23 @@ class LocationController {
   select(name) {
     this.locationManager.selectLocation(name);
     this.locationUIRenderer.updateHeader();
-    document.getElementById("locationMenu").classList.add("hidden");
   }
 
   delete(name) {
     this.locationManager.deleteCustomLocation(name);
     this.locationUIRenderer.updateHeader();
-    this.locationUIRenderer.renderDropdown(
-      (name) => this.select(name),
-      (name) => this.delete(name)
-    );
   }
 
   toggleMenu() {
     this.locationUIRenderer.toggleMenu(
       (name) => this.select(name),
-      (name) => this.delete(name)
+      (name) => this.delete(name),
+      () => this.openAddModal()
     );
+  }
+
+  exitSearchMode() {
+    this.locationUIRenderer.exitSearchMode();
   }
 
   openAddModal() {

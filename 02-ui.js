@@ -453,61 +453,176 @@ class CartRenderer {
 class LocationUIRenderer {
   constructor(locationManager) {
     this.locationManager = locationManager;
+    this.isSearchMode = false;
+    this.searchInput = null;
+    this.dropdown = null;
   }
 
   updateHeader() {
     const button = document.getElementById("locationBtn");
     const locationName = this.locationManager.state.currentLocationName;
-    button.innerHTML = `<span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
+    
+    if (!this.isSearchMode) {
+      button.innerHTML = `<span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
+    }
   }
 
-  renderDropdown(onSelect, onDelete) {
-    const listElement = document.getElementById("locationList");
-    listElement.innerHTML = "";
-
-    const allLocations = this.locationManager.getAllLocations();
-    const baseNames = new Set(BASE_LOCATIONS.map(loc => loc.name));
-    const currentName = this.locationManager.state.currentLocationName;
-
-    allLocations.forEach(location => {
-      const isBase = baseNames.has(location.name);
-      const isSelected = location.name === currentName;
-
-      const div = DOMBuilder.createElement('div', `loc-item ${isSelected ? 'selected' : ''}`, {
-        onclick: () => onSelect(location.name)
-      });
-
-      const span = DOMBuilder.createElement('span', 'loc-name', {
-        textContent: location.name
-      });
-      
-      div.appendChild(span);
-
-      if (!isBase) {
-        const deleteBtn = DOMBuilder.createElement('button', 'loc-delete-btn', {
-          innerHTML: "&times;",
-          title: "Delete Location",
-          onclick: (e) => {
-            e.stopPropagation();
-            onDelete(location.name);
-          }
-        });
-        div.appendChild(deleteBtn);
+  enterSearchMode(onSelect, onDelete, onAddNew) {
+    const button = document.getElementById("locationBtn");
+    const wrapper = document.getElementById("locationWrapper") || button.parentElement;
+    
+    this.isSearchMode = true;
+    
+    // Replace button content with search input
+    button.innerHTML = `<input id="locationSearchInput" type="text" class="location-search-input" placeholder="Search hospital" autocomplete="off" />`;
+    
+    this.searchInput = document.getElementById("locationSearchInput");
+    
+    // Create dropdown if it doesn't exist
+    this.createDropdown(wrapper);
+    
+    // Show dropdown with initial results (first 10 alphabetically)
+    this.updateDropdownResults("", onSelect, onDelete, onAddNew);
+    this.showDropdown();
+    
+    // Focus the search input immediately
+    this.searchInput.focus();
+    
+    // Setup search input listeners
+    this.searchInput.addEventListener("input", (e) => {
+      this.updateDropdownResults(e.target.value, onSelect, onDelete, onAddNew);
+    });
+    
+    // Prevent button click from triggering while in search mode
+    this.searchInput.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+    
+    // Handle escape key to exit search mode
+    this.searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        this.exitSearchMode();
       }
-
-      listElement.appendChild(div);
     });
   }
 
-  toggleMenu(onSelect, onDelete) {
-    const menu = document.getElementById("locationMenu");
-    const isHidden = menu.classList.contains("hidden");
+  exitSearchMode() {
+    if (!this.isSearchMode) return;
+    
+    this.isSearchMode = false;
+    this.hideDropdown();
+    this.updateHeader();
+  }
 
-    if (isHidden) {
-      this.renderDropdown(onSelect, onDelete);
-      menu.classList.remove("hidden");
+  createDropdown(wrapper) {
+    // Remove existing dropdown if any
+    const existingDropdown = document.getElementById("locationSearchDropdown");
+    if (existingDropdown) {
+      existingDropdown.remove();
+    }
+    
+    // Create new dropdown
+    this.dropdown = document.createElement("div");
+    this.dropdown.id = "locationSearchDropdown";
+    this.dropdown.className = "location-search-dropdown hidden";
+    
+    this.dropdown.innerHTML = `
+      <div class="location-search-results"></div>
+      <div class="location-search-footer">
+        <button id="dropdownAddLocationBtn" class="btn btn-sm" type="button">+ Add New Location</button>
+      </div>
+    `;
+    
+    wrapper.appendChild(this.dropdown);
+  }
+
+  showDropdown() {
+    if (this.dropdown) {
+      this.dropdown.classList.remove("hidden");
+    }
+  }
+
+  hideDropdown() {
+    if (this.dropdown) {
+      this.dropdown.classList.add("hidden");
+    }
+  }
+
+  updateDropdownResults(query, onSelect, onDelete, onAddNew) {
+    if (!this.dropdown) return;
+    
+    const resultsContainer = this.dropdown.querySelector(".location-search-results");
+    const matches = this.locationManager.searchLocations(query);
+    const currentName = this.locationManager.state.currentLocationName;
+    
+    resultsContainer.innerHTML = "";
+    
+    // Create result items (up to 10 visible, rest scrollable)
+    matches.forEach(location => {
+      const isCustom = this.locationManager.isCustomLocation(location.name);
+      const isSelected = location.name === currentName;
+      
+      const div = document.createElement("div");
+      div.className = `loc-search-item ${isSelected ? 'selected' : ''}`;
+      
+      const span = document.createElement("span");
+      span.className = "loc-search-name";
+      span.textContent = location.name;
+      div.appendChild(span);
+      
+      // Show delete button only for custom locations
+      if (isCustom) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "loc-delete-btn";
+        deleteBtn.innerHTML = "&times;";
+        deleteBtn.title = "Delete Location";
+        deleteBtn.type = "button";
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          onDelete(location.name);
+          // Refresh results after deletion
+          this.updateDropdownResults(query, onSelect, onDelete, onAddNew);
+        };
+        div.appendChild(deleteBtn);
+      }
+      
+      div.onclick = () => {
+        onSelect(location.name);
+        this.exitSearchMode();
+      };
+      
+      resultsContainer.appendChild(div);
+    });
+    
+    // If no results, show a message
+    if (matches.length === 0) {
+      const noResults = document.createElement("div");
+      noResults.className = "loc-search-no-results";
+      noResults.textContent = "No hospitals found";
+      resultsContainer.appendChild(noResults);
+    }
+    
+    // Setup add new location button
+    const addBtn = this.dropdown.querySelector("#dropdownAddLocationBtn");
+    addBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.exitSearchMode();
+      onAddNew();
+    };
+  }
+
+  // Legacy methods for compatibility
+  renderDropdown(onSelect, onDelete) {
+    // No longer used - kept for compatibility
+  }
+
+  toggleMenu(onSelect, onDelete, onAddNew) {
+    if (this.isSearchMode) {
+      this.exitSearchMode();
     } else {
-      menu.classList.add("hidden");
+      this.enterSearchMode(onSelect, onDelete, onAddNew);
     }
   }
 }
@@ -739,7 +854,6 @@ class ModalManager {
 
   // Location Modal
   openLocation() {
-    document.getElementById("locationMenu").classList.add("hidden");
     document.getElementById("newLocName").value = "";
     document.getElementById("newLocAddress").value = "";
     

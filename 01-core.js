@@ -15,51 +15,11 @@ const CONFIG = {
   }
 };
 
-const BASE_LOCATIONS = [
-  { name: "Michael Garron Hospital", address: "825 Coxwell Ave, East York, M4C 3E7" },
-  { name: "Bancroft - North Hastings Hospital", address: "1H Manor Lane, Bancroft, K0L 1C0" },
-  { name: "Barry's Bay - St. Francis Memorial Hospital", address: "7 St. Francis Memorial Dr, Barry's Bay, K0J 1B0" },
-  { name: "Blind River Site; North Shore Health Network", address: "525 Causley St, Blind River, P0R 1B0" },
-  { name: "Bracebridge - South Muskoka Memorial Hospital", address: "75 Ann St, Bracebridge, P1L 2E4" },
-  { name: "Campbellford Memorial Hospital", address: "146 Oliver Rd, Campbellford, K0L 1L0" },
-  { name: "Deep River and District Hospital", address: "117 Banting Dr, Deep River, K0J 1P0" },
-  { name: "Dryden Regional Health Centre", address: "58 Goodall St, Dryden, P8N 2Z6" },
-  { name: "Dunnville - Haldimand War Memorial Hospital", address: "400 Broad St W, Dunnville, N1A 2P7" },
-  { name: "Elliot Lake - St. Joseph's General Hospital", address: "70 Spine Rd, Elliot Lake, P5A 1X2" },
-  { name: "Exeter - South Huron Hospital", address: "24 Huron St W, Exeter, N0M 1S2" },
-  { name: "Fort Frances La Verendrye Hospital", address: "110 Victoria Ave, Fort Frances, P9A 2B7" },
-  { name: "Goderich - Alexandra Marine and General Hospital", address: "120 Napier St, Goderich, N7A 1W5" },
-  { name: "Grimsby - West Lincoln Memorial Hospital", address: "169 Main St E, Grimsby, L3M 1P3" },
-  { name: "Hagersville - West Haldimand General Hospital", address: "75 Parkview Rd, Hagersville, N0A 1H0" },
-  { name: "Haliburton Highlands Health Services", address: "7199 Gelert Rd, Haliburton, K0M 1S0" },
-  { name: "Hanover and District Hospital", address: "90 7th Ave, Hanover, N4N 1N1" },
-  { name: "Hearst - Notre-Dame Hospital", address: "1405 Edward St, Hearst, P0L 1N0" },
-  { name: "Iroquois Falls - Anson General Hospital", address: "58 Anson Dr, Iroquois Falls, P0K 1E0" },
-  { name: "Kapuskasing - Sensenbrenner Hospital", address: "101 Progress Cres, Kapuskasing, P5N 3H5" },
-  { name: "Kemptville District Hospital", address: "2675 Concession Rd, Kemptville, K0G 1J0" },
-  { name: "Kenora - Lake of The Woods District Hospital", address: "21 Sylvan St W, Kenora, P9N 3W7" },
-  { name: "Kincardine Site; South Bruce Grey Health Centre", address: "1199 Queen St, Kincardine, N2Z 1G6" },
-  { name: "Kirkland Lake - Kirkland & District Hospital", address: "145 Government Rd E, Kirkland Lake, P2N 3P4" },
-  { name: "Lion's Head Hospital", address: "22 Moore St, Lion's Head, N0H 1W0" },
-  { name: "Listowel Memorial Hospital", address: "255 Elizabeth St E, Listowel, N4W 2P5" },
-  { name: "Markdale Hospital", address: "220 Toronto St S, Markdale, N0C 1H0" },
-  { name: "Mattawa Hospital", address: "217 Turcotte Park Rd, Mattawa, P0H 1V0" },
-  { name: "Meaford Hospital", address: "229 Nelson St W, Meaford, N4L 1A3" },
-  { name: "Moose Factory - Weeneebayko Area Health Authority", address: "19 Hospital Dr, Moose Factory, P0L 1W0" },
-  { name: "New Liskeard - Temiskaming Hospital", address: "421 Shepherdson Rd, New Liskeard, P0J 1P0" },
-  { name: "Newbury - Four Counties Health Services", address: "1824 Concession Dr, Newbury, N0L 1Z0" },
-  { name: "North Bay Regional Health Centre", address: "50 College Dr, North Bay, P1B 5A4" },
-  { name: "Owen Sound Hospital", address: "1800 8th St E, Owen Sound, N4K 6M9" },
-  { name: "Renfrew Victoria Hospital", address: "499 Raglan St N, Renfrew, K7V 1P6" },
-  { name: "Seaforth Community Hospital; Huron Perth Healthcare Alliance", address: "24 Centennial Dr, Seaforth, N0K 1W0" },
-  { name: "Simcoe - Norfolk General Hospital", address: "365 West St, Simcoe, N3Y 1T7" },
-  { name: "Sioux Lookout - Meno Ya Win Health Centre", address: "1 Meno Ya Win Way, Sioux Lookout, P8T 1B4" },
-  { name: "Southampton Hospital", address: "340 High St, Southampton, N0H 2L0" },
-  { name: "Sturgeon Falls - West Nipissing General Hospital", address: "725 chemin Coursol Rd, Sturgeon Falls, P2B 2Y6" },
-  { name: "Tillsonburg District Memorial Hospital", address: "167 Rolph St, Tillsonburg, N4G 3Y9" },
-  { name: "Wiarton Hospital", address: "369 Mary St, Wiarton, N0H 2T0" },
-  { name: "Wingham and District Hospital", address: "270 Carling Terrace, Wingham, N0G 2W0" }
-];
+// Fallback location if JSON fails to load
+const FALLBACK_LOCATION = { name: "Michael Garron Hospital", address: "825 Coxwell Ave, East York, M4C 3E7" };
+
+// Will be populated from Locations.json
+let BASE_LOCATIONS = [FALLBACK_LOCATION];
 
 const SPECIALTY_COLUMNS = {
   col1: ["Add New Med", "Neuro & Endocrine", "Cardiac & Heme", "OBGYN", "Substance Use"],
@@ -365,12 +325,37 @@ const MedicationUtils = {
 class LocationManager {
   constructor(state) {
     this.state = state;
+    this.locationsLoaded = false;
   }
 
-  load() {
+  async load() {
+    await this.loadBaseLocations();
     this.loadCustomLocations();
     this.loadCurrentLocation();
     this.validateCurrentLocation();
+  }
+
+  async loadBaseLocations() {
+    try {
+      const response = await fetch("Locations.json", { cache: "no-store" });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (Array.isArray(data.locations) && data.locations.length > 0) {
+        BASE_LOCATIONS = data.locations;
+        this.locationsLoaded = true;
+        console.log(`✓ Loaded ${BASE_LOCATIONS.length} locations from JSON`);
+      } else {
+        console.warn("Locations.json is empty or invalid, using fallback");
+        BASE_LOCATIONS = [FALLBACK_LOCATION];
+      }
+    } catch (error) {
+      console.error("Failed to load locations from JSON, using fallback:", error);
+      BASE_LOCATIONS = [FALLBACK_LOCATION];
+    }
   }
 
   loadCustomLocations() {
@@ -420,9 +405,27 @@ class LocationManager {
     return all;
   }
 
+  searchLocations(query) {
+    const all = this.getAllLocations();
+    
+    if (!query || query.trim() === "") {
+      // Return all locations alphabetically when no query
+      return all;
+    }
+    
+    const searchTerm = query.toLowerCase().trim();
+    
+    // Filter locations where name contains the search term (case-insensitive)
+    const matches = all.filter(loc => 
+      loc.name.toLowerCase().includes(searchTerm)
+    );
+    
+    return matches;
+  }
+
   getCurrentLocation() {
     const all = this.getAllLocations();
-    return all.find(loc => loc.name === this.state.currentLocationName) || BASE_LOCATIONS[0];
+    return all.find(loc => loc.name === this.state.currentLocationName) || FALLBACK_LOCATION;
   }
 
   selectLocation(name) {
@@ -458,6 +461,10 @@ class LocationManager {
     if (this.state.currentLocationName === name) {
       this.selectLocation(CONFIG.defaultLocation);
     }
+  }
+
+  isCustomLocation(name) {
+    return this.state.customLocations.some(loc => loc.name === name);
   }
 }
 

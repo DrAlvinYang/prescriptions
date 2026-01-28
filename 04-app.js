@@ -51,7 +51,7 @@ class Application {
     }
   }
 
-  initializeCore() {
+  async initializeCore() {
     // Create state
     this.state = new AppState();
     
@@ -61,8 +61,10 @@ class Application {
     this.managers.data = new DataLoader();
     this.managers.modal = new ModalManager(this.state);
     
-    // Load locations and provider
-    this.managers.location.load();
+    // Load locations (now async to load from JSON)
+    await this.managers.location.load();
+    
+    // Load provider from localStorage
     this.managers.provider.load();
     
     // Expose for global access
@@ -291,19 +293,14 @@ class Application {
     // Location Modal
     const saveLocBtn = Utils.getElement("saveLocBtn");
     const cancelLocBtn = Utils.getElement("cancelLocBtn");
-    const openAddLocationBtn = Utils.getElement("openAddLocationBtn");
 
-    if (saveLocBtn && cancelLocBtn && openAddLocationBtn) {
+    if (saveLocBtn && cancelLocBtn) {
       saveLocBtn.addEventListener("click", () => {
         this.controllers.location.saveNewLocation();
       });
 
       cancelLocBtn.addEventListener("click", () => {
         this.managers.modal.closeLocation();
-      });
-
-      openAddLocationBtn.addEventListener("click", () => {
-        this.controllers.location.openAddModal();
       });
     }
 
@@ -352,12 +349,17 @@ class Application {
   }
 
   setupLocationListeners() {
-    const locationBtn = Utils.getElement("locationBtn");
-    const locationMenu = Utils.getElement("locationMenu");
+    const locationBtn = document.getElementById("locationBtn");
+    const locationWrapper = locationBtn?.parentElement;
 
-    if (!locationBtn || !locationMenu) {
-      console.error("Location elements not found");
+    if (!locationBtn) {
+      console.error("Location button not found");
       return;
+    }
+
+    // Add id to wrapper for easier reference
+    if (locationWrapper) {
+      locationWrapper.id = "locationWrapper";
     }
 
     locationBtn.addEventListener("click", (e) => {
@@ -365,12 +367,18 @@ class Application {
       this.controllers.location.toggleMenu();
     });
 
-    // Close menu when clicking outside
+    // Close search mode when clicking outside
     document.addEventListener("click", (e) => {
-      if (!locationMenu.contains(e.target) && !locationBtn.contains(e.target)) {
-        locationMenu.classList.add("hidden");
+      const locationWrapper = document.getElementById("locationWrapper");
+      const dropdown = document.getElementById("locationSearchDropdown");
+      
+      if (locationWrapper && !locationWrapper.contains(e.target)) {
+        this.controllers.location.exitSearchMode();
       }
     });
+
+    // Remove the old location menu close handler since we're using a new approach
+    // The old locationMenu element is no longer used
   }
 
   setupProviderListeners() {
