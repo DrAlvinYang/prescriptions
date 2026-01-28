@@ -180,6 +180,16 @@ class Application {
 
     weightInput.value = "";
 
+    // Select all text when clicking/focusing the input
+    weightInput.addEventListener("focus", (e) => {
+      e.target.select();
+    });
+
+    // Also select on click (for cases where input already has focus)
+    weightInput.addEventListener("click", (e) => {
+      e.target.select();
+    });
+
     // Real-time update
     weightInput.addEventListener("input", (e) => {
       this.controllers.weight.update(e.target.value);
@@ -198,6 +208,15 @@ class Application {
     const modalWeightInput = Utils.getElement("modalWeightInput");
 
     if (modalSaveBtn && modalSkipBtn && modalWeightInput) {
+      // Select all text when clicking/focusing the modal weight input
+      modalWeightInput.addEventListener("focus", (e) => {
+        e.target.select();
+      });
+
+      modalWeightInput.addEventListener("click", (e) => {
+        e.target.select();
+      });
+
       modalSaveBtn.addEventListener("click", (e) => {
         e.preventDefault();
         this.managers.modal.saveWeight((med) => {
