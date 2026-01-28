@@ -608,16 +608,16 @@ class ResetController {
   }
 }
 
+
 // ============================================================================
 // PRINT CONTROLLER
 // ============================================================================
 // 
-// ARCHITECTURE NOTE: This uses an HTML <table> with <thead> for the header.
-// Browsers automatically repeat <thead> on every printed page - this is the
-// most reliable cross-browser method for repeating headers.
+// ARCHITECTURE NOTE: This generates a PDF using jsPDF library for complete
+// control over page layout. Each page explicitly includes the header, and
+// prescriptions are never split across pages.
 //
-// Each prescription is rendered as a <tr> with page-break-inside: avoid,
-// ensuring prescriptions are never split across pages.
+// This approach is 100% browser-agnostic - we control every pixel of the PDF.
 //
 // ============================================================================
 
@@ -655,7 +655,10 @@ class PrintController {
         if (med.weight_based && this.state.currentWeight && !med.wasEdited) {
           const calc = MedicationUtils.calculateDose(med, this.state.currentWeight);
           if (calc) {
-            dose = calc.html;
+            // Strip HTML for PDF - extract just the text
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = calc.html;
+            dose = tempDiv.textContent || tempDiv.innerText || calc.html;
           }
         }
 
@@ -666,336 +669,357 @@ class PrintController {
       })
     };
 
-    this.generatePrintDocument(payload);
+    this.generatePDF(payload);
   }
 
-  generatePrintDocument(data) {
-    const html = this.buildPrintHTML(data);
-
-    let frame = document.getElementById('printFrame');
-    if (frame) frame.remove();
-
-    frame = document.createElement('iframe');
-    frame.id = 'printFrame';
-    frame.style.display = 'none';
-    document.body.appendChild(frame);
-
-    const doc = frame.contentWindow.document;
-    doc.open();
-    doc.write(html);
-    doc.close();
+  generatePDF(data) {
+    // Load jsPDF dynamically if not already loaded
+    if (typeof window.jspdf === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.onload = () => this.createAndOpenPDF(data);
+      script.onerror = () => alert('Failed to load PDF library. Please check your internet connection.');
+      document.head.appendChild(script);
+    } else {
+      this.createAndOpenPDF(data);
+    }
   }
 
-  buildPrintHTML(data) {
-    return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8"/>
-  <title>Print Prescriptions</title>
-  ${this.getPrintStyles()}
-</head>
-<body>
-  <table class="rx-table">
-    <thead>
-      <tr>
-        <th class="header-cell">
-          ${this.getHeaderHTML(data)}
-        </th>
-      </tr>
-    </thead>
-    <tbody id="rx-body">
-    </tbody>
-  </table>
-  ${this.getPrintScript(data)}
-</body>
-</html>`;
-  }
-
-  getHeaderHTML(data) {
-    const esc = (s) => (s || "").toString()
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-
-    return `
-      <div class="header-wrapper">
-        <div class="sticker-box">Patient Label</div>
-        <div class="provider-col">
-          <div class="provider-info">
-            <div class="provider-name">Dr. ${esc(data.prescriber.name)}</div>
-            <div class="provider-meta">CPSO: ${esc(data.prescriber.cpso)}</div>
-            <div class="provider-meta">${esc(data.prescriber.address)}</div>
-            <div class="provider-meta" style="margin-top:8px;">
-              <strong>Date:</strong> ${esc(data.dateStr)}
-            </div>
-          </div>
-          <div class="sig-area">
-            <div class="sig-line-wrap">
-              <strong>Signature:</strong>
-              <div class="sig-rule"></div>
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }
-
-  getPrintStyles() {
-    return `<style>
-    /* ===========================================
-       PAGE SETUP
-       =========================================== */
-    @page { 
-      size: letter; 
-      margin: 0.5in;
-    }
+  createAndOpenPDF(data) {
+    const { jsPDF } = window.jspdf;
     
-    * { box-sizing: border-box; }
+    const ROUTES = this.getRouteExpansions();
+    const FREQS = this.getFrequencyExpansions();
+    const TERMS = this.getTermExpansions();
     
-    body { 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
-      font-size: 11pt; 
-      color: #000; 
-      background: #fff; 
-    }
+    // Page setup: Letter size (8.5" x 11") with 0.5" margins
+    // jsPDF uses points: 72 points = 1 inch
+    const PAGE_WIDTH = 612;
+    const PAGE_HEIGHT = 792;
+    const MARGIN = 36; // 0.5 inch
+    const CONTENT_WIDTH = PAGE_WIDTH - (2 * MARGIN);
     
-    /* ===========================================
-       TABLE-BASED LAYOUT FOR REPEATING HEADERS
-       
-       Using a table with thead is the most reliable
-       cross-browser method to repeat headers on
-       every printed page.
-       =========================================== */
-    .rx-table {
-      width: 7.5in;
-      border-collapse: collapse;
-      page-break-inside: auto;
-    }
+    // Header dimensions
+    const STICKER_WIDTH = 216; // 3 inches
+    const STICKER_HEIGHT = 144; // 2 inches
     
-    .rx-table thead {
-      display: table-header-group; /* This makes thead repeat on every page */
-    }
+    // Font sizes
+    const FONT_TITLE = 14;
+    const FONT_NORMAL = 11;
+    const FONT_SMALL = 10;
+    const FONT_META = 9;
     
-    .rx-table tbody {
-      display: table-row-group;
-    }
+    // Line heights
+    const LINE_HEIGHT = 14;
+    const ITEM_PADDING = 12;
     
-    .header-cell {
-      padding: 0;
-      text-align: left;
-      font-weight: normal;
-      vertical-align: top;
-    }
+    // Create PDF
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'pt',
+      format: 'letter'
+    });
     
-    /* ===========================================
-       HEADER STYLES
-       =========================================== */
-    .header-wrapper { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-start; 
-      padding-bottom: 15px; 
-      margin-bottom: 10px; 
-      border-bottom: 3px solid #000;
-      background: white;
-    }
+    // Helper: expand abbreviations
+    const expand = (s, dict) => {
+      if (!s) return "";
+      const keys = Object.keys(dict).sort((a, b) => b.length - a.length);
+      let result = s;
+      keys.forEach(key => {
+        const regex = new RegExp("\\b" + key + "\\b", "gi");
+        result = result.replace(regex, dict[key.toUpperCase()] || key);
+      });
+      return result;
+    };
     
-    .sticker-box { 
-      width: 3in; 
-      height: 2in; 
-      border: 2px solid #ccc; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: #ccc; 
-      font-size: 10pt;
-      flex-shrink: 0;
-    }
-    
-    .provider-col { 
-      text-align: right; 
-      width: 3.5in; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: space-between; 
-      height: 2in; 
-    }
-    
-    .provider-name { 
-      font-weight: 700; 
-      font-size: 14pt; 
-      margin-bottom: 4px; 
-    }
-    
-    .provider-meta { 
-      font-size: 10pt; 
-      color: #333; 
-    }
-    
-    .sig-area { 
-      margin-top: auto; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: flex-end; 
-    }
-    
-    .sig-line-wrap { 
-      display: flex; 
-      align-items: baseline; 
-      gap: 10px; 
-      width: 100%; 
-      justify-content: flex-end; 
-    }
-    
-    .sig-rule { 
-      border-bottom: 1px solid #000; 
-      width: 200px; 
-      height: 1px; 
-    }
-    
-    /* ===========================================
-       PRESCRIPTION ITEM STYLES
-       =========================================== */
-    .rx-row {
-      page-break-inside: avoid; /* Never split a prescription across pages */
-      break-inside: avoid;
-    }
-    
-    .rx-row td {
-      padding: 0;
-      vertical-align: top;
-    }
-    
-    .rx-item { 
-      padding: 12px 0; 
-      border-bottom: 1px solid #ddd; 
-    }
-    
-    .rx-title { 
-      font-weight: 700; 
-      font-size: 12pt; 
-      margin-bottom: 4px; 
-    }
-    
-    .rx-details { 
-      margin-left: 20px; 
-      line-height: 1.4; 
-    }
-    
-    .rx-meta { 
-      margin-top: 6px; 
-      font-size: 10pt; 
-      color: #444; 
-    }
-    
-    .rx-comments { 
-      margin-top: 8px; 
-      font-style: italic; 
-      background: #f4f4f4; 
-      padding: 6px 10px; 
-      border-radius: 6px; 
-      display: inline-block;
-      max-width: 100%;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-    
-    .calc-dose { 
-      color: #228B22; 
-      font-weight: 700; 
-    }
-    
-    .calc-note { 
-      font-style: italic; 
-      color: #555; 
-    }
-    
-    /* ===========================================
-       PRINT-SPECIFIC OVERRIDES
-       =========================================== */
-    @media print {
-      body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    // Helper: format duration
+    const fmtDur = (d) => {
+      if (!d) return "";
+      const match = d.match(/^(\d+)\s*(d|day|wk|week|mo|mth|month|yr|year)s?$/i);
+      if (match) {
+        let num = match[1];
+        let unit = match[2].toLowerCase();
+        if (unit === 'd') unit = 'day';
+        if (unit === 'wk') unit = 'week';
+        if (unit.startsWith('mo') || unit.startsWith('mt')) unit = 'month';
+        if (unit.startsWith('y')) unit = 'year';
+        return "for " + num + " " + unit + (num == 1 ? '' : 's');
       }
-      
-      .rx-table thead {
-        display: table-header-group !important;
-      }
-      
-      .rx-row {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-      }
-      
-      /* Ensure comments background prints */
-      .rx-comments {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-    }
+      return d;
+    };
     
-    /* ===========================================
-       SCREEN PREVIEW (non-print)
-       =========================================== */
-    @media screen {
-      body {
-        padding: 20px;
-        background: #f0f0f0;
-      }
+    // Helper: wrap text and return array of lines
+    const wrapText = (text, maxWidth, fontSize) => {
+      pdf.setFontSize(fontSize);
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = '';
       
-      .rx-table {
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        margin: 0 auto;
-      }
-    }
-  </style>`;
-  }
-
-  getPrintScript(data) {
-    return `<script>
-    try {
-      const DATA = ${JSON.stringify(data)};
-      const ROUTES = ${JSON.stringify(this.getRouteExpansions())};
-      const FREQS = ${JSON.stringify(this.getFrequencyExpansions())};
-      const TERMS = ${JSON.stringify(this.getTermExpansions())};
-      
-      ${this.getPrintFunctions()}
-      
-      // Build table rows for each prescription
-      const tbody = document.getElementById("rx-body");
-      let html = '';
-      
-      DATA.items.forEach((med, index) => {
-        html += getItemRow(med, index);
+      words.forEach(word => {
+        const testLine = currentLine ? currentLine + ' ' + word : word;
+        const testWidth = pdf.getTextWidth(testLine);
+        
+        if (testWidth > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
       });
       
-      tbody.innerHTML = html;
+      if (currentLine) {
+        lines.push(currentLine);
+      }
       
-      window.focus();
+      return lines.length > 0 ? lines : [''];
+    };
+    
+    // Draw header on current page, returns Y position after header
+    const drawHeader = (startY) => {
+      // Patient label box (left side)
+      pdf.setDrawColor(200, 200, 200);
+      pdf.setLineWidth(1.5);
+      pdf.rect(MARGIN, startY, STICKER_WIDTH, STICKER_HEIGHT);
       
-      // Reset weight in parent window after print dialog closes
-      window.addEventListener('afterprint', function() {
-        if (window.parent && window.parent.appState) {
-          window.parent.appState.currentWeight = null;
-          const weightInput = window.parent.document.getElementById("weightInput");
-          if (weightInput) {
-            weightInput.value = "";
-          }
-          if (window.parent.cartRenderer) {
-            window.parent.cartRenderer.render();
-          }
-        }
-      }, { once: true });
+      // "Patient Label" text centered in box
+      pdf.setFontSize(FONT_SMALL);
+      pdf.setTextColor(200, 200, 200);
+      pdf.setFont('helvetica', 'normal');
+      const labelText = "Patient Label";
+      const labelWidth = pdf.getTextWidth(labelText);
+      pdf.text(labelText, MARGIN + (STICKER_WIDTH - labelWidth) / 2, startY + STICKER_HEIGHT / 2 + 4);
       
-      setTimeout(() => window.print(), 150);
-    } catch(err) {
-      console.error("Print generation error:", err);
-      alert("Print generation error: " + err.message);
+      // Provider info (right side)
+      pdf.setTextColor(0, 0, 0);
+      const rightX = PAGE_WIDTH - MARGIN;
+      let providerY = startY + 5;
+      
+      // Doctor name
+      pdf.setFontSize(FONT_TITLE);
+      pdf.setFont('helvetica', 'bold');
+      const drName = "Dr. " + data.prescriber.name;
+      pdf.text(drName, rightX, providerY + 12, { align: 'right' });
+      providerY += 20;
+      
+      // CPSO
+      pdf.setFontSize(FONT_SMALL);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(60, 60, 60);
+      pdf.text("CPSO: " + data.prescriber.cpso, rightX, providerY + 10, { align: 'right' });
+      providerY += 14;
+      
+      // Address (may wrap)
+      const addressLines = wrapText(data.prescriber.address, 250, FONT_SMALL);
+      addressLines.forEach(line => {
+        pdf.text(line, rightX, providerY + 10, { align: 'right' });
+        providerY += 12;
+      });
+      
+      // Date
+      providerY += 8;
+      pdf.setTextColor(60, 60, 60);
+      pdf.setFont('helvetica', 'bold');
+      const dateLabel = "Date: ";
+      const dateText = data.dateStr;
+      pdf.text(dateLabel + dateText, rightX, providerY + 10, { align: 'right' });
+      
+      // Signature line (at bottom of header area)
+      const sigY = startY + STICKER_HEIGHT - 5;
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(FONT_SMALL);
+      const sigLabel = "Signature:";
+      const sigLabelWidth = pdf.getTextWidth(sigLabel);
+      pdf.text(sigLabel, rightX - 155, sigY);
+      pdf.setLineWidth(0.5);
+      pdf.setDrawColor(0, 0, 0);
+      pdf.line(rightX - 150 + sigLabelWidth, sigY, rightX, sigY);
+      
+      // Divider line below header
+      const dividerY = startY + STICKER_HEIGHT + 15;
+      pdf.setLineWidth(2);
+      pdf.setDrawColor(0, 0, 0);
+      pdf.line(MARGIN, dividerY, PAGE_WIDTH - MARGIN, dividerY);
+      
+      return dividerY + 15;
+    };
+    
+    // Calculate height needed for a prescription item
+    const measureItem = (med) => {
+      let height = ITEM_PADDING;
+      height += LINE_HEIGHT + 4; // Title
+      
+      let dose = med.dose_text || "";
+      let expandedDose = expand(dose, TERMS);
+      let form = expand(med.form || "", TERMS);
+      
+      let formLower = form.toLowerCase();
+      let doseLower = expandedDose.toLowerCase();
+      let formSingular = formLower.endsWith('s') ? formLower.slice(0, -1) : formLower;
+      
+      let showForm = form && !doseLower.includes(formLower) && !doseLower.includes(formSingular) && !doseLower.includes("see instructions");
+      
+      let prnSuffix = "";
+      if (med.prn) {
+        prnSuffix = (med.frequency || "").toUpperCase() === "PRN" 
+          ? "for " + med.prn 
+          : "as needed for " + med.prn;
+      }
+      
+      let sigParts = [
+        expandedDose,
+        showForm ? form : "",
+        expand(med.route || "", ROUTES),
+        expand(med.frequency || "", FREQS),
+        prnSuffix,
+        fmtDur(med.duration)
+      ].filter(Boolean);
+      
+      let sig = sigParts.join(" ");
+      let sigLines = wrapText(sig, CONTENT_WIDTH - 20, FONT_NORMAL);
+      height += sigLines.length * LINE_HEIGHT;
+      
+      if (med.dispense || med.refill) {
+        height += LINE_HEIGHT + 4;
+      }
+      
+      if (med.comments) {
+        let commentLines = wrapText("Note: " + med.comments, CONTENT_WIDTH - 20, FONT_META);
+        height += 8 + (commentLines.length * (LINE_HEIGHT - 2));
+      }
+      
+      height += ITEM_PADDING + 1;
+      return height;
+    };
+    
+    // Draw a prescription item, returns Y position after item
+    const drawItem = (med, index, y) => {
+      let currentY = y + ITEM_PADDING;
+      
+      // Title
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text((index + 1) + ". " + med.med, MARGIN, currentY + 10);
+      currentY += LINE_HEIGHT + 4;
+      
+      // Build sig
+      let dose = med.dose_text || "";
+      let expandedDose = expand(dose, TERMS);
+      let form = expand(med.form || "", TERMS);
+      
+      let formLower = form.toLowerCase();
+      let doseLower = expandedDose.toLowerCase();
+      let formSingular = formLower.endsWith('s') ? formLower.slice(0, -1) : formLower;
+      
+      let showForm = form && !doseLower.includes(formLower) && !doseLower.includes(formSingular) && !doseLower.includes("see instructions");
+      
+      let prnSuffix = "";
+      if (med.prn) {
+        prnSuffix = (med.frequency || "").toUpperCase() === "PRN" 
+          ? "for " + med.prn 
+          : "as needed for " + med.prn;
+      }
+      
+      let sigParts = [
+        expandedDose,
+        showForm ? form : "",
+        expand(med.route || "", ROUTES),
+        expand(med.frequency || "", FREQS),
+        prnSuffix,
+        fmtDur(med.duration)
+      ].filter(Boolean);
+      
+      let sig = sigParts.join(" ");
+      
+      // Sig text (indented)
+      pdf.setFontSize(FONT_NORMAL);
+      pdf.setFont('helvetica', 'normal');
+      let sigLines = wrapText(sig, CONTENT_WIDTH - 20, FONT_NORMAL);
+      sigLines.forEach(line => {
+        pdf.text(line, MARGIN + 20, currentY + 10);
+        currentY += LINE_HEIGHT;
+      });
+      
+      // Meta (dispense, refills)
+      if (med.dispense || med.refill) {
+        currentY += 4;
+        pdf.setFontSize(FONT_SMALL);
+        pdf.setTextColor(80, 80, 80);
+        
+        let metaParts = [];
+        if (med.dispense) metaParts.push("Dispense: " + med.dispense);
+        if (med.refill) metaParts.push("Refills: " + med.refill);
+        
+        pdf.text(metaParts.join("   |   "), MARGIN + 20, currentY + 10);
+        currentY += LINE_HEIGHT;
+      }
+      
+      // Comments
+      if (med.comments) {
+        currentY += 8;
+        pdf.setFontSize(FONT_META);
+        pdf.setFont('helvetica', 'italic');
+        pdf.setTextColor(80, 80, 80);
+        
+        let commentLines = wrapText("Note: " + med.comments, CONTENT_WIDTH - 20, FONT_META);
+        commentLines.forEach(line => {
+          pdf.text(line, MARGIN + 20, currentY + 8);
+          currentY += LINE_HEIGHT - 2;
+        });
+      }
+      
+      currentY += ITEM_PADDING;
+      
+      // Bottom border
+      pdf.setDrawColor(220, 220, 220);
+      pdf.setLineWidth(0.5);
+      pdf.line(MARGIN, currentY, PAGE_WIDTH - MARGIN, currentY);
+      
+      return currentY + 1;
+    };
+    
+    // Main: paginate and render
+    let y = MARGIN;
+    const pageBottomY = PAGE_HEIGHT - MARGIN;
+    
+    // Draw header on first page
+    y = drawHeader(y);
+    
+    // Process each item
+    data.items.forEach((med, index) => {
+      const itemHeight = measureItem(med);
+      
+      if (y + itemHeight > pageBottomY) {
+        pdf.addPage();
+        y = MARGIN;
+        y = drawHeader(y);
+      }
+      
+      y = drawItem(med, index, y);
+    });
+    
+    // Get PDF as blob and open in new tab
+    const pdfBlob = pdf.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    
+    // Open PDF in new tab - this works because we're in the main window context
+    window.open(pdfUrl, '_blank');
+    
+    // Reset weight after generating
+    this.state.currentWeight = null;
+    const weightInput = document.getElementById("weightInput");
+    if (weightInput) {
+      weightInput.value = "";
     }
-  <\/script>`;
+    if (window.cartRenderer) {
+      window.cartRenderer.render();
+    }
+  }
+
+  buildPDFGeneratorHTML(data) {
+    // This method is no longer used but kept for reference
+    return '';
   }
 
   getRouteExpansions() {
@@ -1032,106 +1056,6 @@ class PrintController {
       "CHEW": "chewable tablet", "EC TAB": "enteric-coated tablet",
       "ER TAB": "extended-release tablet", "DEV": "device"
     };
-  }
-
-  getPrintFunctions() {
-    return `
-      function esc(s) {
-        return (s || "").toString()
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      }
-      
-      function strip(h) {
-        let t = document.createElement("div");
-        t.innerHTML = h;
-        return t.textContent || t.innerText || "";
-      }
-      
-      function expand(s, d) {
-        if (!s) return "";
-        const keys = Object.keys(d).sort((a, b) => b.length - a.length).join("|");
-        const pattern = new RegExp("\\\\b(" + keys + ")\\\\b", "gi");
-        return s.replace(pattern, m => d[m.toUpperCase()] || m);
-      }
-      
-      function fmtDur(d) {
-        if (!d) return "";
-        return d.replace(/^(\\d+)\\s*(d|day|wk|week|mo|mth|month|yr|year)s?$/i, (m, p1, p2) => {
-          let u = p2.toLowerCase();
-          if (u === 'd') u = 'day';
-          if (u === 'wk') u = 'week';
-          if (u.startsWith('m')) u = 'month';
-          return \`for \${p1} \${u}\${p1 == 1 ? '' : 's'}\`;
-        });
-      }
-      
-      // Returns a table row containing a single prescription
-      // Each row has page-break-inside: avoid to prevent splitting
-      function getItemRow(m, i) {
-        let dose = m.dose_text || "";
-        let plain = strip(dose).trim();
-        let expandedDose = expand(plain, TERMS);
-        let expDoseLower = expandedDose.toLowerCase();
-        
-        let form = (m.form || "").trim();
-        let expandedForm = expand(form, TERMS);
-        let expFormLower = expandedForm.toLowerCase();
-        let expFormSingular = expFormLower.endsWith('s') 
-          ? expFormLower.slice(0, -1) 
-          : expFormLower;
-        
-        let line2 = "";
-        if (expandedForm && 
-            !expDoseLower.includes(expFormLower) && 
-            !expDoseLower.includes(expFormSingular) &&
-            !plain.toLowerCase().includes("see instructions")) {
-          line2 = expandedForm;
-        }
-        
-        let finalDose = dose.includes("<span") ? dose : esc(expandedDose);
-        
-        let prnSuffix = "";
-        if (m.prn) {
-          if ((m.frequency || "").toUpperCase() === "PRN") {
-            prnSuffix = "for " + esc(m.prn);
-          } else {
-            prnSuffix = "as needed for " + esc(m.prn);
-          }
-        }
-        
-        let sig = [
-          finalDose,
-          esc(line2),
-          esc(expand(m.route || "", ROUTES)),
-          esc(expand(m.frequency || "", FREQS)),
-          prnSuffix,
-          fmtDur(m.duration)
-        ].filter(Boolean).join(" ");
-        
-        let metaParts = [];
-        if (m.dispense) metaParts.push(\`Dispense: <strong>\${esc(m.dispense)}</strong>\`);
-        if (m.refill) metaParts.push(\`Refills: <strong>\${esc(m.refill)}</strong>\`);
-        let meta = metaParts.join(" &nbsp;|&nbsp; ");
-        
-        // Truncate comments to 1000 chars (safety)
-        let comments = (m.comments || "").substring(0, 1000);
-        
-        return \`<tr class="rx-row">
-          <td>
-            <div class="rx-item">
-              <div class="rx-title">\${i + 1}. \${esc(m.med)}</div>
-              <div class="rx-details">
-                <div>\${sig}</div>
-                \${meta ? \`<div class="rx-meta">\${meta}</div>\` : ""}
-                \${comments ? \`<div class="rx-comments">Note: \${esc(comments)}</div>\` : ""}
-              </div>
-            </div>
-          </td>
-        </tr>\`;
-      }
-    `;
   }
 }
 
