@@ -623,7 +623,11 @@ class ModalManager {
     document.getElementById("editRefill").value = item.refill || "";
     document.getElementById("editForm").value = item.form || "";
     document.getElementById("editPrn").value = item.prn || "";
-    document.getElementById("editComments").value = item.comments || "";
+    
+    // Enforce 1000 character limit on comments
+    const commentsField = document.getElementById("editComments");
+    commentsField.value = (item.comments || "").substring(0, 1000);
+    commentsField.maxLength = 1000;
 
     // Unlock tabbing on click
     const fields = ["editDose", "editRoute", "editFreq", "editDur", "editDispense", "editRefill", "editForm", "editPrn", "editComments"];

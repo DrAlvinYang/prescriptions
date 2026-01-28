@@ -27,12 +27,6 @@
           </div>
         </div>
 
-        <div class="weight-section">
-          <label for="weightInput">Weight:</label>
-          <input id="weightInput" type="number" placeholder="..." min="0" step="0.01" autocomplete="off" />
-          <span>kg</span>
-        </div>
-
         <div class="searchbar">
           <input id="searchInput" type="text" placeholder="Search med or indication" autocomplete="off" />
           <button id="clearSearchBtn" class="search-clear-btn" type="button" aria-label="Clear search">&times;</button>
@@ -62,9 +56,10 @@
     <aside id="cart" class="cart">
       <div class="cart-header">
         <div class="cart-title">Prescriptions</div>
-        <div class="cart-actions">
-          <button id="printBtn" class="btn" type="button">Print</button>
-          <button id="clearCartBtn" class="btn btn-secondary" type="button">Clear</button>
+        <div class="weight-section">
+          <label for="weightInput">Weight:</label>
+          <input id="weightInput" type="number" placeholder="..." min="0" step="0.01" autocomplete="off" />
+          <span>kg</span>
         </div>
       </div>
 
@@ -72,6 +67,8 @@
 
       <div class="cart-footer">
         <div class="cart-count"><span id="cartCount">0</span> prescriptions</div>
+        <button id="clearCartBtn" class="btn btn-secondary" type="button">Clear</button>
+        <button id="printBtn" class="btn" type="button">Print</button>
       </div>
     </aside>
   </div>
@@ -127,7 +124,7 @@
       </div>
       <div class="edit-full-row">
         <label>Note</label>
-        <textarea id="editComments" rows="3"></textarea>
+        <textarea id="editComments" rows="3" maxlength="1000"></textarea>
       </div>
       <div class="modal-actions">
         <button id="cancelEditBtn" class="btn btn-secondary">Cancel</button>

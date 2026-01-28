@@ -466,7 +466,10 @@ class PrintController {
           }
         }
 
-        return { ...med, dose_text: dose };
+        // Truncate comments to 1000 characters (safety enforcement)
+        const comments = (med.comments || "").substring(0, 1000);
+
+        return { ...med, dose_text: dose, comments };
       })
     };
 
@@ -504,12 +507,7 @@ class PrintController {
   ${this.getPrintStyles()}
 </head>
 <body>
-  <table>
-    <thead>
-      <tr><td><div id="header-container"></div></td></tr>
-    </thead>
-    <tbody id="med-list-body"></tbody>
-  </table>
+  <div id="print-content"></div>
   ${this.getPrintScript(data)}
 </body>
 </html>`;
@@ -517,18 +515,34 @@ class PrintController {
 
   getPrintStyles() {
     return `<style>
-    @page { size: letter; margin: 0.5in; }
+    @page { 
+      size: letter; 
+      margin: 0.5in;
+    }
+    
     * { box-sizing: border-box; }
     body { 
       margin: 0; padding: 0; 
       font-family: -apple-system, sans-serif; 
       font-size: 11pt; color: #000; background: #fff; 
     }
-    table { width: 100%; border-collapse: collapse; }
-    thead { display: table-header-group; }
-    tbody { display: table-row-group; }
-    tr { page-break-inside: avoid; }
-    td { vertical-align: top; padding: 0; }
+    
+    .print-page {
+      width: 7.5in;
+      min-height: 10in;
+      max-height: 10in;
+      overflow: hidden;
+      page-break-after: always;
+      position: relative;
+    }
+    
+    .print-page:last-child {
+      page-break-after: auto;
+    }
+    
+    .page-header { 
+      margin-bottom: 15px;
+    }
     
     .header-wrapper { 
       display: flex; justify-content: space-between; 
@@ -551,14 +565,27 @@ class PrintController {
     .sig-line-wrap { display: flex; align-items: baseline; gap: 10px; width: 100%; justify-content: flex-end; }
     .sig-rule { border-bottom: 1px solid #000; width: 200px; height: 1px; }
     
-    .rx-item { padding: 12px 0; border-bottom: 1px solid #ddd; }
+    .rx-item { 
+      padding: 12px 0; 
+      border-bottom: 1px solid #ddd; 
+    }
     .rx-title { font-weight: 700; font-size: 12pt; margin-bottom: 4px; }
     .rx-details { margin-left: 20px; line-height: 1.4; }
     .rx-meta { margin-top: 6px; font-size: 10pt; color: #444; }
     .rx-comments { 
       margin-top: 8px; font-style: italic; 
       background: #f4f4f4; padding: 6px 10px; 
-      border-radius: 6px; display: inline-block; 
+      border-radius: 6px; display: inline-block;
+      max-width: 100%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    /* Hidden measurement container */
+    .measure-container {
+      position: absolute;
+      visibility: hidden;
+      width: 7.5in;
     }
   </style>`;
   }
@@ -571,17 +598,85 @@ class PrintController {
       const FREQS = ${JSON.stringify(this.getFrequencyExpansions())};
       const TERMS = ${JSON.stringify(this.getTermExpansions())};
       
+      // Page dimensions in pixels (at 96 DPI)
+      // Letter size: 8.5" x 11" with 0.5" margins = 7.5" x 10" usable
+      const PAGE_HEIGHT_PX = 10 * 96; // 960px usable height
+      const HEADER_HEIGHT_PX = 220;   // Approximate header height (sticker box + provider info + border)
+      const CONTENT_AREA_PX = PAGE_HEIGHT_PX - HEADER_HEIGHT_PX - 20; // 20px safety buffer
+      
       ${this.getPrintFunctions()}
       
-      document.getElementById("header-container").innerHTML = getHead();
-      const tbody = document.getElementById("med-list-body");
-      tbody.innerHTML = DATA.items.map((m, i) => 
-        \`<tr><td>\${getItem(m, i)}</td></tr>\`
-      ).join("");
+      // Create measurement container
+      const measureDiv = document.createElement('div');
+      measureDiv.className = 'measure-container';
+      document.body.appendChild(measureDiv);
+      
+      // Pre-render all items to measure their heights
+      const itemHeights = [];
+      DATA.items.forEach((m, i) => {
+        const itemHtml = getItem(m, i);
+        measureDiv.innerHTML = itemHtml;
+        const height = measureDiv.firstElementChild.offsetHeight;
+        itemHeights.push(height);
+      });
+      
+      // Remove measurement container
+      measureDiv.remove();
+      
+      // Build pages with dynamic height calculation
+      const pages = [];
+      let currentPage = { items: [], usedHeight: 0 };
+      
+      DATA.items.forEach((m, i) => {
+        const itemHeight = itemHeights[i];
+        
+        // Check if item fits on current page
+        if (currentPage.items.length === 0) {
+          // First item on page - always add it (it will fit due to 1000 char limit)
+          currentPage.items.push({ med: m, index: i });
+          currentPage.usedHeight = itemHeight;
+        } else if (currentPage.usedHeight + itemHeight <= CONTENT_AREA_PX) {
+          // Item fits on current page
+          currentPage.items.push({ med: m, index: i });
+          currentPage.usedHeight += itemHeight;
+        } else {
+          // Item doesn't fit - start new page
+          pages.push(currentPage);
+          currentPage = { 
+            items: [{ med: m, index: i }], 
+            usedHeight: itemHeight 
+          };
+        }
+      });
+      
+      // Don't forget the last page
+      if (currentPage.items.length > 0) {
+        pages.push(currentPage);
+      }
+      
+      // Render all pages
+      const container = document.getElementById("print-content");
+      let html = '';
+      
+      pages.forEach((page, pageIndex) => {
+        html += '<div class="print-page">';
+        html += '<div class="page-header">' + getHead() + '</div>';
+        html += '<div class="page-content">';
+        
+        page.items.forEach(item => {
+          html += getItem(item.med, item.index);
+        });
+        
+        html += '</div>';
+        html += '</div>';
+      });
+      
+      container.innerHTML = html;
       
       window.focus();
-      setTimeout(() => window.print(), 100);
+      setTimeout(() => window.print(), 150);
     } catch(err) {
+      console.error("Print generation error:", err);
       alert("Print generation error: " + err.message);
     }
   </script>`;
@@ -724,12 +819,15 @@ class PrintController {
         if (m.refill) metaParts.push(\`Refills: <strong>\${esc(m.refill)}</strong>\`);
         let meta = metaParts.join(" &nbsp;|&nbsp; ");
         
+        // Truncate comments to 1000 chars (safety)
+        let comments = (m.comments || "").substring(0, 1000);
+        
         return \`<div class="rx-item">
           <div class="rx-title">\${i + 1}. \${esc(m.med)}</div>
           <div class="rx-details">
             <div>\${sig}</div>
             \${meta ? \`<div class="rx-meta">\${meta}</div>\` : ""}
-            \${m.comments ? \`<div class="rx-comments">Note: \${esc(m.comments)}</div>\` : ""}
+            \${comments ? \`<div class="rx-comments">Note: \${esc(comments)}</div>\` : ""}
           </div>
         </div>\`;
       }
