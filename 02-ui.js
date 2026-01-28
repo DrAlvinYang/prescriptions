@@ -456,6 +456,7 @@ class LocationUIRenderer {
     this.isSearchMode = false;
     this.searchInput = null;
     this.dropdown = null;
+    this.activeLocationIndex = -1; // Track highlighted item via keyboard
   }
 
   updateHeader() {
@@ -472,6 +473,7 @@ class LocationUIRenderer {
     const wrapper = document.getElementById("locationWrapper") || button.parentElement;
     
     this.isSearchMode = true;
+    this.activeLocationIndex = -1; // Reset keyboard navigation
     
     // Replace button content with search input
     button.innerHTML = `<input id="locationSearchInput" type="text" class="location-search-input" placeholder="Search hospital" autocomplete="off" />`;
@@ -485,11 +487,15 @@ class LocationUIRenderer {
     this.updateDropdownResults("", onSelect, onDelete, onAddNew);
     this.showDropdown();
     
+    // Scroll to currently selected location
+    this.scrollToSelectedLocation();
+    
     // Focus the search input immediately
     this.searchInput.focus();
     
     // Setup search input listeners
     this.searchInput.addEventListener("input", (e) => {
+      this.activeLocationIndex = -1; // Reset navigation on new search
       this.updateDropdownResults(e.target.value, onSelect, onDelete, onAddNew);
     });
     
@@ -498,20 +504,100 @@ class LocationUIRenderer {
       e.stopPropagation();
     });
     
-    // Handle escape key to exit search mode
+    // Handle keyboard navigation
     this.searchInput.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopPropagation();
         this.exitSearchMode();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        this.navigateLocations("down", onSelect, onDelete, onAddNew);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        this.navigateLocations("up", onSelect, onDelete, onAddNew);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        this.selectActiveLocation(onSelect);
       }
     });
+  }
+
+  navigateLocations(direction, onSelect, onDelete, onAddNew) {
+    const items = this.dropdown.querySelectorAll(".loc-search-item");
+    if (items.length === 0) return;
+
+    if (direction === "down") {
+      // Move down, but stop at last item
+      this.activeLocationIndex = Math.min(
+        this.activeLocationIndex + 1,
+        items.length - 1
+      );
+    } else if (direction === "up") {
+      // Move up, but stop at first item
+      this.activeLocationIndex = Math.max(
+        this.activeLocationIndex - 1,
+        0
+      );
+    }
+
+    this.updateActiveLocationItem(items);
+  }
+
+  updateActiveLocationItem(items) {
+    items.forEach((element, index) => {
+      if (index === this.activeLocationIndex) {
+        element.classList.add("is-active");
+        element.focus();
+        element.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else {
+        element.classList.remove("is-active");
+      }
+    });
+  }
+
+  selectActiveLocation(onSelect) {
+    const items = this.dropdown.querySelectorAll(".loc-search-item");
+    
+    // If only one result, auto-select it
+    if (items.length === 1) {
+      const locationName = items[0].querySelector(".loc-search-name").textContent;
+      onSelect(locationName);
+      this.exitSearchMode();
+      return true;
+    }
+    
+    // If an item is highlighted via keyboard
+    if (this.activeLocationIndex >= 0 && items[this.activeLocationIndex]) {
+      const locationName = items[this.activeLocationIndex].querySelector(".loc-search-name").textContent;
+      onSelect(locationName);
+      this.exitSearchMode();
+      return true;
+    }
+
+    return false;
+  }
+
+  scrollToSelectedLocation() {
+    const currentName = this.locationManager.state.currentLocationName;
+    
+    // Use setTimeout to ensure the dropdown is rendered
+    setTimeout(() => {
+      const items = this.dropdown.querySelectorAll(".loc-search-item");
+      items.forEach((item) => {
+        const nameSpan = item.querySelector(".loc-search-name");
+        if (nameSpan && nameSpan.textContent === currentName) {
+          item.scrollIntoView({ block: "center", behavior: "smooth" });
+        }
+      });
+    }, 50);
   }
 
   exitSearchMode() {
     if (!this.isSearchMode) return;
     
     this.isSearchMode = false;
+    this.activeLocationIndex = -1; // Reset navigation state
     this.hideDropdown();
     this.updateHeader();
   }
@@ -566,6 +652,7 @@ class LocationUIRenderer {
       
       const div = document.createElement("div");
       div.className = `loc-search-item ${isSelected ? 'selected' : ''}`;
+      div.tabIndex = 0; // Make focusable for keyboard navigation
       
       const span = document.createElement("span");
       span.className = "loc-search-name";
@@ -592,6 +679,34 @@ class LocationUIRenderer {
         onSelect(location.name);
         this.exitSearchMode();
       };
+      
+      // Handle keyboard events on location items
+      div.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          onSelect(location.name);
+          this.exitSearchMode();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          this.exitSearchMode();
+        } else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          const items = Array.from(this.dropdown.querySelectorAll(".loc-search-item"));
+          const currentIndex = items.indexOf(div);
+          if (currentIndex < items.length - 1) {
+            this.activeLocationIndex = currentIndex + 1;
+            this.updateActiveLocationItem(items);
+          }
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          const items = Array.from(this.dropdown.querySelectorAll(".loc-search-item"));
+          const currentIndex = items.indexOf(div);
+          if (currentIndex > 0) {
+            this.activeLocationIndex = currentIndex - 1;
+            this.updateActiveLocationItem(items);
+          }
+        }
+      });
       
       resultsContainer.appendChild(div);
     });
