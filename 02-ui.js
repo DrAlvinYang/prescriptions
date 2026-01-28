@@ -269,10 +269,10 @@ class DashboardRenderer {
         // Special case: "Add New Med" button
         if (specialty === "Add New Med") {
           const button = DOMBuilder.createElement('button', 'specialty-card add-new-med-btn', {
-            textContent: 'Add New Med',
+            textContent: '+ Add New Med',
             type: 'button',
             onclick: () => {
-              // Placeholder - functionality to be implemented later
+              window.modalManager.openAddNewMed();
             }
           });
           column.appendChild(button);
@@ -658,6 +658,18 @@ class ModalManager {
     }
 
     document.getElementById("editModalTitle").textContent = `Edit ${item.med}`;
+    
+    // Show medication name field only for custom meds
+    const medNameRow = document.getElementById("editMedNameRow");
+    const medNameInput = document.getElementById("editMedName");
+    if (item.isCustomMed) {
+      medNameRow.classList.remove("hidden");
+      medNameInput.value = item.med || "";
+    } else {
+      medNameRow.classList.add("hidden");
+      medNameInput.value = "";
+    }
+    
     document.getElementById("editDose").value = displayDose;
     document.getElementById("editRoute").value = item.route || "";
     document.getElementById("editFreq").value = item.frequency || "";
@@ -673,7 +685,10 @@ class ModalManager {
     commentsField.maxLength = 1000;
 
     // Unlock tabbing on click
-    const fields = ["editDose", "editRoute", "editFreq", "editDur", "editDispense", "editRefill", "editForm", "editPrn", "editComments"];
+    const fields = item.isCustomMed 
+      ? ["editMedName", "editDose", "editRoute", "editFreq", "editDur", "editDispense", "editRefill", "editForm", "editPrn", "editComments"]
+      : ["editDose", "editRoute", "editFreq", "editDur", "editDispense", "editRefill", "editForm", "editPrn", "editComments"];
+    
     fields.forEach(id => {
       document.getElementById(id).onclick = () => {
         this.state.tabbingUnlocked = true;
@@ -688,7 +703,8 @@ class ModalManager {
   }
 
   saveEdit() {
-    this.state.updateCartItem(this.state.editingId, {
+    const item = this.state.findCartItem(this.state.editingId);
+    const updates = {
       dose_text: document.getElementById("editDose").value,
       route: document.getElementById("editRoute").value,
       frequency: document.getElementById("editFreq").value,
@@ -699,8 +715,19 @@ class ModalManager {
       prn: document.getElementById("editPrn").value,
       comments: document.getElementById("editComments").value,
       wasEdited: true
-    });
+    };
     
+    // Update medication name for custom meds
+    if (item && item.isCustomMed) {
+      const medName = document.getElementById("editMedName").value.trim();
+      if (!medName) {
+        alert("Medication name is required.");
+        return;
+      }
+      updates.med = medName;
+    }
+    
+    this.state.updateCartItem(this.state.editingId, updates);
     this.closeEdit();
   }
 
@@ -771,6 +798,74 @@ class ModalManager {
     } catch (error) {
       alert(error.message);
     }
+  }
+
+  // Add New Med Modal
+  openAddNewMed() {
+    this.state.tabbingUnlocked = true; // Unlock tabbing immediately since we auto-focus
+    
+    // Clear all fields
+    document.getElementById("addMedName").value = "";
+    document.getElementById("addDose").value = "";
+    document.getElementById("addRoute").value = "";
+    document.getElementById("addFreq").value = "";
+    document.getElementById("addDur").value = "";
+    document.getElementById("addDispense").value = "";
+    document.getElementById("addRefill").value = "";
+    document.getElementById("addForm").value = "";
+    document.getElementById("addPrn").value = "";
+    document.getElementById("addComments").value = "";
+    
+    // Unlock tabbing on click (redundant but kept for consistency)
+    const fields = ["addMedName", "addDose", "addRoute", "addFreq", "addDur", "addDispense", "addRefill", "addForm", "addPrn", "addComments"];
+    fields.forEach(id => {
+      document.getElementById(id).onclick = () => {
+        this.state.tabbingUnlocked = true;
+      };
+    });
+    
+    const modal = document.getElementById("addNewMedModal");
+    modal.classList.remove("hidden");
+    
+    // Focus on medication name field
+    setTimeout(() => {
+      document.getElementById("addMedName").focus();
+    }, 0);
+    
+    // Trap focus in modal
+    this.trapFocus(modal);
+  }
+
+  saveAddNewMed(onSuccess) {
+    const medName = document.getElementById("addMedName").value.trim();
+    
+    if (!medName) {
+      alert("Medication name is required.");
+      return;
+    }
+    
+    const newMed = {
+      med: medName,
+      dose_text: document.getElementById("addDose").value,
+      route: document.getElementById("addRoute").value,
+      frequency: document.getElementById("addFreq").value,
+      duration: document.getElementById("addDur").value,
+      dispense: document.getElementById("addDispense").value,
+      refill: document.getElementById("addRefill").value,
+      form: document.getElementById("addForm").value,
+      prn: document.getElementById("addPrn").value,
+      comments: document.getElementById("addComments").value,
+      isCustomMed: true,
+      wasEdited: false
+    };
+    
+    onSuccess(newMed);
+    this.closeAddNewMed();
+  }
+
+  closeAddNewMed() {
+    this.removeFocusTrap();
+    document.getElementById("addNewMedModal").classList.add("hidden");
   }
 }
 

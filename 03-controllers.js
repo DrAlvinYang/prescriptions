@@ -336,12 +336,14 @@ class KeyboardController {
     const locationModal = document.getElementById("locationModal");
     const providerModal = document.getElementById("providerModal");
     const editModal = document.getElementById("editModal");
+    const addNewMedModal = document.getElementById("addNewMedModal");
     
     return (
       !weightModal.classList.contains("hidden") ||
       !locationModal.classList.contains("hidden") ||
       !providerModal.classList.contains("hidden") ||
-      !editModal.classList.contains("hidden")
+      !editModal.classList.contains("hidden") ||
+      !addNewMedModal.classList.contains("hidden")
     );
   }
 
@@ -413,10 +415,16 @@ class KeyboardController {
     const weightModal = document.getElementById("weightModal");
     const locationModal = document.getElementById("locationModal");
     const editModal = document.getElementById("editModal");
+    const addNewMedModal = document.getElementById("addNewMedModal");
 
     // Edit Modal
     if (!editModal.classList.contains("hidden")) {
       return this.handleEditModalKeys(event);
+    }
+
+    // Add New Med Modal
+    if (!addNewMedModal.classList.contains("hidden")) {
+      return this.handleAddNewMedModalKeys(event);
     }
 
     // Escape key for all modals
@@ -441,6 +449,9 @@ class KeyboardController {
   }
 
   handleEditModalKeys(event) {
+    const item = this.state.findCartItem(this.state.editingId);
+    const isCustomMed = item && item.isCustomMed;
+    
     // Tab navigation
     if (event.key === "Tab") {
       if (event.shiftKey) {
@@ -470,6 +481,42 @@ class KeyboardController {
     // Escape to cancel
     if (event.key === "Escape") {
       window.modalManager.closeEdit();
+      return true;
+    }
+
+    return true;
+  }
+
+  handleAddNewMedModalKeys(event) {
+    // Tab navigation
+    if (event.key === "Tab") {
+      if (event.shiftKey) {
+        event.preventDefault();
+        return true;
+      }
+
+      if (!this.state.tabbingUnlocked) {
+        event.preventDefault();
+        return true;
+      }
+
+      if (document.activeElement.id === "addComments") {
+        event.preventDefault();
+        return true;
+      }
+    }
+
+    // Enter to save (except in comments)
+    if (event.key === "Enter" && document.activeElement.id !== "addComments") {
+      event.preventDefault();
+      window.modalManager.saveAddNewMed((med) => window.cartController.add(med));
+      window.cartController.render();
+      return true;
+    }
+
+    // Escape to cancel
+    if (event.key === "Escape") {
+      window.modalManager.closeAddNewMed();
       return true;
     }
 

@@ -101,7 +101,8 @@ class AppState {
     const entry = {
       ...JSON.parse(JSON.stringify(medication)),
       uid: crypto.randomUUID(),
-      wasEdited: false
+      wasEdited: false,
+      isCustomMed: medication.isCustomMed || false
     };
     this.cart.push(entry);
   }

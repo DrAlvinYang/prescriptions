@@ -271,6 +271,23 @@ class Application {
       });
     }
 
+    // Add New Med Modal
+    const saveAddBtn = Utils.getElement("saveAddBtn");
+    const cancelAddBtn = Utils.getElement("cancelAddBtn");
+
+    if (saveAddBtn && cancelAddBtn) {
+      saveAddBtn.addEventListener("click", () => {
+        this.managers.modal.saveAddNewMed((med) => {
+          this.controllers.cart.add(med);
+        });
+        this.controllers.cart.render();
+      });
+
+      cancelAddBtn.addEventListener("click", () => {
+        this.managers.modal.closeAddNewMed();
+      });
+    }
+
     // Location Modal
     const saveLocBtn = Utils.getElement("saveLocBtn");
     const cancelLocBtn = Utils.getElement("cancelLocBtn");
@@ -295,6 +312,7 @@ class Application {
       if (e.key === "Escape") {
         const weightModal = Utils.getElement("weightModal");
         const editModal = Utils.getElement("editModal");
+        const addNewMedModal = Utils.getElement("addNewMedModal");
         const locationModal = Utils.getElement("locationModal");
         const providerModal = Utils.getElement("providerModal");
 
@@ -303,6 +321,8 @@ class Application {
           this.managers.modal.closeWeight();
         } else if (editModal && !editModal.classList.contains("hidden")) {
           this.managers.modal.closeEdit();
+        } else if (addNewMedModal && !addNewMedModal.classList.contains("hidden")) {
+          this.managers.modal.closeAddNewMed();
         } else if (locationModal && !locationModal.classList.contains("hidden")) {
           this.managers.modal.closeLocation();
         } else if (providerModal && !providerModal.classList.contains("hidden")) {
@@ -326,6 +346,7 @@ class Application {
 
     setupModalClickOutside("weightModal", () => this.managers.modal.closeWeight());
     setupModalClickOutside("editModal", () => this.managers.modal.closeEdit());
+    setupModalClickOutside("addNewMedModal", () => this.managers.modal.closeAddNewMed());
     setupModalClickOutside("locationModal", () => this.managers.modal.closeLocation());
     setupModalClickOutside("providerModal", () => this.managers.modal.closeProvider());
   }
