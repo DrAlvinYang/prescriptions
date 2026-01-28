@@ -85,8 +85,14 @@ body {
   color: #333;
   font-size: 14px;
   font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   cursor: pointer;
   transition: background 0.1s, border-color 0.1s;
+  
+  /* Reset browser default button styling for consistent cross-browser appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .provider-btn:hover {
@@ -123,8 +129,14 @@ body {
   color: #333;
   font-size: 14px;
   font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   cursor: pointer;
   transition: background 0.1s, border-color 0.1s;
+  
+  /* Reset browser default button styling for consistent cross-browser appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .location-btn:hover {

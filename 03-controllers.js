@@ -498,11 +498,6 @@ class PrintController {
     };
 
     this.generatePrintDocument(payload);
-
-    // Reset weight after printing
-    this.state.currentWeight = null;
-    document.getElementById("weightInput").value = "";
-    window.cartRenderer.render();
   }
 
   generatePrintDocument(data) {
@@ -698,6 +693,21 @@ class PrintController {
       container.innerHTML = html;
       
       window.focus();
+      
+      // Reset weight in parent window after print dialog closes
+      window.addEventListener('afterprint', function() {
+        if (window.parent && window.parent.appState) {
+          window.parent.appState.currentWeight = null;
+          const weightInput = window.parent.document.getElementById("weightInput");
+          if (weightInput) {
+            weightInput.value = "";
+          }
+          if (window.parent.cartRenderer) {
+            window.parent.cartRenderer.render();
+          }
+        }
+      }, { once: true });
+      
       setTimeout(() => window.print(), 150);
     } catch(err) {
       console.error("Print generation error:", err);
