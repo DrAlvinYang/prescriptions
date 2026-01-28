@@ -198,7 +198,7 @@ class DashboardRenderer {
       
       let label = "General";
       
-      if (specialty === "Detox") {
+      if (specialty === "Substance Use") {
         label = sub || "General";
       } else if (sub && pop) {
         label = `${sub} (${pop})`;
@@ -266,7 +266,17 @@ class DashboardRenderer {
       column.innerHTML = "";
 
       specialties.forEach(specialty => {
-        if (groups.has(specialty)) {
+        // Special case: "Add New Med" button
+        if (specialty === "Add New Med") {
+          const button = DOMBuilder.createElement('button', 'specialty-card add-new-med-btn', {
+            textContent: 'Add New Med',
+            type: 'button',
+            onclick: () => {
+              // Placeholder - functionality to be implemented later
+            }
+          });
+          column.appendChild(button);
+        } else if (groups.has(specialty)) {
           const card = this.renderSpecialtyCard(
             specialty, 
             groups.get(specialty),
@@ -586,8 +596,8 @@ class ModalManager {
     modal.classList.remove("hidden");
     input.focus();
     
-    // Trap focus in modal
-    this.trapFocus(modal);
+    // Do NOT trap focus for weight modal - we want Tab to be completely disabled
+    // (handled in KeyboardController)
   }
 
   closeWeight() {

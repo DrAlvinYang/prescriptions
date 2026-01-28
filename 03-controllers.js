@@ -270,6 +270,13 @@ class KeyboardController {
   }
 
   handleGlobalKeydown(event) {
+    // Check if weight modal is open - if so, disable Tab completely
+    const weightModal = document.getElementById("weightModal");
+    if (weightModal && !weightModal.classList.contains("hidden") && event.key === "Tab") {
+      event.preventDefault();
+      return;
+    }
+    
     // Handle Tab key for brand name display (only when no modal is active)
     if (event.key === "Tab") {
       const anyModalOpen = this.isAnyModalOpen();

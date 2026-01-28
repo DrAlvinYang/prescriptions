@@ -2,10 +2,10 @@
 import pandas as pd
 import json
 import os
+import sys
 
 # Configuration
 # Using absolute paths to ensure execution from any location
-# Shell escapes (\) removed for valid Python string formatting
 EXCEL_FILE = "/Users/alvin/Documents/Documents - Alvin's Macbook/Alvin/Medicine/Work/ED Website/Prescriptions/Prescriptions.xlsx"
 OUTPUT_FILE = "/Users/alvin/Documents/Documents - Alvin's Macbook/Alvin/Medicine/Work/ED Website/Prescriptions/Prescriptions.json"
 
@@ -32,14 +32,28 @@ def clean_refill(val):
         return str(val).strip()
 
 def convert_excel_to_json():
-    print(f"Reading {EXCEL_FILE}...")
+    print("=" * 70)
+    print("PRESCRIPTION EXCEL TO JSON CONVERTER")
+    print("=" * 70)
+    print(f"\nReading {EXCEL_FILE}...")
     
     try:
         # Load the Excel file (all sheets)
         xls = pd.ExcelFile(EXCEL_FILE)
     except FileNotFoundError:
-        print(f"Error: Could not find '{EXCEL_FILE}'. Check the path.")
+        print(f"\n✗ ERROR: Could not find '{EXCEL_FILE}'")
+        print("Please check that the file path is correct.")
+        input("\nPress Enter to close...")
         return
+    except Exception as e:
+        print(f"\n✗ ERROR reading Excel file: {e}")
+        input("\nPress Enter to close...")
+        return
+
+    print(f"\n✓ Found {len(xls.sheet_names)} sheets:")
+    for sheet in xls.sheet_names:
+        print(f"  - {sheet}")
+    print()
 
     meds = []
 
@@ -49,7 +63,8 @@ def convert_excel_to_json():
         
         # Standardize headers to match our logic (strip spaces)
         df.columns = [c.strip() for c in df.columns]
-
+        
+        row_count = 0
         for index, row in df.iterrows():
             # 1. Skip rows where 'Med' is empty
             if pd.isna(row.get('Med')) or str(row.get('Med')).strip() == "":
@@ -122,6 +137,9 @@ def convert_excel_to_json():
                 "search_text": search_text.lower()
             }
             meds.append(med_obj)
+            row_count += 1
+        
+        print(f"  → Added {row_count} medications from {sheet_name}")
 
     # 8. Write to JSON
     final_output = {
@@ -133,10 +151,50 @@ def convert_excel_to_json():
     }
 
     # 'w' mode automatically overwrites existing files
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        json.dump(final_output, f, indent=2)
+    try:
+        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+            json.dump(final_output, f, indent=2)
         
-    print(f"\nSuccess! Converted {len(meds)} prescriptions to '{OUTPUT_FILE}'.")
+        print("\n" + "=" * 70)
+        print("✓ SUCCESS!")
+        print("=" * 70)
+        print(f"Converted {len(meds)} prescriptions to:")
+        print(f"{OUTPUT_FILE}")
+        
+        print(f"\nVerifying output...")
+        
+        # Verify the file was created and is valid JSON
+        with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+            verify = json.load(f)
+            print(f"✓ JSON file is valid")
+            print(f"✓ Contains {verify['source']['record_count']} medications")
+            
+            # Show specialty breakdown
+            specialty_counts = {}
+            for med in verify['meds']:
+                spec = med['specialty']
+                specialty_counts[spec] = specialty_counts.get(spec, 0) + 1
+            
+            print(f"\nSpecialty breakdown:")
+            for spec, count in sorted(specialty_counts.items()):
+                print(f"  {spec}: {count} medications")
+        
+        print("\n" + "=" * 70)
+        print("CONVERSION COMPLETE!")
+        print("=" * 70)
+                
+    except Exception as e:
+        print(f"\n✗ ERROR writing or verifying JSON file: {e}")
+        input("\nPress Enter to close...")
+        return
 
 if __name__ == "__main__":
-    convert_excel_to_json()
+    try:
+        convert_excel_to_json()
+    except Exception as e:
+        print(f"\n✗ UNEXPECTED ERROR: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        print("\n")
+        input("Press Enter to close this window...")

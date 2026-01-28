@@ -820,3 +820,28 @@ details[open] > .subfolder-summary .subfolder-arrow {
   pointer-events: none;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+/* --- Add New Med Button --- */
+button.add-new-med-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--header-text);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.2s, border-color 0.2s;
+  display: block;
+}
+
+button.add-new-med-btn:hover {
+  background: var(--header-bg);
+  border-color: var(--accent);
+}
+
+button.add-new-med-btn:active {
+  background: #e8f0ff;
+}

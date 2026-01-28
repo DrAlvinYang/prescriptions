@@ -62,9 +62,9 @@ const BASE_LOCATIONS = [
 ];
 
 const SPECIALTY_COLUMNS = {
-  col1: ["Orders +", "Non-Med", "Allergy, Analgesia, Antiemetic", "Anti-infective", "Neuro & Endocrine"],
-  col2: ["Eye", "ENT", "Cardiac & Heme", "Respiratory", "GI & GU"],
-  col3: ["OBGYN", "STI", "Derm", "Psych", "Detox"]
+  col1: ["Add New Med", "Neuro & Endocrine", "Cardiac & Heme", "OBGYN", "Substance Use"],
+  col2: ["Allergy, Analgesia, Antiemetic", "ENT", "Respiratory", "STI", "Psych"],
+  col3: ["Anti-infective", "Eye", "GI & GU", "Derm", "Non-Med"]
 };
 
 const NESTED_SPECIALTIES = ["Allergy, Analgesia, Antiemetic", "ENT", "GI & GU"];

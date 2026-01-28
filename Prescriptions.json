@@ -1699,7 +1699,7 @@
       "specialty": "Anti-infective",
       "med": "Dolutegravir",
       "brands": [
-        "Tivicay"
+        "Trvicay"
       ],
       "indication": "HIV PEP (post-exposure prophylaxis)",
       "dose_text": "50mg",
@@ -7150,7 +7150,7 @@
       "specialty": "STI",
       "med": "Dolutegravir",
       "brands": [
-        "Trvicay"
+        "Tivicay"
       ],
       "indication": "HIV PEP (post-exposure prophylaxis)",
       "dose_text": "50mg",
@@ -7167,7 +7167,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "sti | adult | hiv pep (post-exposure prophylaxis) | dolutegravir | trvicay | 50mg | start as soon as possible after exposure (and within 72 hours of exposure). take in combination with truvada."
+      "search_text": "sti | adult | hiv pep (post-exposure prophylaxis) | dolutegravir | tivicay | 50mg | start as soon as possible after exposure (and within 72 hours of exposure). take in combination with truvada."
     },
     {
       "specialty": "Derm",
@@ -8289,7 +8289,7 @@
       "search_text": "psych | adult | anxiety | lorazepam | ativan | 1-2mg | anxiety | dispense 1mg tabs. use only for short duration as can be habit-forming. follow up with usual care provider."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Lorazepam",
       "brands": [
         "Ativan"
@@ -8309,10 +8309,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | alcohol withdrawal (with cirrhosis or severe respiratory disease) | lorazepam | ativan | dispense 1mg tabs. day 1: 1mg po qid. day 2: 1mg po tid. day 3: 1mg bid. day 4 and thereafter: 1mg od."
+      "search_text": "substance use | adult | withdrawal management | alcohol withdrawal (with cirrhosis or severe respiratory disease) | lorazepam | ativan | dispense 1mg tabs. day 1: 1mg po qid. day 2: 1mg po tid. day 3: 1mg bid. day 4 and thereafter: 1mg od."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Diazepam",
       "brands": [
         "Valium"
@@ -8332,10 +8332,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | alcohol withdrawal | diazepam | valium | dispense 10mg tabs. day 1: 10mg po qid. day 2: 10mg po tid. day 3: 10mg po bid. day 4 and thereafter: 10mg po qhs. hold if sedated."
+      "search_text": "substance use | adult | withdrawal management | alcohol withdrawal | diazepam | valium | dispense 10mg tabs. day 1: 10mg po qid. day 2: 10mg po tid. day 3: 10mg po bid. day 4 and thereafter: 10mg po qhs. hold if sedated."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Gabapentin",
       "brands": [
         "Neurontin"
@@ -8355,10 +8355,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | alcohol withdrawal (not for patients with known history of severe or complicated withdrawal) | gabapentin | neurontin | 300mg | alcohol withdrawal | take 300mg po tid scheduled. can take additional 300mg po q8h prn (max 3 doses/day)."
+      "search_text": "substance use | adult | withdrawal management | alcohol withdrawal (not for patients with known history of severe or complicated withdrawal) | gabapentin | neurontin | 300mg | alcohol withdrawal | take 300mg po tid scheduled. can take additional 300mg po q8h prn (max 3 doses/day)."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Thiamine",
       "brands": [
         "Betaxin"
@@ -8378,10 +8378,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | alcohol use disorder (wernicke encephalopahy prevention) | thiamine | betaxin | 100mg"
+      "search_text": "substance use | adult | withdrawal management | alcohol use disorder (wernicke encephalopahy prevention) | thiamine | betaxin | 100mg"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Naltrexone",
       "brands": [
         "Revia"
@@ -8401,10 +8401,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | alcohol use disorder (avoid in liver failure/concurrent opioid use) | naltrexone | revia | 50mg | lu code = 532."
+      "search_text": "substance use | adult | withdrawal management | alcohol use disorder (avoid in liver failure/concurrent opioid use) | naltrexone | revia | 50mg | lu code = 532."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Acamprosate",
       "brands": [
         "Campral"
@@ -8424,10 +8424,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | alcohol use disorder (avoid in severe renal failure) | acamprosate | campral | 666mg | lu code = 531."
+      "search_text": "substance use | adult | withdrawal management | alcohol use disorder (avoid in severe renal failure) | acamprosate | campral | 666mg | lu code = 531."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Buprenorphine + Naloxone (2mg-0.5mg)",
       "brands": [
         "Suboxone"
@@ -8447,10 +8447,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | opioid use disorder (ed start) | buprenorphine + naloxone (2mg-0.5mg) | suboxone | withdrawal symptoms | [start date - end date inclusive]. take 2-4mg sl q1h prn (maximum 16mg per 24 hours). dispense naloxone kit if patient does not have one."
+      "search_text": "substance use | adult | withdrawal management | opioid use disorder (ed start) | buprenorphine + naloxone (2mg-0.5mg) | suboxone | withdrawal symptoms | [start date - end date inclusive]. take 2-4mg sl q1h prn (maximum 16mg per 24 hours). dispense naloxone kit if patient does not have one."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Buprenorphine + Naloxone (4mg-1mg)",
       "brands": [
         "Suboxone"
@@ -8470,10 +8470,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (4mg-1mg) | suboxone | 1 tab"
+      "search_text": "substance use | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (4mg-1mg) | suboxone | 1 tab"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Buprenorphine + Naloxone (6mg-1.5mg)",
       "brands": [
         "Suboxone"
@@ -8493,10 +8493,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (6mg-1.5mg) | suboxone | 1 tab"
+      "search_text": "substance use | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (6mg-1.5mg) | suboxone | 1 tab"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Buprenorphine + Naloxone (8mg-2mg)",
       "brands": [
         "Suboxone"
@@ -8516,10 +8516,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (8mg-2mg) | suboxone | 1 tab"
+      "search_text": "substance use | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (8mg-2mg) | suboxone | 1 tab"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Buprenorphine + Naloxone (16mg-4mg)",
       "brands": [
         "Suboxone"
@@ -8539,10 +8539,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (16mg-4mg) | suboxone | 1 tab"
+      "search_text": "substance use | adult | withdrawal management | opioid use disorder (prescription renewal) | buprenorphine + naloxone (16mg-4mg) | suboxone | 1 tab"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Clonidine",
       "brands": [
         "Catapres"
@@ -8562,10 +8562,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | opioid withdrawal | clonidine | catapres | 0.1-0.2mg | withdrawal symptoms | dispense 0.1mg tabs. hold if blood pressure \u226490/60 or patient dizzy. maximum 0.8mg per 24 hours."
+      "search_text": "substance use | adult | withdrawal management | opioid withdrawal | clonidine | catapres | 0.1-0.2mg | withdrawal symptoms | dispense 0.1mg tabs. hold if blood pressure \u226490/60 or patient dizzy. maximum 0.8mg per 24 hours."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Nicotine Gum",
       "brands": [
         "Nicorette",
@@ -8586,10 +8586,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | nicotine replacement | nicotine gum | nicorette thrive | 2mg | smoking cessation"
+      "search_text": "substance use | adult | withdrawal management | nicotine replacement | nicotine gum | nicorette thrive | 2mg | smoking cessation"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Nicotine Patch",
       "brands": [
         "Nicoderm"
@@ -8609,10 +8609,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | nicotine replacement (<10 cigarettes/day) | nicotine patch | nicoderm | 7mg | smoking cessation"
+      "search_text": "substance use | adult | withdrawal management | nicotine replacement (<10 cigarettes/day) | nicotine patch | nicoderm | 7mg | smoking cessation"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Nicotine Patch",
       "brands": [
         "Nicoderm"
@@ -8632,10 +8632,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | nicotine replacement (<10 cigarettes/day) | nicotine patch | nicoderm | 14mg | smoking cessation"
+      "search_text": "substance use | adult | withdrawal management | nicotine replacement (<10 cigarettes/day) | nicotine patch | nicoderm | 14mg | smoking cessation"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Nicotine Patch",
       "brands": [
         "Nicoderm"
@@ -8655,10 +8655,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | withdrawal management | nicotine replacement (>10 cigarettes/day) | nicotine patch | nicoderm | 21mg | smoking cessation"
+      "search_text": "substance use | adult | withdrawal management | nicotine replacement (>10 cigarettes/day) | nicotine patch | nicoderm | 21mg | smoking cessation"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Olanzapine",
       "brands": [
         "Xyprexa"
@@ -8678,10 +8678,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | substance use symptoms (e.g. sleep, anxiety, agitation, psychosis) | olanzapine | xyprexa | 5mg | agitation | may take 2 tabs (10mg) qhs if needed. follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | substance use symptoms (e.g. sleep, anxiety, agitation, psychosis) | olanzapine | xyprexa | 5mg | agitation | may take 2 tabs (10mg) qhs if needed. follow up with usual care provider for refills."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Quetiapine",
       "brands": [
         "Seroquel"
@@ -8701,10 +8701,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | substance use symptoms (e.g. anxiety, agitation) | quetiapine | seroquel | 25mg | agitation | maximum 100mg in 24 hours. follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | substance use symptoms (e.g. anxiety, agitation) | quetiapine | seroquel | 25mg | agitation | maximum 100mg in 24 hours. follow up with usual care provider for refills."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Quetiapine",
       "brands": [
         "Seroquel"
@@ -8724,10 +8724,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | substance use symptoms (e.g. anxiety, agitation) in elder age | quetiapine | seroquel | 12.5mg | agitation | maximum 50mg in 24 hours. follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | substance use symptoms (e.g. anxiety, agitation) in elder age | quetiapine | seroquel | 12.5mg | agitation | maximum 50mg in 24 hours. follow up with usual care provider for refills."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Quetiapine",
       "brands": [
         "Seroquel"
@@ -8747,10 +8747,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | sleep (off label use for patients with subtance use symptoms) | quetiapine | seroquel | 25mg | sleep | follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | sleep (off label use for patients with subtance use symptoms) | quetiapine | seroquel | 25mg | sleep | follow up with usual care provider for refills."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Trazodone",
       "brands": [
         "Desyrel"
@@ -8770,10 +8770,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | sleep | trazodone | desyrel | 50-75mg | sleep | take with food. follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | sleep | trazodone | desyrel | 50-75mg | sleep | take with food. follow up with usual care provider for refills."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Trazodone",
       "brands": [
         "Desyrel"
@@ -8793,10 +8793,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | sleep (in elderly) | trazodone | desyrel | 25-50mg | sleep | take with food. follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | sleep (in elderly) | trazodone | desyrel | 25-50mg | sleep | take with food. follow up with usual care provider for refills."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Melatonin",
       "brands": [
         "Circadin"
@@ -8816,10 +8816,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | symptom relief | sleep | melatonin | circadin | 5-10mg | sleep | immediate release formulation."
+      "search_text": "substance use | adult | symptom relief | sleep | melatonin | circadin | 5-10mg | sleep | immediate release formulation."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Acetaminophen",
       "brands": [
         "Paracetamol",
@@ -8840,10 +8840,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | pain/fever | acetaminophen | paracetamol tylenol | 650-975mg | pain/fever | maximum 4000mg per 24 hours from all sources."
+      "search_text": "substance use | adult | other | pain/fever | acetaminophen | paracetamol tylenol | 650-975mg | pain/fever | maximum 4000mg per 24 hours from all sources."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Ibuprofen",
       "brands": [
         "Advil",
@@ -8864,10 +8864,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | pain/fever | ibuprofen | advil motrin | 200-400mg | pain | maximum 2400mg per 24 hours. may cause stomach irritation, take with food."
+      "search_text": "substance use | adult | other | pain/fever | ibuprofen | advil motrin | 200-400mg | pain | maximum 2400mg per 24 hours. may cause stomach irritation, take with food."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Ondansetron",
       "brands": [
         "Zofran",
@@ -8888,10 +8888,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | nausea/vomiting | ondansetron | zofran zuplenz | 4mg | nausea/vomiting | may take 1-2 tabs (4-8mg) q4-6h prn. may dispense sl/odt if patient preference. maximum 24mg/24h. hold if sedated."
+      "search_text": "substance use | adult | other | nausea/vomiting | ondansetron | zofran zuplenz | 4mg | nausea/vomiting | may take 1-2 tabs (4-8mg) q4-6h prn. may dispense sl/odt if patient preference. maximum 24mg/24h. hold if sedated."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Dimenhydrinate",
       "brands": [
         "Gravol",
@@ -8912,10 +8912,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | nausea/vomiting | dimenhydrinate | gravol dramamine | 50mg | nausea/vomiting | maximum 4 doses (200mg) per 24 hours. hold if sedated."
+      "search_text": "substance use | adult | other | nausea/vomiting | dimenhydrinate | gravol dramamine | 50mg | nausea/vomiting | maximum 4 doses (200mg) per 24 hours. hold if sedated."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Diphenhydramine",
       "brands": [
         "Benadryl"
@@ -8935,10 +8935,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | allergy symptoms | diphenhydramine | benadryl | 25-50mg | allergy | maximum 25mg each time if elderly or known hepatic issues. limit use to maximum 3 days."
+      "search_text": "substance use | adult | other | allergy symptoms | diphenhydramine | benadryl | 25-50mg | allergy | maximum 25mg each time if elderly or known hepatic issues. limit use to maximum 3 days."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Hydrocortisone (0.5%)",
       "brands": [
         "Cortate",
@@ -8959,10 +8959,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | hydrocortisone (0.5%) | cortate hycort | 1 application"
+      "search_text": "substance use | adult | other | hydrocortisone (0.5%) | cortate hycort | 1 application"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Diclofenac Diethylamine",
       "brands": [
         "Voltaren Emulgel"
@@ -8982,10 +8982,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | diclofenac diethylamine | voltaren emulgel | 1 application | pain"
+      "search_text": "substance use | adult | other | diclofenac diethylamine | voltaren emulgel | 1 application | pain"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Polymyxin B + Bacitracin",
       "brands": [
         "Polysporin"
@@ -9005,10 +9005,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | polymyxin b + bacitracin | polysporin | 1 application | wound management"
+      "search_text": "substance use | adult | other | polymyxin b + bacitracin | polysporin | 1 application | wound management"
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Permethrin lotion (1%)",
       "brands": [
         "Nix",
@@ -9029,10 +9029,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | head lice | permethrin lotion (1%) | nix kwellada-p | wash hair before application. apply lotion to saturate hair and scalp, leave in for 10 minutes then rinse. remove remaining nits with comb. repeat treatment in 7 days."
+      "search_text": "substance use | adult | other | head lice | permethrin lotion (1%) | nix kwellada-p | wash hair before application. apply lotion to saturate hair and scalp, leave in for 10 minutes then rinse. remove remaining nits with comb. repeat treatment in 7 days."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Permethrin cream (5%)",
       "brands": [
         "Nix",
@@ -9053,10 +9053,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | scabies | permethrin cream (5%) | nix kwellada-p | apply to entire body from scalp to soles (30 g for average adult); leave on for 8-14 hours washing off. repeat treatment in 7 days. treat close contacts."
+      "search_text": "substance use | adult | other | scabies | permethrin cream (5%) | nix kwellada-p | apply to entire body from scalp to soles (30 g for average adult); leave on for 8-14 hours washing off. repeat treatment in 7 days. treat close contacts."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Psyllium",
       "brands": [
         "Metamucil"
@@ -9076,10 +9076,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | constipation | psyllium | metamucil | 3.4g | constipation | bulk forming agent. can increase up to 14g twice daily until regular soft bowel movements."
+      "search_text": "substance use | adult | other | constipation | psyllium | metamucil | 3.4g | constipation | bulk forming agent. can increase up to 14g twice daily until regular soft bowel movements."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "PEG 3350",
       "brands": [
         "Polyethylene Glycol",
@@ -9103,10 +9103,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | constipation | peg 3350 | polyethylene glycol restoralax lax-a-day miralax golytely | 17g | constipation | osmotic agent. take 1-2 times daily until regular soft bowel movements."
+      "search_text": "substance use | adult | other | constipation | peg 3350 | polyethylene glycol restoralax lax-a-day miralax golytely | 17g | constipation | osmotic agent. take 1-2 times daily until regular soft bowel movements."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Sennosides",
       "brands": [
         "Senna",
@@ -9127,10 +9127,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | constipation | sennosides | senna senokot | 2 tab | constipation | stimulant agent. take 17.2mg once daily, may slowly increase up to maximum 34.4mg twice daily until regular soft bowel movements."
+      "search_text": "substance use | adult | other | constipation | sennosides | senna senokot | 2 tab | constipation | stimulant agent. take 17.2mg once daily, may slowly increase up to maximum 34.4mg twice daily until regular soft bowel movements."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Loperamide",
       "brands": [
         "Imodium"
@@ -9150,10 +9150,10 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | diarrhea | loperamide | imodium | diarrhea | take 4mg initially, then 2mg after each loose stool. maximum 8mg per 24 hours. limit use to less than 48 hours."
+      "search_text": "substance use | adult | other | diarrhea | loperamide | imodium | diarrhea | take 4mg initially, then 2mg after each loose stool. maximum 8mg per 24 hours. limit use to less than 48 hours."
     },
     {
-      "specialty": "Detox",
+      "specialty": "Substance Use",
       "med": "Pramoxine + Zinc Sulfate + Hydrocortisone",
       "brands": [
         "Anusol HC"
@@ -9173,7 +9173,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "detox | adult | other | hemorrhoids | pramoxine + zinc sulfate + hydrocortisone | anusol hc | 1 application | hemorrhoids"
+      "search_text": "substance use | adult | other | hemorrhoids | pramoxine + zinc sulfate + hydrocortisone | anusol hc | 1 application | hemorrhoids"
     },
     {
       "specialty": "Non-Med",
