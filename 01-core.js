@@ -22,8 +22,8 @@ const FALLBACK_LOCATION = { name: "Michael Garron Hospital", address: "825 Coxwe
 let BASE_LOCATIONS = [FALLBACK_LOCATION];
 
 const SPECIALTY_COLUMNS = {
-  col1: ["Add New Med", "Neuro & Endocrine", "Cardiac & Heme", "OBGYN", "Substance Use"],
-  col2: ["Allergy, Analgesia, Antiemetic", "ENT", "Respiratory", "STI", "Psych"],
+  col1: ["Add New Med", "Neuro & Endocrine", "Cardiac & Heme", "STI", "Substance Use"],
+  col2: ["Allergy, Analgesia, Antiemetic", "ENT", "Respiratory", "OBGYN", "Psych"],
   col3: ["Anti-infective", "Eye", "GI & GU", "Derm", "Non-Med"]
 };
 
