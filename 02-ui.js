@@ -506,9 +506,25 @@ class LocationUIRenderer {
     
     // Handle keyboard navigation
     this.searchInput.addEventListener("keydown", (e) => {
+      // Stop all keydown events from bubbling to the parent button
+      e.stopPropagation();
+
+      // Special handling for space to prevent button click but allow typing
+      if (e.key === " ") {
+        e.preventDefault();
+        // Manually insert space at cursor position
+        const start = this.searchInput.selectionStart;
+        const end = this.searchInput.selectionEnd;
+        const value = this.searchInput.value;
+        this.searchInput.value = value.substring(0, start) + " " + value.substring(end);
+        this.searchInput.selectionStart = this.searchInput.selectionEnd = start + 1;
+        // Trigger input event to update search results
+        this.searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        return;
+      }
+
       if (e.key === "Escape") {
         e.preventDefault();
-        e.stopPropagation();
         this.exitSearchMode();
       } else if (e.key === "ArrowDown") {
         e.preventDefault();

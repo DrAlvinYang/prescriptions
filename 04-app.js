@@ -255,6 +255,11 @@ class Application {
             this.controllers.cart.add(med);
           });
         }
+
+        // Prevent arrow keys from adjusting the number
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          e.preventDefault();
+        }
       });
     }
 
