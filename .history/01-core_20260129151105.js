@@ -188,71 +188,11 @@ const Utils = {
       return Utils.escapeHtml(cleanText);
     }
 
-    // Short route/frequency abbreviations that need word boundary matching
-    // to prevent false positives (e.g., "im" matching within "time")
-    const wordBoundaryTerms = new Set([
-      // Routes (2-3 char abbreviations)
-      'po', 'im', 'iv', 'sc', 'sq', 'sl', 'pr', 'pv', 'td', 'in', 'id', 'io', 'it', 'ia',
-      'top', 'neb', 'inh', 'ng', 'gt', 'ad', 'as', 'au', 'od', 'os', 'ou',
-      // Frequencies (short abbreviations)
-      'bid', 'tid', 'qid', 'qd', 'prn', 'qhs', 'qam'
-    ]);
-
-    // Extract numeric values from terms for range matching
-    const numericTerms = terms
-      .map(t => parseFloat(t))
-      .filter(n => !isNaN(n));
-
-    // Sort terms by length descending to match longer terms first
-    const sortedTerms = [...terms].sort((a, b) => b.length - a.length);
-
-    // Build pattern for range matching (e.g., "7-10" or "7 to 10")
-    const rangePattern = /(\d+\.?\d*)\s*[-to]+\s*(\d+\.?\d*)/gi;
-
-    // First pass: find all ranges that contain any of our numeric search values
-    const rangesToHighlight = new Set();
-    let rangeMatch;
-    while ((rangeMatch = rangePattern.exec(cleanText)) !== null) {
-      const rangeMin = parseFloat(rangeMatch[1]);
-      const rangeMax = parseFloat(rangeMatch[2]);
-      // Check if any numeric term falls within this range
-      for (const numVal of numericTerms) {
-        if (numVal >= rangeMin && numVal <= rangeMax) {
-          rangesToHighlight.add(rangeMatch[0]);
-          break;
-        }
-      }
-    }
-
-    // Combine direct terms with ranges to highlight
-    const allHighlightPatterns = [...sortedTerms];
-    for (const range of rangesToHighlight) {
-      allHighlightPatterns.push(range);
-    }
-
-    if (allHighlightPatterns.length === 0) {
-      return Utils.escapeHtml(cleanText);
-    }
-
-    // Sort again by length to match longer patterns first
-    allHighlightPatterns.sort((a, b) => b.length - a.length);
-
-    // Build pattern - use word boundaries for short route/frequency terms
-    const patternParts = allHighlightPatterns.map(term => {
-      const escaped = Utils.escapeRegex(term);
-      if (wordBoundaryTerms.has(term.toLowerCase())) {
-        return `\\b${escaped}\\b`;
-      }
-      return escaped;
-    });
-
-    const finalPattern = new RegExp(`(${patternParts.join('|')})`, 'gi');
-    const parts = cleanText.split(finalPattern);
-
-    const allHighlightLower = new Set(allHighlightPatterns.map(p => p.toLowerCase()));
+    const pattern = new RegExp(`(${terms.map(Utils.escapeRegex).join('|')})`, 'gi');
+    const parts = cleanText.split(pattern);
 
     return parts.map(part => {
-      if (allHighlightLower.has(part.toLowerCase())) {
+      if (terms.some(term => term.toLowerCase() === part.toLowerCase())) {
         return `<span class="highlight">${Utils.escapeHtml(part)}</span>`;
       }
       return Utils.escapeHtml(part);
@@ -638,30 +578,26 @@ class SearchManager {
       'once daily': 'freq_daily', 'qd': 'freq_daily', 'once': 'freq_daily',
       // BID
       'bid': 'freq_bid', 'twice daily': 'freq_bid', 'q12h': 'freq_bid',
-      'every 12 hours': 'freq_bid', 'every 12 hour': 'freq_bid',
-      'every 12h': 'freq_bid',
+      'every 12 hours': 'freq_bid', 'every 12h': 'freq_bid',
       // TID
       'tid': 'freq_tid', 'three times daily': 'freq_tid', 'q8h': 'freq_q8h',
-      'every 8 hours': 'freq_q8h', 'every 8 hour': 'freq_q8h', 'every 8h': 'freq_q8h',
+      'every 8 hours': 'freq_q8h', 'every 8h': 'freq_q8h',
       // QID
       'qid': 'freq_qid', 'four times daily': 'freq_qid',
       // q4h
-      'q4h': 'freq_q4h', 'every 4 hours': 'freq_q4h', 'every 4 hour': 'freq_q4h',
-      'every 4h': 'freq_q4h', 'q 4 h': 'freq_q4h', 'q 4h': 'freq_q4h',
+      'q4h': 'freq_q4h', 'every 4 hours': 'freq_q4h', 'every 4h': 'freq_q4h',
+      'q 4 h': 'freq_q4h', 'q 4h': 'freq_q4h',
       // q6h
-      'q6h': 'freq_q6h', 'every 6 hours': 'freq_q6h', 'every 6 hour': 'freq_q6h',
-      'every 6h': 'freq_q6h', 'q 6 h': 'freq_q6h', 'q 6h': 'freq_q6h',
+      'q6h': 'freq_q6h', 'every 6 hours': 'freq_q6h', 'every 6h': 'freq_q6h',
+      'q 6 h': 'freq_q6h', 'q 6h': 'freq_q6h',
       // q4-6h (range frequencies)
       'q4-6h': 'freq_q4-6h', 'q 4-6 h': 'freq_q4-6h', 'q 4-6h': 'freq_q4-6h',
-      'every 4 to 6 hours': 'freq_q4-6h', 'every 4 to 6 hour': 'freq_q4-6h',
-      'every 4-6 hours': 'freq_q4-6h', 'every 4-6 hour': 'freq_q4-6h',
+      'every 4 to 6 hours': 'freq_q4-6h', 'every 4-6 hours': 'freq_q4-6h',
       'every 4-6h': 'freq_q4-6h',
       // q2h
-      'q2h': 'freq_q2h', 'every 2 hours': 'freq_q2h', 'every 2 hour': 'freq_q2h',
-      'every 2h': 'freq_q2h',
+      'q2h': 'freq_q2h', 'every 2 hours': 'freq_q2h', 'every 2h': 'freq_q2h',
       // q3h
-      'q3h': 'freq_q3h', 'every 3 hours': 'freq_q3h', 'every 3 hour': 'freq_q3h',
-      'every 3h': 'freq_q3h',
+      'q3h': 'freq_q3h', 'every 3 hours': 'freq_q3h', 'every 3h': 'freq_q3h',
       // qHS (bedtime)
       'qhs': 'freq_qhs', 'at bedtime': 'freq_qhs', 'bedtime': 'freq_qhs',
       'nightly': 'freq_qhs',
@@ -671,7 +607,6 @@ class SearchManager {
       'qmwf': 'freq_qmwf', 'monday wednesday friday': 'freq_qmwf',
       // q5mins
       'q5mins': 'freq_q5mins', 'q5min': 'freq_q5mins', 'every 5 minutes': 'freq_q5mins',
-      'every 5 minute': 'freq_q5mins',
       // PRN
       'prn': 'freq_prn', 'as needed': 'freq_prn'
     };
@@ -695,100 +630,76 @@ class SearchManager {
       'freq_prn': ['prn', 'as needed']
     };
 
-    // Route normalization map - maps all variants to internal keys
-    // Based on authoritative route list for clinical safety
+    // Route normalization map - maps variants to internal keys
     this.routeMap = {
-      // PO (by mouth) - oral administration
-      'po': 'route_po', 'oral': 'route_po', 'orally': 'route_po',
-      'by mouth': 'route_po', 'mouth': 'route_po',
-      // TOP (topical)
+      // Oral
+      'po': 'route_po', 'oral': 'route_po', 'by mouth': 'route_po', 'orally': 'route_po',
+      // Topical
       'top': 'route_topical', 'topical': 'route_topical', 'topically': 'route_topical',
-      // Ophthalmic (to affected eye(s))
+      // Ophthalmic
       'ophth': 'route_ophthalmic', 'ophthalmic': 'route_ophthalmic',
       'to affected eye': 'route_ophthalmic', 'to affected eyes': 'route_ophthalmic',
-      'to affected eye(s)': 'route_ophthalmic', 'eye drops': 'route_ophthalmic',
-      // Specific eye routes
+      'to affected eye(s)': 'route_ophthalmic',
+      // Specific eye routes (ambiguous with OD frequency)
       'od': 'route_od', 'right eye': 'route_od',
       'os': 'route_os', 'left eye': 'route_os',
       'ou': 'route_ou', 'both eyes': 'route_ou',
-      // INH (inhalation)
-      'inh': 'route_inhalation', 'inhalation': 'route_inhalation',
-      'inhaled': 'route_inhalation', 'by inhalation': 'route_inhalation',
-      // NEB (nebulized)
-      'neb': 'route_nebulized', 'nebulized': 'route_nebulized', 'nebulizer': 'route_nebulized',
-      // IM (intramuscular)
-      'im': 'route_im', 'intramuscular': 'route_im', 'intramuscularly': 'route_im',
-      // IV (intravenous)
-      'iv': 'route_iv', 'intravenous': 'route_iv', 'intravenously': 'route_iv',
-      // PV (per vaginal)
-      'pv': 'route_pv', 'per vaginal': 'route_pv', 'vaginal': 'route_pv', 'vaginally': 'route_pv',
-      // IN / nasal (intranasal)
-      'in': 'route_nasal', 'nasal': 'route_nasal', 'intranasal': 'route_nasal',
-      'intranasally': 'route_nasal',
-      // PR (per rectum)
-      'pr': 'route_pr', 'per rectum': 'route_pr', 'rectal': 'route_pr', 'rectally': 'route_pr',
-      // SL (sublingual)
-      'sl': 'route_sl', 'sublingual': 'route_sl', 'sublingually': 'route_sl',
-      // PO/SL (by mouth or sublingual)
-      'po sl': 'route_po_sl', 'po/sl': 'route_po_sl',
-      // Otic (to affected ear(s))
+      // Otic
       'otic': 'route_otic', 'to affected ear': 'route_otic',
       'to affected ears': 'route_otic', 'to affected ear(s)': 'route_otic',
-      'ear drops': 'route_otic',
-      // Specific ear routes
       'ad': 'route_ad', 'right ear': 'route_ad',
       'as': 'route_as', 'left ear': 'route_as',
       'au': 'route_au', 'both ears': 'route_au',
-      // TD (transdermal)
-      'td': 'route_td', 'transdermal': 'route_td', 'transdermally': 'route_td',
-      'patch': 'route_td',
-      // Chewed
-      'chewed': 'route_chewed',
-      // SC / SQ / subcut (subcutaneous)
+      // Inhalation
+      'inh': 'route_inhalation', 'inhalation': 'route_inhalation',
+      'inhaled': 'route_inhalation', 'by inhalation': 'route_inhalation',
+      'neb': 'route_nebulized', 'nebulized': 'route_nebulized', 'nebulizer': 'route_nebulized',
+      // Injection routes
+      'im': 'route_im', 'intramuscular': 'route_im', 'intramuscularly': 'route_im',
+      'iv': 'route_iv', 'intravenous': 'route_iv', 'intravenously': 'route_iv',
       'sc': 'route_sc', 'sq': 'route_sc', 'subcut': 'route_sc',
       'subcutaneous': 'route_sc', 'subcutaneously': 'route_sc',
-      // ID (intradermal)
       'id': 'route_id', 'intradermal': 'route_id',
-      // IO (intraosseous)
       'io': 'route_io', 'intraosseous': 'route_io',
-      // IT (intrathecal)
       'it': 'route_it', 'intrathecal': 'route_it',
-      // IA (intraarticular)
       'ia': 'route_ia', 'intraarticular': 'route_ia',
-      // NG (nasogastric tube)
+      // Vaginal/Rectal
+      'pv': 'route_pv', 'per vaginal': 'route_pv', 'vaginally': 'route_pv', 'vaginal': 'route_pv',
+      'pr': 'route_pr', 'per rectum': 'route_pr', 'rectally': 'route_pr', 'rectal': 'route_pr',
+      // Sublingual/Buccal
+      'sl': 'route_sl', 'sublingual': 'route_sl', 'sublingually': 'route_sl',
+      'buccal': 'route_buccal',
+      'po/sl': 'route_po_sl', 'po sl': 'route_po_sl',
+      // Nasal
+      'in': 'route_nasal', 'nasal': 'route_nasal', 'intranasal': 'route_nasal',
+      'intranasally': 'route_nasal',
+      // Transdermal
+      'td': 'route_td', 'transdermal': 'route_td', 'transdermally': 'route_td',
+      // Enteral tubes
       'ng': 'route_ng', 'nasogastric': 'route_ng', 'nasogastric tube': 'route_ng',
-      'ng tube': 'route_ng',
-      // GT / PEG / G-tube (gastrostomy tube)
-      'gt': 'route_gt', 'peg': 'route_gt', 'g tube': 'route_gt', 'g-tube': 'route_gt',
-      'gastrostomy': 'route_gt', 'gastrostomy tube': 'route_gt', 'peg tube': 'route_gt',
-      // J-tube (jejunostomy tube)
-      'j tube': 'route_jt', 'j-tube': 'route_jt', 'jtube': 'route_jt',
-      'jejunostomy': 'route_jt', 'jejunostomy tube': 'route_jt',
-      // Buccal
-      'buccal': 'route_buccal'
+      'gt': 'route_gt', 'peg': 'route_gt', 'g-tube': 'route_gt', 'gastrostomy tube': 'route_gt',
+      'j-tube': 'route_jt', 'jejunostomy tube': 'route_jt',
+      // Special
+      'chewed': 'route_chewed'
     };
 
     // Tokens that are ambiguous between frequency and route (treated as OR)
     this.ambiguousTokens = new Set(['od']);
 
-    // Unit aliases for normalization - maps all variants to canonical form
+    // Unit aliases for normalization
     this.unitAliases = {
-      // Duration units
-      'd': 'day', 'day': 'day', 'days': 'day',
-      'wk': 'week', 'wks': 'week', 'week': 'week', 'weeks': 'week',
-      'h': 'hour', 'hr': 'hour', 'hrs': 'hour', 'hour': 'hour', 'hours': 'hour',
-      'mo': 'month', 'mth': 'month', 'mths': 'month', 'month': 'month', 'months': 'month',
-      'yr': 'year', 'yrs': 'year', 'year': 'year', 'years': 'year',
-      // Dose form units
-      'tab': 'tablet', 'tabs': 'tablet', 'tablet': 'tablet', 'tablets': 'tablet',
-      'cap': 'capsule', 'caps': 'capsule', 'capsule': 'capsule', 'capsules': 'capsule',
-      // Volume/mass units
+      'd': 'day', 'days': 'day',
+      'wk': 'week', 'wks': 'week', 'weeks': 'week',
+      'h': 'hour', 'hr': 'hour', 'hrs': 'hour', 'hours': 'hour',
+      'mo': 'month', 'mth': 'month', 'mths': 'month', 'months': 'month',
+      'yr': 'year', 'yrs': 'year', 'years': 'year',
+      'tab': 'tablet', 'tabs': 'tablet', 'tablets': 'tablet',
+      'cap': 'capsule', 'caps': 'capsule', 'capsules': 'capsule',
       'ml': 'ml', 'mls': 'ml',
       'mg': 'mg', 'mgs': 'mg',
       'g': 'g', 'gm': 'g', 'gms': 'g', 'gram': 'g', 'grams': 'g',
       'mcg': 'mcg', 'ug': 'mcg', 'microgram': 'mcg', 'micrograms': 'mcg',
-      'unit': 'unit', 'units': 'unit', 'iu': 'unit',
-      // Delivery units
+      'unit': 'unit', 'units': 'unit',
       'puff': 'puff', 'puffs': 'puff',
       'drop': 'drop', 'drops': 'drop', 'gtt': 'drop', 'gtts': 'drop',
       'spray': 'spray', 'sprays': 'spray',
@@ -901,10 +812,9 @@ class SearchManager {
       }
     }
 
-    // Next, extract space-separated number+unit patterns like "7 day", "500 mg", "7 d"
+    // Next, extract space-separated number+unit patterns like "7 day", "500 mg"
     // Pattern: number followed by space followed by recognized unit
-    // Includes all common abbreviations: d/day/days, wk/week/weeks, h/hr/hrs/hour/hours, etc.
-    const numUnitPattern = /(\d+\.?\d*)\s+(d|day|days|wk|wks|week|weeks|h|hr|hrs|hour|hours|mo|mth|month|months|yr|year|years|mg|mgs|g|gm|mcg|ug|ml|mls|l|unit|units|iu|tab|tabs|tablet|tablets|cap|caps|capsule|capsules|puff|puffs|drop|drops|gtt|gtts|spray|sprays|application|applications)\b/gi;
+    const numUnitPattern = /(\d+\.?\d*)\s+(day|days|week|weeks|wk|wks|hour|hours|hr|hrs|h|month|months|mo|year|years|yr|mg|mgs|g|gm|mcg|ug|ml|mls|l|unit|units|tab|tabs|tablet|tablets|cap|caps|capsule|capsules|puff|puffs|drop|drops|gtt|gtts|spray|sprays|application|applications)\b/gi;
 
     let numUnitMatch;
     const numUnitMatches = [];
@@ -959,16 +869,13 @@ class SearchManager {
    */
   isUnitWord(word) {
     const unitWords = new Set([
-      // Duration
-      'd', 'day', 'days', 'wk', 'wks', 'week', 'weeks',
-      'h', 'hr', 'hrs', 'hour', 'hours',
-      'mo', 'mth', 'month', 'months',
-      'yr', 'year', 'years',
-      // Mass/volume
+      'day', 'days', 'week', 'weeks', 'wk', 'wks',
+      'hour', 'hours', 'hr', 'hrs', 'h',
+      'month', 'months', 'mo',
+      'year', 'years', 'yr',
       'mg', 'mgs', 'g', 'gm', 'mcg', 'ug',
       'ml', 'mls', 'l',
-      'unit', 'units', 'iu',
-      // Dose forms
+      'unit', 'units',
       'tab', 'tabs', 'tablet', 'tablets',
       'cap', 'caps', 'capsule', 'capsules',
       'puff', 'puffs', 'drop', 'drops', 'gtt', 'gtts',
@@ -983,7 +890,7 @@ class SearchManager {
   classifyToken(word) {
     const stripped = this.stripUnitPlural(word);
 
-    // Check for numeric with unit (e.g., "500mg", "7day", "7d")
+    // Check for numeric with unit (e.g., "500mg", "7day")
     const numericWithUnit = this.parseNumericWithUnit(word);
     if (numericWithUnit) {
       return {
@@ -994,9 +901,7 @@ class SearchManager {
         unit: numericWithUnit.unit,
         isRange: numericWithUnit.isRange,
         rangeMin: numericWithUnit.rangeMin,
-        rangeMax: numericWithUnit.rangeMax,
-        isDuration: numericWithUnit.isDuration,
-        isDose: numericWithUnit.isDose
+        rangeMax: numericWithUnit.rangeMax
       };
     }
 
@@ -1056,21 +961,20 @@ class SearchManager {
 
   /**
    * Parse a token that may contain a number with a unit
-   * Handles: "500mg", "7day", "7d", "1g", "0.5ml", "25-50mg"
+   * Handles: "500mg", "7day", "1g", "0.5ml", "25-50mg"
    */
   parseNumericWithUnit(token) {
     const durationUnits = new Set(['day', 'week', 'hour', 'month', 'year']);
 
-    // Match patterns like: 500mg, 0.5ml, 25-50mg, 7day, 7d, 1-2tab
+    // Match patterns like: 500mg, 0.5ml, 25-50mg, 7day, 1-2tab
     const rangeWithUnit = token.match(/^(\d+\.?\d*)\s*[-to]+\s*(\d+\.?\d*)\s*([a-z]+)$/i);
     if (rangeWithUnit) {
       const unit = this.normalizeUnit(rangeWithUnit[3]);
-      if (this.recognizedUnits.has(unit) || this.unitAliases[rangeWithUnit[3].toLowerCase()]) {
-        const normalizedUnit = this.unitAliases[rangeWithUnit[3].toLowerCase()] || unit;
-        const isDuration = durationUnits.has(normalizedUnit);
+      if (this.recognizedUnits.has(unit)) {
+        const isDuration = durationUnits.has(unit);
         return {
           value: null,
-          unit: normalizedUnit,
+          unit: unit,
           isRange: true,
           rangeMin: parseFloat(rangeWithUnit[1]),
           rangeMax: parseFloat(rangeWithUnit[2]),
@@ -1082,14 +986,12 @@ class SearchManager {
 
     const singleWithUnit = token.match(/^(\d+\.?\d*)\s*([a-z]+)$/i);
     if (singleWithUnit) {
-      const rawUnit = singleWithUnit[2].toLowerCase();
-      const normalizedUnit = this.unitAliases[rawUnit] || this.normalizeUnit(rawUnit);
-      // Check if it's a recognized unit (either directly or via alias)
-      if (this.recognizedUnits.has(normalizedUnit) || this.unitAliases[rawUnit]) {
-        const isDuration = durationUnits.has(normalizedUnit);
+      const unit = this.normalizeUnit(singleWithUnit[2]);
+      if (this.recognizedUnits.has(unit)) {
+        const isDuration = durationUnits.has(unit);
         return {
           value: parseFloat(singleWithUnit[1]),
-          unit: normalizedUnit,
+          unit: unit,
           isRange: false,
           isDuration: isDuration,
           isDose: !isDuration
@@ -1139,14 +1041,12 @@ class SearchManager {
    */
   extractNumericsFromText(text, fieldType = 'unknown') {
     if (!text) return [];
-    // Use light normalization that preserves hyphens for range detection
-    // Only lowercase and collapse whitespace, don't replace hyphens with spaces
-    const normalized = text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
+    const normalized = this.normalizeText(text);
     const numerics = [];
     const durationUnits = new Set(['day', 'week', 'hour', 'month', 'year']);
 
-    // Match ranges with units: 25-50mg, 5-7 days, 7 to 10 days
-    const rangeWithUnitPattern = /(\d+\.?\d*)\s*(?:[-]|to)\s*(\d+\.?\d*)\s*([a-z]+)/gi;
+    // Match ranges with units: 25-50mg, 7-10 days
+    const rangeWithUnitPattern = /(\d+\.?\d*)\s*[-to]+\s*(\d+\.?\d*)\s*([a-z]+)/gi;
     let match;
     while ((match = rangeWithUnitPattern.exec(normalized)) !== null) {
       const unit = this.normalizeUnit(match[3]);
@@ -1163,9 +1063,8 @@ class SearchManager {
       });
     }
 
-    // Match single values with units: 500mg, 7day, 7 days
-    // Use negative lookbehind/lookahead to avoid matching parts of ranges
-    const singleWithUnitPattern = /(?<!\d\s*[-]\s*)(?<!\d\s+to\s+)(\d+\.?\d*)\s*([a-z]+)(?!\s*[-]\s*\d)(?!\s+to\s+\d)/gi;
+    // Match single values with units: 500mg, 7day
+    const singleWithUnitPattern = /(?<!\d[-to]\s*)(\d+\.?\d*)\s*([a-z]+)(?!\s*[-to]\s*\d)/gi;
     while ((match = singleWithUnitPattern.exec(normalized)) !== null) {
       const unit = this.normalizeUnit(match[2]);
       const isDuration = durationUnits.has(unit);
@@ -1276,69 +1175,27 @@ class SearchManager {
    * Get normalized route key for a medication's route field
    */
   getMedRouteKey(med) {
-    const rawRoute = (med.route || '').toLowerCase().trim();
+    const route = this.normalizeText(med.route || '');
 
-    // Direct mapping for raw route values (before heavy normalization)
-    const directMapping = {
-      'po': 'route_po',
-      'oral': 'route_po',
-      'topical': 'route_topical',
-      'top': 'route_topical',
-      'to affected eye(s)': 'route_ophthalmic',
-      'to affected eye': 'route_ophthalmic',
-      'ophthalmic': 'route_ophthalmic',
-      'ophth': 'route_ophthalmic',
-      'inhalation': 'route_inhalation',
-      'inh': 'route_inhalation',
-      'im': 'route_im',
-      'intramuscular': 'route_im',
-      'iv': 'route_iv',
-      'intravenous': 'route_iv',
-      'pv': 'route_pv',
-      'vaginal': 'route_pv',
-      'per vaginal': 'route_pv',
-      'nasal': 'route_nasal',
-      'in': 'route_nasal',
-      'intranasal': 'route_nasal',
-      'pr': 'route_pr',
-      'rectal': 'route_pr',
-      'per rectum': 'route_pr',
-      'sl': 'route_sl',
-      'sublingual': 'route_sl',
-      'to affected ear(s)': 'route_otic',
-      'to affected ear': 'route_otic',
-      'otic': 'route_otic',
-      'td': 'route_td',
-      'transdermal': 'route_td',
-      'po/sl': 'route_po_sl',
-      'chewed': 'route_chewed',
-      'sc': 'route_sc',
-      'sq': 'route_sc',
-      'subcut': 'route_sc',
-      'subcutaneous': 'route_sc',
-      'neb': 'route_nebulized',
-      'nebulized': 'route_nebulized',
-      'buccal': 'route_buccal',
-      'ng': 'route_ng',
-      'nasogastric': 'route_ng',
-      'gt': 'route_gt',
-      'peg': 'route_gt',
-      'g-tube': 'route_gt',
-      'j-tube': 'route_jt'
-    };
-
-    if (directMapping[rawRoute]) {
-      return directMapping[rawRoute];
+    // Try direct mapping
+    if (this.routeMap[route]) {
+      return this.routeMap[route];
     }
 
-    // Try normalized route
-    const normalized = this.normalizeText(rawRoute);
-    if (this.routeMap[normalized]) {
-      return this.routeMap[normalized];
+    // Try matching known route values in the data
+    const routeMapping = {
+      'to affected eye(s)': 'route_ophthalmic',
+      'to affected eye': 'route_ophthalmic',
+      'to affected ear(s)': 'route_otic',
+      'to affected ear': 'route_otic'
+    };
+
+    if (routeMapping[route]) {
+      return routeMapping[route];
     }
 
     // Handle compound routes
-    if (normalized.includes('po') && normalized.includes('sl')) {
+    if (route.includes('po') && route.includes('sl')) {
       return 'route_po_sl';
     }
 
@@ -1420,7 +1277,7 @@ class SearchManager {
   /**
    * Check if two strings match with typo tolerance
    * Only applied to medication names and indications
-   * Stricter for short words to avoid false positives (e.g., "lice" matching "line")
+   * Max edit distance: 1 for short strings, 2 for longer strings
    */
   fuzzyMatches(query, target, maxDistance = null) {
     if (!query || !target) return false;
@@ -1428,11 +1285,14 @@ class SearchManager {
     const q = query.toLowerCase();
     const t = target.toLowerCase();
 
-    // Exact substring match
+    // Exact match
     if (t.includes(q) || q.includes(t)) return true;
 
     // Don't fuzzy match very short tokens (<=2 chars)
     if (q.length <= 2) return false;
+
+    // Calculate max allowed distance based on word length
+    const allowedDistance = maxDistance !== null ? maxDistance : (q.length <= 5 ? 1 : 2);
 
     // For fuzzy matching, compare word by word
     const queryWords = q.split(/\s+/);
@@ -1445,24 +1305,17 @@ class SearchManager {
       for (const tWord of targetWords) {
         if (tWord.length <= 2) continue;
 
-        // Check prefix match first (always allowed)
+        // Check prefix match first
         if (tWord.startsWith(qWord) || qWord.startsWith(tWord)) {
           foundMatch = true;
           break;
         }
 
-        // Levenshtein distance - stricter for short words to avoid false positives
-        // (e.g., "lice" should NOT match "line", "like", "live", etc.)
-        // Words <= 4 chars: NO Levenshtein (too many false positives)
-        // Words 5-6 chars: distance 1
-        // Words 7+ chars: distance 2
-        if (qWord.length >= 5) {
-          const allowedDist = maxDistance !== null ? maxDistance : (qWord.length <= 6 ? 1 : 2);
-          const dist = this.levenshteinDistance(qWord, tWord);
-          if (dist <= allowedDist) {
-            foundMatch = true;
-            break;
-          }
+        // Check Levenshtein distance
+        const dist = this.levenshteinDistance(qWord, tWord);
+        if (dist <= allowedDistance) {
+          foundMatch = true;
+          break;
         }
       }
 
@@ -1526,10 +1379,9 @@ class SearchManager {
     const doseNumerics = this.extractNumericsFromText(med.dose_text, 'dose');
     const durationNumerics = this.extractNumericsFromText(med.duration, 'duration');
 
-    // Population synonym lists for filtering by adult/pediatric
-    const population = (med.population || '').toLowerCase().trim();
-    const pediatricSynonyms = ['pediatric', 'pediatrics', 'paediatric', 'paediatrics', 'child', 'children', 'infant', 'toddler', 'peds', 'ped', 'paeds', 'paed'];
-    const adultSynonyms = ['adult', 'adults'];
+    // Pediatric synonym expansion
+    const population = (med.population || '').toLowerCase();
+    const pediatricSynonyms = ['pediatric', 'paediatric', 'child', 'children', 'infant', 'toddler', 'peds', 'ped', 'paeds'];
 
     for (const token of tokens) {
       let tokenMatched = false;
@@ -1562,14 +1414,21 @@ class SearchManager {
 
         case 'frequency':
         case 'frequency_phrase':
-          // Hard filter - frequency must match exactly
-          // If user specifies a frequency, medication MUST have that exact frequency
+          // Hard filter - frequency must match (but allow synonyms)
           if (medFreqKey === token.frequencyKey) {
             score += this.weights.frequency;
             tokenMatched = true;
-          } else {
-            // Frequency doesn't match (including when medication has no frequency)
+          } else if (token.frequencyKey && medFreqKey) {
+            // Check if they're related (e.g., q12h and BID might be equivalent)
+            // For now, strict match only
             frequencyFilterFailed = true;
+          } else {
+            // If medication has no frequency, don't fail the filter
+            if (!med.frequency) {
+              tokenMatched = true;
+            } else {
+              frequencyFilterFailed = true;
+            }
           }
           break;
 
@@ -1682,26 +1541,6 @@ class SearchManager {
           // Text matching with scoring priorities
           const term = token.normalized;
 
-          // First check population filters - these match the medication's population field
-          // Adult synonyms match adult medications
-          if (adultSynonyms.includes(term)) {
-            if (population === 'adult') {
-              score += this.weights.indication;
-              tokenMatched = true;
-            }
-            // Don't continue to other checks - this is a population filter
-            break;
-          }
-          // Pediatric synonyms match pediatric medications
-          if (pediatricSynonyms.includes(term)) {
-            if (population === 'pediatric') {
-              score += this.weights.indication;
-              tokenMatched = true;
-            }
-            // Don't continue to other checks - this is a population filter
-            break;
-          }
-
           // Check medication name (exact/prefix)
           if (fields.medName.includes(term) || fields.medName.startsWith(term)) {
             score += this.weights.medName;
@@ -1720,6 +1559,11 @@ class SearchManager {
           // Check notes/sites
           else if (fields.notes.includes(term)) {
             score += this.weights.notes;
+            tokenMatched = true;
+          }
+          // Pediatric synonym check
+          else if (population === 'pediatric' && pediatricSynonyms.includes(term)) {
+            score += this.weights.indication;
             tokenMatched = true;
           }
           // Fuzzy matching fallback for med name and indication only
@@ -1835,120 +1679,12 @@ class SearchManager {
   }
 
   /**
-   * Get all highlight terms for UI highlighting
-   * Expands tokens to include all synonyms and variations
+   * Normalize search terms for UI highlighting
    * (Public API used by SearchResultsRenderer)
    */
   normalizeSearchTerms(query) {
     const tokens = this.tokenizeQuery(query);
-    const highlightTerms = new Set();
-
-    for (const token of tokens) {
-      // Always add the raw token
-      if (token.raw) {
-        highlightTerms.add(token.raw.toLowerCase());
-      }
-
-      switch (token.type) {
-        case 'frequency':
-        case 'frequency_phrase':
-          // Add all frequency synonyms
-          if (token.frequencyKey && this.frequencyDisplayMap[token.frequencyKey]) {
-            for (const synonym of this.frequencyDisplayMap[token.frequencyKey]) {
-              highlightTerms.add(synonym.toLowerCase());
-            }
-          }
-          break;
-
-        case 'route':
-          // Add all route synonyms that map to the same route key
-          for (const [routeText, routeKey] of Object.entries(this.routeMap)) {
-            if (routeKey === token.routeKey) {
-              highlightTerms.add(routeText.toLowerCase());
-            }
-          }
-          break;
-
-        case 'ambiguous':
-          // Add both frequency and route synonyms
-          if (token.frequencyKey && this.frequencyDisplayMap[token.frequencyKey]) {
-            for (const synonym of this.frequencyDisplayMap[token.frequencyKey]) {
-              highlightTerms.add(synonym.toLowerCase());
-            }
-          }
-          if (token.routeKey) {
-            for (const [routeText, routeKey] of Object.entries(this.routeMap)) {
-              if (routeKey === token.routeKey) {
-                highlightTerms.add(routeText.toLowerCase());
-              }
-            }
-          }
-          break;
-
-        case 'numeric_with_unit':
-          // Add variations of the numeric+unit (e.g., 7d, 7 day, 7 days, 7day)
-          this.addNumericHighlightVariants(highlightTerms, token.value, token.unit, token.isRange, token.rangeMin, token.rangeMax);
-          break;
-
-        case 'numeric_only':
-          // For unitless numerics, add the number itself
-          // Also add common patterns that might contain this number
-          if (token.value !== null) {
-            highlightTerms.add(token.value.toString());
-          }
-          if (token.isRange) {
-            highlightTerms.add(`${token.rangeMin}-${token.rangeMax}`);
-            highlightTerms.add(`${token.rangeMin} to ${token.rangeMax}`);
-          }
-          break;
-
-        case 'text':
-          // Text tokens - just the normalized term
-          if (token.normalized) {
-            highlightTerms.add(token.normalized.toLowerCase());
-          }
-          break;
-      }
-    }
-
-    return Array.from(highlightTerms).filter(Boolean);
-  }
-
-  /**
-   * Add numeric highlight variants for a given value and unit
-   * Handles both exact values and ranges
-   */
-  addNumericHighlightVariants(terms, value, unit, isRange, rangeMin, rangeMax) {
-    if (!unit) return;
-
-    // Get all unit variations for this canonical unit
-    const unitVariants = [];
-    for (const [alias, canonical] of Object.entries(this.unitAliases)) {
-      if (canonical === unit) {
-        unitVariants.push(alias);
-      }
-    }
-    // Also add the canonical unit itself
-    unitVariants.push(unit);
-
-    if (isRange && rangeMin !== undefined && rangeMax !== undefined) {
-      // Add range patterns
-      for (const unitVar of unitVariants) {
-        terms.add(`${rangeMin}-${rangeMax}${unitVar}`);
-        terms.add(`${rangeMin}-${rangeMax} ${unitVar}`);
-        terms.add(`${rangeMin} to ${rangeMax} ${unitVar}`);
-      }
-    } else if (value !== null) {
-      // Add single value patterns with all unit variations
-      for (const unitVar of unitVariants) {
-        terms.add(`${value}${unitVar}`);
-        terms.add(`${value} ${unitVar}`);
-      }
-      // Note: We intentionally do NOT add the bare number here.
-      // Range matching in highlightText uses parseFloat() on terms like "5d" to extract
-      // the numeric value for range checking, so "6d" will still highlight "5-7 days".
-      // Adding bare numbers would incorrectly highlight "5mg" when searching "5d".
-    }
+    return tokens.map(t => t.raw).filter(Boolean);
   }
 
   /**
