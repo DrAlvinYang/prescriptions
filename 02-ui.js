@@ -329,7 +329,20 @@ class SearchResultsRenderer {
     const totalResults = groups.adult.length + groups.pediatric.length + groups.other.length;
 
     if (totalResults === 0) {
-      resultsContainer.innerHTML = `<div style="padding:15px; color:#666;">No matches found.</div>`;
+      resultsContainer.innerHTML = `
+        <div style="padding:15px; color:#666; display:flex; align-items:center; justify-content:space-between;">
+          <span>No matches found.</span>
+          <button id="addNewMedFromSearch" class="add-new-med-from-search-btn" type="button">
+            Add new medication <span class="enter-symbol"></span>
+          </button>
+        </div>`;
+
+      const addBtn = document.getElementById("addNewMedFromSearch");
+      if (addBtn) {
+        addBtn.onclick = () => {
+          window.modalManager.openAddNewMed();
+        };
+      }
       return;
     }
 

@@ -130,20 +130,30 @@ class SearchController {
 
   selectActiveResult() {
     const results = Utils.queryElements("#searchResults .med-item");
-    
+
+    // If no results, check for "Add new medication" button
+    if (results.length === 0) {
+      const addBtn = document.getElementById("addNewMedFromSearch");
+      if (addBtn) {
+        addBtn.click();
+        return true;
+      }
+      return false;
+    }
+
     // If focused on a med item, click it
     if (document.activeElement && document.activeElement.classList.contains("med-item")) {
       document.activeElement.click();
       return true;
     }
-    
+
     // If only one result, auto-select it
     if (results.length === 1) {
       results[0].click();
       this.clear(); // Clear search after selection
       return true;
     }
-    
+
     // If an item is highlighted via keyboard
     if (this.state.activeSearchIndex >= 0 && results[this.state.activeSearchIndex]) {
       results[this.state.activeSearchIndex].click();

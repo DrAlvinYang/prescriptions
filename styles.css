@@ -98,8 +98,22 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1; 
+  flex: 1;
   text-align: left;
+}
+
+.provider-edit-icon {
+  flex-shrink: 0;
+  color: #666;
+  margin-left: 8px;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.provider-edit-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* Location Dropdown */
@@ -935,4 +949,36 @@ button.add-new-med-btn:hover {
 
 button.add-new-med-btn:active {
   background: #e8f0ff;
+}
+
+/* Add New Med From Search Button */
+.add-new-med-from-search-btn {
+  background: var(--btn);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.add-new-med-from-search-btn:hover {
+  background: var(--btn-hover);
+}
+
+.add-new-med-from-search-btn .enter-symbol {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 17l-5-5 5-5'/%3E%3Cpath d='M20 7v4a2 2 0 0 1-2 2H4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+  vertical-align: middle;
 }
