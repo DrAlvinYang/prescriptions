@@ -46,9 +46,9 @@ body {
 /* --- Topbar --- */
 .topbar {
   display: flex;
-  gap: 12px; 
+  gap: 12px;
   align-items: center;
-  padding: 10px 20px;
+  padding: 10px 75px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -81,7 +81,7 @@ body {
   border-radius: 6px;
   padding: 0 10px;
   height: 35px;
-  width: 150px;
+  width: 130px;
 
   display: flex;
   align-items: center;
@@ -132,9 +132,9 @@ body {
   border-radius: 6px;
   padding: 0 10px;
   height: 35px;
-  width: 250px;
-  min-width: 200px; /* Allow shrinking by 50px */
-  flex-shrink: 1;
+  width: 200px;
+  min-width: 200px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
@@ -264,6 +264,20 @@ body {
   outline-offset: -2px;
 }
 
+/* Location Search Backdrop */
+.location-search-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+}
+.location-search-backdrop.hidden {
+  display: none;
+}
+
 /* Location Search Dropdown */
 .location-search-dropdown {
   position: absolute;
@@ -274,7 +288,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  width: 520px; /* Wide enough for ~70 characters */
+  width: 480px;
   z-index: 200;
   display: flex;
   flex-direction: column;

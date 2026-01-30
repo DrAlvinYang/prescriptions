@@ -683,11 +683,32 @@ class LocationUIRenderer {
     if (this.dropdown) {
       this.dropdown.classList.remove("hidden");
     }
+    this.showBackdrop();
   }
 
   hideDropdown() {
     if (this.dropdown) {
       this.dropdown.classList.add("hidden");
+    }
+    this.hideBackdrop();
+  }
+
+  showBackdrop() {
+    let backdrop = document.getElementById("locationSearchBackdrop");
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "locationSearchBackdrop";
+      backdrop.className = "location-search-backdrop";
+      backdrop.addEventListener("click", () => this.exitSearchMode());
+      document.body.appendChild(backdrop);
+    }
+    backdrop.classList.remove("hidden");
+  }
+
+  hideBackdrop() {
+    const backdrop = document.getElementById("locationSearchBackdrop");
+    if (backdrop) {
+      backdrop.classList.add("hidden");
     }
   }
 
