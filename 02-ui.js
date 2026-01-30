@@ -570,15 +570,39 @@ class LocationUIRenderer {
       );
     }
 
-    this.updateActiveLocationItem(items);
+    this.updateActiveLocationItem(items, direction);
   }
 
-  updateActiveLocationItem(items) {
+  updateActiveLocationItem(items, direction = null) {
     items.forEach((element, index) => {
       if (index === this.activeLocationIndex) {
         element.classList.add("is-active");
-        element.focus();
-        element.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        // Prevent automatic scroll on focus to avoid flickering
+        element.focus({ preventScroll: true });
+
+        // Check if element is already visible in the dropdown
+        const dropdownResults = this.dropdown.querySelector(".location-search-results");
+        const elementRect = element.getBoundingClientRect();
+        const containerRect = dropdownResults.getBoundingClientRect();
+
+        const isFullyVisible =
+          elementRect.top >= containerRect.top &&
+          elementRect.bottom <= containerRect.bottom;
+
+        const scrollOptions = {
+          behavior: "auto" // Instant scroll for seamless item replacement
+        };
+
+        // Only use directional scrolling if element is not fully visible
+        if (direction === "up" && !isFullyVisible) {
+          scrollOptions.block = "start"; // Align to top when going up
+        } else if (direction === "down" && !isFullyVisible) {
+          scrollOptions.block = "end"; // Align to bottom when going down
+        } else {
+          scrollOptions.block = "nearest"; // Use nearest if already visible or no direction
+        }
+
+        element.scrollIntoView(scrollOptions);
       } else {
         element.classList.remove("is-active");
       }
@@ -609,14 +633,16 @@ class LocationUIRenderer {
 
   scrollToSelectedLocation() {
     const currentName = this.locationManager.state.currentLocationName;
-    
+
     // Use setTimeout to ensure the dropdown is rendered
     setTimeout(() => {
       const items = this.dropdown.querySelectorAll(".loc-search-item");
-      items.forEach((item) => {
+      items.forEach((item, index) => {
         const nameSpan = item.querySelector(".loc-search-name");
         if (nameSpan && nameSpan.textContent === currentName) {
           item.scrollIntoView({ block: "center", behavior: "smooth" });
+          // Set active index so arrow keys continue from this position
+          this.activeLocationIndex = index;
         }
       });
     }, 50);
@@ -724,7 +750,7 @@ class LocationUIRenderer {
           const currentIndex = items.indexOf(div);
           if (currentIndex < items.length - 1) {
             this.activeLocationIndex = currentIndex + 1;
-            this.updateActiveLocationItem(items);
+            this.updateActiveLocationItem(items, "down");
           }
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
@@ -732,7 +758,22 @@ class LocationUIRenderer {
           const currentIndex = items.indexOf(div);
           if (currentIndex > 0) {
             this.activeLocationIndex = currentIndex - 1;
-            this.updateActiveLocationItem(items);
+            this.updateActiveLocationItem(items, "up");
+          }
+        } else if (e.key.length === 1 && e.key.match(/[a-z]/i)) {
+          // Letter jump: find first location starting with this letter
+          e.preventDefault();
+          const char = e.key.toLowerCase();
+          const items = Array.from(this.dropdown.querySelectorAll(".loc-search-item"));
+
+          for (let i = 0; i < items.length; i++) {
+            const nameSpan = items[i].querySelector(".loc-search-name");
+            if (nameSpan && nameSpan.textContent.trim().toLowerCase().startsWith(char)) {
+              this.activeLocationIndex = i;
+              // Use "up" direction to align matched item to top of dropdown
+              this.updateActiveLocationItem(items, "up");
+              break;
+            }
           }
         }
       });

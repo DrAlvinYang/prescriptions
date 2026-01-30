@@ -465,39 +465,21 @@ class LocationManager {
     return all;
   }
 
-  normalizeLocationText(text) {
-    if (!text) return '';
-    return text
-      .toLowerCase()
-      .trim()
-      // Remove periods
-      .replace(/\./g, '')
-      // Normalize accented characters to their base form
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      // Replace hyphens with spaces for matching
-      .replace(/-/g, ' ')
-      // Collapse multiple spaces into one
-      .replace(/\s+/g, ' ');
-  }
-
   searchLocations(query) {
     const all = this.getAllLocations();
-
+    
     if (!query || query.trim() === "") {
       // Return all locations alphabetically when no query
       return all;
     }
-
-    // Normalize search term: lowercase, trim, remove periods, strip accents, normalize delimiters
-    const searchTerm = this.normalizeLocationText(query);
-
-    // Filter locations where normalized name contains the search term
-    const matches = all.filter(loc => {
-      const normalizedName = this.normalizeLocationText(loc.name);
-      return normalizedName.includes(searchTerm);
-    });
-
+    
+    const searchTerm = query.toLowerCase().trim();
+    
+    // Filter locations where name contains the search term (case-insensitive)
+    const matches = all.filter(loc => 
+      loc.name.toLowerCase().includes(searchTerm)
+    );
+    
     return matches;
   }
 
@@ -842,7 +824,6 @@ class SearchManager {
    * - Collapse whitespace
    * - Treat hyphens, slashes, spaces as identical delimiters
    * - Normalize decimals (.5 -> 0.5)
-   * - Remove periods from abbreviations (st. -> st)
    */
   normalizeText(text) {
     if (!text) return '';
@@ -856,8 +837,6 @@ class SearchManager {
       .replace(/[-\/]/g, ' ')
       // Normalize decimal notation (.5 -> 0.5)
       .replace(/(?<![0-9])\.(\d)/g, '0.$1')
-      // Remove periods at end of words (st. -> st) but preserve decimals
-      .replace(/\.(?=\s|$)/g, '')
       // Remove comparison symbols and replace with words
       .replace(/>=|≥/g, ' gte ')
       .replace(/<=|≤/g, ' lte ')

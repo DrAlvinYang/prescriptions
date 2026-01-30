@@ -125,7 +125,7 @@ class SearchController {
       );
     }
 
-    this.updateActiveItem(results);
+    this.updateActiveItem(results, direction);
   }
 
   selectActiveResult() {
@@ -163,12 +163,36 @@ class SearchController {
     return false;
   }
 
-  updateActiveItem(results) {
+  updateActiveItem(results, direction = null) {
     results.forEach((element, index) => {
       if (index === this.state.activeSearchIndex) {
         element.classList.add("is-active");
-        element.focus();
-        element.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        // Prevent automatic scroll on focus to avoid flickering
+        element.focus({ preventScroll: true });
+
+        // Check if element is already visible in the viewport
+        const container = document.querySelector(".content-scroll");
+        const elementRect = element.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        const isFullyVisible =
+          elementRect.top >= containerRect.top &&
+          elementRect.bottom <= containerRect.bottom;
+
+        const scrollOptions = {
+          behavior: "auto" // Instant scroll for seamless item replacement
+        };
+
+        // Only use directional scrolling if element is not fully visible
+        if (direction === "up" && !isFullyVisible) {
+          scrollOptions.block = "start"; // Align to top when going up
+        } else if (direction === "down" && !isFullyVisible) {
+          scrollOptions.block = "end"; // Align to bottom when going down
+        } else {
+          scrollOptions.block = "nearest"; // Use nearest if already visible or no direction
+        }
+
+        element.scrollIntoView(scrollOptions);
       } else {
         element.classList.remove("is-active");
       }
@@ -273,10 +297,11 @@ class WeightController {
 // ============================================================================
 
 class KeyboardController {
-  constructor(state, searchController, printController) {
+  constructor(state, searchController, printController, locationController) {
     this.state = state;
     this.searchController = searchController;
     this.printController = printController;
+    this.locationController = locationController;
   }
 
   handleGlobalKeydown(event) {
@@ -325,10 +350,16 @@ class KeyboardController {
         return;
       }
     }
-    
+
     // Cmd/Ctrl + F: Focus search
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f') {
       event.preventDefault();
+
+      // Close location dropdown if open
+      if (this.locationController) {
+        this.locationController.exitSearchMode();
+      }
+
       const searchInput = document.getElementById("searchInput");
       searchInput.focus();
       searchInput.select();

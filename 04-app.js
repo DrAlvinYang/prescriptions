@@ -143,7 +143,8 @@ class Application {
     this.controllers.keyboard = new KeyboardController(
       this.state,
       this.controllers.search,
-      this.controllers.print
+      this.controllers.print,
+      this.controllers.location
     );
 
     // Expose globally for onclick handlers
