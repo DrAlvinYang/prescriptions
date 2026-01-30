@@ -973,3 +973,172 @@ button.add-new-med-btn {
   background-size: 16px 16px;
   vertical-align: middle;
 }
+
+/* --- Help Button (Fixed at bottom left) --- */
+.help-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 500;
+  padding: 0;
+}
+
+.help-btn:hover {
+  background: var(--btn-hover);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  transform: scale(1.05);
+}
+
+.help-btn svg {
+  width: 22px;
+  height: 22px;
+  color: var(--accent);
+}
+
+/* --- Help Popup Overlay --- */
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.help-overlay.hidden {
+  display: none;
+}
+
+/* --- Help Popup Box --- */
+.help-popup-box {
+  background: var(--panel);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px;
+  position: relative;
+}
+
+/* --- Help Close Button --- */
+.help-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.1s;
+}
+
+.help-close-btn:hover {
+  background: var(--btn-hover);
+  color: var(--text);
+}
+
+/* --- Help Content Styling --- */
+.help-content {
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.help-content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--header-text);
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.help-content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--header-text);
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.help-content p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+}
+
+.help-content ol,
+.help-content ul {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+  padding-left: 25px;
+}
+
+.help-content li {
+  margin-bottom: 8px;
+}
+
+.help-content strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  .help-popup-box {
+    width: 95%;
+    padding: 20px;
+    max-height: 90vh;
+  }
+
+  .help-content h2 {
+    font-size: 18px;
+  }
+
+  .help-content h3 {
+    font-size: 15px;
+  }
+
+  .help-content p,
+  .help-content ol,
+  .help-content ul {
+    font-size: 12px;
+  }
+
+  .help-btn {
+    bottom: 15px;
+    left: 15px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .help-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}

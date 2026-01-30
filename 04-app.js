@@ -163,6 +163,7 @@ class Application {
     this.setupLocationListeners();
     this.setupProviderListeners();
     this.setupActionButtons();
+    this.setupHelpListeners();
     this.setupGlobalKeyboard();
   }
 
@@ -454,6 +455,41 @@ class Application {
         this.controllers.reset.reset();
       });
     }
+  }
+
+  setupHelpListeners() {
+    const helpBtn = Utils.getElement("helpBtn");
+    const helpPopup = Utils.getElement("helpPopup");
+    const helpCloseBtn = Utils.getElement("helpCloseBtn");
+
+    if (!helpBtn || !helpPopup || !helpCloseBtn) {
+      console.warn("Help elements not found");
+      return;
+    }
+
+    // Open help popup when clicking the help button
+    helpBtn.addEventListener("click", () => {
+      helpPopup.classList.remove("hidden");
+    });
+
+    // Close help popup when clicking the X button
+    helpCloseBtn.addEventListener("click", () => {
+      helpPopup.classList.add("hidden");
+    });
+
+    // Close help popup when clicking outside the popup box
+    helpPopup.addEventListener("click", (e) => {
+      if (e.target === helpPopup) {
+        helpPopup.classList.add("hidden");
+      }
+    });
+
+    // Close help popup with Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !helpPopup.classList.contains("hidden")) {
+        helpPopup.classList.add("hidden");
+      }
+    });
   }
 
   setupGlobalKeyboard() {
