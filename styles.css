@@ -22,7 +22,7 @@ body {
   color: var(--text);
   background: var(--bg);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   min-width: 850px;
 }
 
@@ -65,7 +65,7 @@ body {
 
 .brand {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--accent);
   white-space: nowrap;
 }
@@ -88,7 +88,7 @@ body {
   justify-content: flex-start;
 
   color: #333;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.1s, border-color 0.1s;
@@ -142,7 +142,7 @@ body {
   gap: 8px;
 
   color: #333;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.1s, border-color 0.1s;
@@ -162,8 +162,8 @@ body {
 }
 
 .location-btn .arrow {
-  flex-shrink: 0; 
-  font-size: 10px;
+  flex-shrink: 0;
+  font-size: 9px;
   color: #666;
 }
 
@@ -204,8 +204,8 @@ body {
 .loc-item:hover { background: #f0f7ff; }
 .loc-item.selected { font-weight: 700; color: var(--accent); background: #eef3f8; }
 
-.loc-name { 
-  font-size: 13px;
+.loc-name {
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -217,7 +217,7 @@ body {
   background: none;
   border: none;
   color: #888;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   cursor: pointer;
   padding: 0 6px;
@@ -236,7 +236,7 @@ body {
 }
 .btn-sm {
   width: 100%;
-  font-size: 12px;
+  font-size: 11px;
   padding: 6px;
 }
 
@@ -246,7 +246,7 @@ body {
   height: 100%;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: #333;
   outline: none;
@@ -320,7 +320,7 @@ body {
 .loc-search-item.selected { font-weight: 700; color: var(--accent); background: #eef3f8; }
 
 .loc-search-name {
-  font-size: 13px;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -357,10 +357,10 @@ body {
 .weight-section label {
   font-weight: 600;
   color: #000;
-  font-size: 12px;
+  font-size: 11px;
 }
 .weight-section span {
-  font-size: 12px;
+  font-size: 11px;
   color: #000;
   font-weight: 600;
 }
@@ -370,7 +370,7 @@ body {
   padding: 0;
   border: none;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   text-align: center;
   background: transparent;
   outline: none;
@@ -391,7 +391,7 @@ body {
   padding: 8px 30px 8px 12px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 12px;
   height: 35px;
 }
 .searchbar input::placeholder {
@@ -405,7 +405,7 @@ body {
   transform: translateY(-50%);
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 17px;
   color: #999;
   cursor: pointer;
   padding: 0;
@@ -422,7 +422,7 @@ body {
 }
 
 .reset-btn {
-  font-size: 18px;
+  font-size: 17px;
   color: #000;
   padding: 4px 8px;
   border: 1px solid transparent;
@@ -476,7 +476,7 @@ summary.specialty-header {
   color: var(--header-text);
   padding: 10px 12px;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
   list-style: none;
@@ -509,7 +509,7 @@ details:not([open]) summary.specialty-header {
   background: #fcfcfc;
   cursor: pointer;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   color: #444;
   display: flex;
   align-items: center;
@@ -518,7 +518,7 @@ details:not([open]) summary.specialty-header {
 }
 .subfolder-summary:hover { background: #f4f4f4; }
 .subfolder-arrow {
-  font-size: 10px;
+  font-size: 9px;
   transition: transform 0.2s;
 }
 details[open] > .subfolder-summary .subfolder-arrow {
@@ -566,13 +566,13 @@ details[open] > .subfolder-summary .subfolder-arrow {
 }
 
 .med-name-text {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #222;
   margin-right: 4px;
 }
 .med-details-text {
-  font-size: 13px;
+  font-size: 12px;
   color: #444;
 }
 
@@ -583,7 +583,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   padding: 0;
 }
 .section-title {
-  font-size: 18px;
+  font-size: 17px;
   margin-bottom: 15px;
   color: var(--text);
   /* Optional: Align the title with the new margins of the results */
@@ -670,12 +670,12 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .cart-med-name {
   grid-area: name;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   color: #222;
 }
 .cart-med-details {
   grid-area: details;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
   line-height: 1.4;
 }
@@ -701,7 +701,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 .cart-count {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text);
   text-align: left;
 }
@@ -712,7 +712,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   border: 1px solid var(--border);
   background: var(--btn);
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.1s;
@@ -734,7 +734,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   align-self: start; /* Aligns with the first line (name) */
   background: none;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   color: #999;
   padding: 0;
@@ -785,7 +785,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .modal-input-group input {
   width: 100%;
   padding: 8px;
-  font-size: 16px;
+  font-size: 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
   -moz-appearance: textfield; 
@@ -822,7 +822,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 }
 
 .desktop-only-message p {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text);
   margin: 0 0 10px 0;
   line-height: 1.5;
@@ -830,29 +830,29 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 .desktop-only-message p:first-child {
   font-weight: 600;
-  font-size: 18px;
+  font-size: 17px;
 }
 
 /* --- Responsive Breakpoints --- */
 
-/* Dashboard: 3 columns to 1 column at 1200px */
-@media (max-width: 1200px) {
-  .dashboard-container {
-    flex-direction: column;
-  }
-
-  /* Stretch folders to fill width up to cart border */
-  .dash-col {
-    width: 100%;
-  }
-
-  details.specialty-card {
-    width: 100%;
-  }
-}
-
+/* Dashboard: 3 columns to 2 columns at 1180px (same as header pivot) */
 /* Header: Single-line to two-line pivot at 1180px */
 @media (max-width: 1180px) {
+  /* Dashboard: 2 columns with equal spacing */
+  .dashboard-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .dash-col {
+    flex: 1;
+  }
+
+  /* Hide the third column (it will be empty in 2-column mode) */
+  #col3 {
+    display: none;
+  }
+
   .topbar {
     flex-wrap: wrap;
     height: auto;
@@ -1000,7 +1000,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 /* Brand Match Hint */
 .brand-match-hint {
   font-weight: normal;
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: #228B22; 
   font-style: italic;
   margin-left: 6px;
@@ -1038,7 +1038,7 @@ body.show-brands .brand-match-hint {
 
 .edit-field label, .edit-full-row label {
   display: block;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--muted);
   margin-bottom: 4px;
@@ -1050,7 +1050,7 @@ body.show-brands .brand-match-hint {
   padding: 6px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-family: inherit;
   resize: none;
 }
@@ -1078,7 +1078,7 @@ body.show-brands .brand-match-hint {
 .edit-btn {
   grid-area: edit;
   align-self: end; /* Aligns with the last line of details */
-  font-size: 11px;
+  font-size: 10px;
   color: var(--accent);
   background: none;
   border: none;
@@ -1192,7 +1192,7 @@ button.add-new-med-btn {
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   padding: 10px 12px;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--header-text);
   cursor: pointer;
   width: 100%;
@@ -1206,7 +1206,7 @@ button.add-new-med-btn {
   border: 1px solid transparent;
   border-radius: 4px;
   padding: 5px 11px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.1s;
@@ -1302,7 +1302,7 @@ button.add-new-med-btn {
   right: 15px;
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 27px;
   color: var(--muted);
   cursor: pointer;
   padding: 0;
@@ -1328,7 +1328,7 @@ button.add-new-med-btn {
 }
 
 .help-content h2 {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--header-text);
   margin-top: 0;
@@ -1336,7 +1336,7 @@ button.add-new-med-btn {
 }
 
 .help-content h3 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--header-text);
   margin-top: 20px;
@@ -1344,14 +1344,14 @@ button.add-new-med-btn {
 }
 
 .help-content p {
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.6;
   margin: 0 0 15px 0;
 }
 
 .help-content ol,
 .help-content ul {
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.6;
   margin: 0 0 15px 0;
   padding-left: 25px;
@@ -1375,17 +1375,17 @@ button.add-new-med-btn {
   }
 
   .help-content h2 {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .help-content h3 {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .help-content p,
   .help-content ol,
   .help-content ul {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .help-btn {

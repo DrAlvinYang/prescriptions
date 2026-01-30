@@ -8,8 +8,8 @@ class Application {
     this.controllers = {};
     this.renderers = {};
     this.managers = {};
-    this.isSingleColumn = false;
-    this.SINGLE_COLUMN_BREAKPOINT = 1200;
+    this.isTwoColumn = false;
+    this.TWO_COLUMN_BREAKPOINT = 1180;
   }
 
   async initialize() {
@@ -569,15 +569,15 @@ class Application {
 
   render() {
     // Check current layout mode
-    this.isSingleColumn = window.innerWidth <= this.SINGLE_COLUMN_BREAKPOINT;
+    this.isTwoColumn = window.innerWidth <= this.TWO_COLUMN_BREAKPOINT;
 
     // Render dashboard based on layout mode
-    if (this.isSingleColumn) {
-      // Single column: all folders alphabetically in col1
+    if (this.isTwoColumn) {
+      // Two columns: consolidated layout for narrower screens
       this.renderers.dashboard.render(
         {
-          col1: SPECIALTY_SINGLE_COLUMN,
-          col2: [],
+          col1: SPECIALTY_2_COLUMNS.col1,
+          col2: SPECIALTY_2_COLUMNS.col2,
           col3: []
         },
         (med, element) => this.controllers.cart.toggle(med, element)
@@ -599,11 +599,11 @@ class Application {
   }
 
   handleResize() {
-    const wasSingleColumn = this.isSingleColumn;
-    this.isSingleColumn = window.innerWidth <= this.SINGLE_COLUMN_BREAKPOINT;
+    const wasTwoColumn = this.isTwoColumn;
+    this.isTwoColumn = window.innerWidth <= this.TWO_COLUMN_BREAKPOINT;
 
     // Only re-render if layout mode changed
-    if (wasSingleColumn !== this.isSingleColumn) {
+    if (wasTwoColumn !== this.isTwoColumn) {
       // Save open folder states
       const openFolders = new Set();
       document.querySelectorAll('details[open]').forEach(details => {
@@ -614,11 +614,11 @@ class Application {
       });
 
       // Re-render dashboard
-      if (this.isSingleColumn) {
+      if (this.isTwoColumn) {
         this.renderers.dashboard.render(
           {
-            col1: SPECIALTY_SINGLE_COLUMN,
-            col2: [],
+            col1: SPECIALTY_2_COLUMNS.col1,
+            col2: SPECIALTY_2_COLUMNS.col2,
             col3: []
           },
           (med, element) => this.controllers.cart.toggle(med, element)
