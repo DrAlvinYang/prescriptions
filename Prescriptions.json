@@ -608,13 +608,13 @@
       "refill": "0",
       "prn": "nausea/vomiting",
       "form": "tab",
-      "comments": "May dispense subligual if patient preference.",
+      "comments": "May dispense sublingual if patient preference.",
       "population": "Adult",
       "subcategory": "Antiemetic",
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "allergy, analgesia, antiemetic | adult | antiemetic | nausea/vomiting | ondansetron | zofran zuplenz | 8mg | nausea/vomiting | may dispense subligual if patient preference."
+      "search_text": "allergy, analgesia, antiemetic | adult | antiemetic | nausea/vomiting | ondansetron | zofran zuplenz | 8mg | nausea/vomiting | may dispense sublingual if patient preference."
     },
     {
       "specialty": "Allergy, Analgesia, Antiemetic",
@@ -965,8 +965,8 @@
       "population": "Pediatric",
       "subcategory": "Allergy",
       "weight_based": false,
-      "dose_per_kg_mg": 15.0,
-      "max_dose_mg": 1000.0,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
       "search_text": "allergy, analgesia, antiemetic | pediatric | allergy | allergy symptoms | cetirizine | reactine zyrtec | 5-10mg | allergy | for age greater than 5 years."
     },
     {
@@ -1699,7 +1699,7 @@
       "specialty": "Anti-infective",
       "med": "Dolutegravir",
       "brands": [
-        "Trvicay"
+        "Tivicay"
       ],
       "indication": "HIV PEP (post-exposure prophylaxis)",
       "dose_text": "50mg",
@@ -1716,7 +1716,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "anti-infective | adult | hiv pep (post-exposure prophylaxis) | dolutegravir | trvicay | 50mg | start as soon as possible after exposure (and within 72 hours of exposure). take in combination with truvada."
+      "search_text": "anti-infective | adult | hiv pep (post-exposure prophylaxis) | dolutegravir | tivicay | 50mg | start as soon as possible after exposure (and within 72 hours of exposure). take in combination with truvada."
     },
     {
       "specialty": "Anti-infective",
@@ -3151,10 +3151,10 @@
       ],
       "indication": "",
       "dose_text": "",
-      "route": "PO",
+      "route": "",
       "frequency": "",
       "duration": "",
-      "dispense": "7 day",
+      "dispense": "",
       "refill": "0",
       "prn": "",
       "form": "suspension",
@@ -3754,7 +3754,7 @@
         "Amoxil",
         "Trimox"
       ],
-      "indication": "Otits media (adult, high risk: age >65, immunocompromised, antibiotics within last month)",
+      "indication": "Otitis media (adult, high risk: age >65, immunocompromised, antibiotics within last month)",
       "dose_text": "1000mg",
       "route": "PO",
       "frequency": "TID",
@@ -3769,7 +3769,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "ent | adult | ear | otits media (adult, high risk: age >65, immunocompromised, antibiotics within last month) | amoxicillin | amoxil trimox | 1000mg"
+      "search_text": "ent | adult | ear | otitis media (adult, high risk: age >65, immunocompromised, antibiotics within last month) | amoxicillin | amoxil trimox | 1000mg"
     },
     {
       "specialty": "ENT",
@@ -4642,7 +4642,7 @@
         "Nitrolingual"
       ],
       "indication": "Chest pain",
-      "dose_text": "1 spray",
+      "dose_text": "1-2 sprays",
       "route": "SL",
       "frequency": "q5mins",
       "duration": "",
@@ -4656,7 +4656,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "cardiac & heme | adult | chest pain | nitroglycerin (spray) | nitrolingual | 1 spray | chest pain | 1-2 sprays at chest pain onset; repeat every 5 minutes if pain persists; may administer up to 3 sprays in a 15-minute period. if pain is not relieved or worsens 5 minutes after 1 dose, seek emergency medical attention. use sitting down."
+      "search_text": "cardiac & heme | adult | chest pain | nitroglycerin (spray) | nitrolingual | 1-2 sprays | chest pain | 1-2 sprays at chest pain onset; repeat every 5 minutes if pain persists; may administer up to 3 sprays in a 15-minute period. if pain is not relieved or worsens 5 minutes after 1 dose, seek emergency medical attention. use sitting down."
     },
     {
       "specialty": "Cardiac & Heme",
@@ -6782,10 +6782,10 @@
         "TMP-SMX"
       ],
       "indication": "UTI (cystitis or pyelonephritis)",
-      "dose_text": "6mg/kg/dose",
-      "route": "PO",
-      "frequency": "q12h",
-      "duration": "7 day",
+      "dose_text": "",
+      "route": "",
+      "frequency": "",
+      "duration": "",
       "dispense": "",
       "refill": "0",
       "prn": "",
@@ -6796,7 +6796,7 @@
       "weight_based": true,
       "dose_per_kg_mg": 6.0,
       "max_dose_mg": 160.0,
-      "search_text": "gi & gu | pediatric | gu | uti (cystitis or pyelonephritis) | tmp/smx | septra bactrim sulfamethoxazole + trimethroprim tmp-smx | 6mg/kg/dose | 6mg trimethoprim/kg po q12h for 7 days. 12mg/kg/day. maximum dose = 160mg trimethoprim/dose."
+      "search_text": "gi & gu | pediatric | gu | uti (cystitis or pyelonephritis) | tmp/smx | septra bactrim sulfamethoxazole + trimethroprim tmp-smx | 6mg trimethoprim/kg po q12h for 7 days. 12mg/kg/day. maximum dose = 160mg trimethoprim/dose."
     },
     {
       "specialty": "OBGYN",
@@ -8363,7 +8363,7 @@
       "brands": [
         "Betaxin"
       ],
-      "indication": "Alcohol use disorder (Wernicke encephalopahy prevention)",
+      "indication": "Alcohol use disorder (Wernicke encephalopathy prevention)",
       "dose_text": "100mg",
       "route": "PO",
       "frequency": "qAM",
@@ -8378,7 +8378,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "substance use | adult | withdrawal management | alcohol use disorder (wernicke encephalopahy prevention) | thiamine | betaxin | 100mg"
+      "search_text": "substance use | adult | withdrawal management | alcohol use disorder (wernicke encephalopathy prevention) | thiamine | betaxin | 100mg"
     },
     {
       "specialty": "Substance Use",
@@ -8529,7 +8529,7 @@
       "route": "SL",
       "frequency": "OD",
       "duration": "7 day",
-      "dispense": "7 day",
+      "dispense": "7 tab",
       "refill": "0",
       "prn": "",
       "form": "tab",
@@ -8732,7 +8732,7 @@
       "brands": [
         "Seroquel"
       ],
-      "indication": "Sleep (off label use for patients with subtance use symptoms)",
+      "indication": "Sleep (off label use for patients with substance use symptoms)",
       "dose_text": "25mg",
       "route": "PO",
       "frequency": "qhs",
@@ -8747,7 +8747,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "substance use | adult | symptom relief | sleep (off label use for patients with subtance use symptoms) | quetiapine | seroquel | 25mg | sleep | follow up with usual care provider for refills."
+      "search_text": "substance use | adult | symptom relief | sleep (off label use for patients with substance use symptoms) | quetiapine | seroquel | 25mg | sleep | follow up with usual care provider for refills."
     },
     {
       "specialty": "Substance Use",
