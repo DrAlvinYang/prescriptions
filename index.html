@@ -78,9 +78,9 @@
     </aside>
   </div>
 
-  <div id="weightModal" class="modal-overlay hidden">
+  <div id="weightModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="weightModalTitle">
     <div class="modal-box">
-      <p style="margin-top:0; font-size:15px; line-height:1.5; color:#333;">
+      <p id="weightModalTitle" style="margin-top:0; font-size:15px; line-height:1.5; color:#333;">
         Medication is weight-based, enter patient's weight to calculate dose.
       </p>
       <div class="modal-input-group">
@@ -93,9 +93,9 @@
     </div>
   </div>
 
-  <div id="locationModal" class="modal-overlay hidden">
+  <div id="locationModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="locationModalTitle">
     <div class="modal-box">
-      <h3 style="margin-top:0;">Add New Location</h3>
+      <h3 id="locationModalTitle" style="margin-top:0;">Add New Location</h3>
       <div class="modal-input-group">
         <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Location Name</label>
         <input id="newLocName" type="text" placeholder="e.g. Clinic A" />
@@ -111,9 +111,9 @@
     </div>
   </div>
 
-  <div id="providerModal" class="modal-overlay hidden">
+  <div id="providerModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="providerModalTitle">
     <div class="modal-box">
-      <h3 style="margin-top:0;">Edit Provider Information</h3>
+      <h3 id="providerModalTitle" style="margin-top:0;">Edit Provider Information</h3>
       <div class="modal-input-group">
         <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Full Name</label>
         <input id="newProviderName" type="text" placeholder="e.g. John Smith" />
@@ -129,7 +129,7 @@
     </div>
   </div>
 
-  <div id="editModal" class="modal-overlay hidden">
+  <div id="editModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
     <div class="modal-box modal-wide">
       <h3 id="editModalTitle" style="margin-top:0; font-size:16px;">Edit Prescription</h3>
       <div id="editMedNameRow" class="edit-full-row hidden">
@@ -160,9 +160,9 @@
     </div>
   </div>
 
-  <div id="addNewMedModal" class="modal-overlay hidden">
+  <div id="addNewMedModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="addNewMedModalTitle">
     <div class="modal-box modal-wide">
-      <h3 style="margin-top:0; font-size:16px;">Add New Medication</h3>
+      <h3 id="addNewMedModalTitle" style="margin-top:0; font-size:16px;">Add New Medication</h3>
       <div class="edit-full-row">
         <label>Medication Name</label>
         <input id="addMedName" type="text" />
@@ -201,12 +201,12 @@
   </button>
 
   <!-- Help Popup -->
-  <div id="helpPopup" class="help-overlay hidden">
+  <div id="helpPopup" class="help-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="helpPopupTitle">
     <div class="help-popup-box">
       <button id="helpCloseBtn" class="help-close-btn" type="button" aria-label="Close help">&times;</button>
 
       <div class="help-content">
-        <h2>Getting Started</h2>
+        <h2 id="helpPopupTitle">Getting Started</h2>
         <p>This tool streamlines creating discharge prescriptions within the ED.</p>
 
         <h3>Workflow</h3>

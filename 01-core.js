@@ -4,8 +4,9 @@
 
 const CONFIG = {
   prescriber: {
-    name: "Alvin Yang",
-    cpso: "118749"
+    // Default placeholder - user should set their own info via the provider button
+    name: "",
+    cpso: ""
   },
   defaultLocation: "Michael Garron Hospital",
   storage: {
@@ -90,7 +91,8 @@ class AppState {
   }
 
   setWeight(weight) {
-    this.currentWeight = weight && !isNaN(weight) && weight > 0 ? weight : null;
+    const MAX_WEIGHT = 500;
+    this.currentWeight = weight && !isNaN(weight) && weight > 0 && weight <= MAX_WEIGHT ? weight : null;
   }
 }
 
@@ -320,12 +322,17 @@ const MedicationUtils = {
     const perKg = parseFloat(med.dose_per_kg_mg);
     const maxDose = parseFloat(med.max_dose_mg);
 
-    if (!perKg) return null;
+    // Validate dose_per_kg is a positive number (not 0, NaN, null, undefined, or negative)
+    if (!perKg || isNaN(perKg) || perKg <= 0) {
+      console.warn(`Invalid dose_per_kg_mg for ${med.med}: ${med.dose_per_kg_mg}`);
+      return null;
+    }
 
     let calculated = weight * perKg;
     let isMaxed = false;
 
-    if (maxDose && calculated > maxDose) {
+    // Only apply max dose if it's a valid positive number
+    if (maxDose && !isNaN(maxDose) && maxDose > 0 && calculated > maxDose) {
       calculated = maxDose;
       isMaxed = true;
     }
@@ -334,7 +341,7 @@ const MedicationUtils = {
       ? Math.floor(calculated)
       : Math.floor(calculated * 10) / 10;
 
-    const info = isMaxed 
+    const info = isMaxed
       ? `Max Dose reached; Ref: ${perKg} mg/kg`
       : `${perKg} mg/kg`;
 
@@ -422,10 +429,22 @@ class LocationManager {
     try {
       const stored = localStorage.getItem(CONFIG.storage.locations);
       if (stored) {
-        this.state.customLocations = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // Validate structure: must be array of objects with name and address strings
+        if (Array.isArray(parsed)) {
+          this.state.customLocations = parsed.filter(loc =>
+            loc &&
+            typeof loc === 'object' &&
+            typeof loc.name === 'string' &&
+            typeof loc.address === 'string' &&
+            loc.name.trim().length > 0 &&
+            loc.address.trim().length > 0
+          );
+        }
       }
     } catch (error) {
       console.error("Failed to load custom locations:", error);
+      this.state.customLocations = [];
     }
   }
 
@@ -560,12 +579,24 @@ class ProviderManager {
       const stored = localStorage.getItem(CONFIG.storage.provider);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed.name && parsed.cpso) {
-          this.currentProvider = parsed;
+        // Validate structure and format
+        if (
+          parsed &&
+          typeof parsed === 'object' &&
+          typeof parsed.name === 'string' &&
+          typeof parsed.cpso === 'string' &&
+          parsed.name.trim().length > 0 &&
+          /^\d{5,6}$/.test(parsed.cpso.trim())
+        ) {
+          this.currentProvider = {
+            name: parsed.name.trim(),
+            cpso: parsed.cpso.trim()
+          };
         }
       }
     } catch (error) {
       console.error("Failed to load provider info:", error);
+      // Keep default CONFIG.prescriber values
     }
   }
 
@@ -2083,10 +2114,8 @@ class SearchManager {
       }
     }
 
-    // Sort each group by indication then med name
-    groups.adult.sort(MedicationUtils.compareByIndication);
-    groups.pediatric.sort(MedicationUtils.compareByIndication);
-    groups.other.sort(MedicationUtils.compareByIndication);
+    // Note: Results are already sorted by relevance score from search()
+    // Preserving that order instead of re-sorting by indication
 
     return groups;
   }

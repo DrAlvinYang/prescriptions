@@ -144,7 +144,7 @@ def convert_excel_to_json():
     # 8. Write to JSON
     final_output = {
         "source": {
-            "file": EXCEL_FILE,
+            "file": os.path.basename(EXCEL_FILE),
             "record_count": len(meds)
         },
         "meds": meds

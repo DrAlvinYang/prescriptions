@@ -53,10 +53,10 @@ class MedicationRenderer {
 
   renderHTML(med, options = {}) {
     const { showPopulation = false, highlightTerms = [] } = options;
-    
+
     const detailsString = MedicationUtils.getDetailsArray(med, null).join(", ");
-    const format = (txt) => highlightTerms.length > 0 
-      ? Utils.highlightText(txt, highlightTerms) 
+    const format = (txt) => highlightTerms.length > 0
+      ? Utils.highlightText(txt, highlightTerms)
       : Utils.escapeHtml(txt);
 
     // Indication
@@ -65,27 +65,27 @@ class MedicationRenderer {
       indicationHtml = `<div class="med-indication">${format(med.indication)}</div>`;
     }
 
-    // Med name - append brands if state.showingBrands is true
+    // Med name - always include brand span (visibility controlled by CSS)
     let medNameHtml = format(med.med);
-    if (this.state.showingBrands && med.brands && med.brands.length > 0) {
+    if (med.brands && med.brands.length > 0) {
       const brandText = MedicationUtils.formatBrandNames(med.brands);
       medNameHtml += ` <span class="brand-name">${Utils.escapeHtml(brandText)}</span>`;
     }
-    
+
     const detailsHtml = format(detailsString);
-    
+
     // Population label
-    const popLabel = (showPopulation && med.population) 
-      ? `<span style="font-weight:normal; color:#666; font-size:0.9em; margin-left:4px;">(${Utils.escapeHtml(med.population)})</span>` 
+    const popLabel = (showPopulation && med.population)
+      ? `<span style="font-weight:normal; color:#666; font-size:0.9em; margin-left:4px;">(${Utils.escapeHtml(med.population)})</span>`
       : "";
 
-    // Brand matching hint (only show when NOT showing brands)
+    // Brand matching hint (shown when brands are hidden and search matches a brand)
     let brandHint = "";
-    if (!this.state.showingBrands && highlightTerms.length > 0 && Array.isArray(med.brands)) {
-      const matchedBrand = med.brands.find(brand => 
+    if (highlightTerms.length > 0 && Array.isArray(med.brands)) {
+      const matchedBrand = med.brands.find(brand =>
         highlightTerms.some(term => brand.toLowerCase().includes(term))
       );
-      
+
       if (matchedBrand) {
         brandHint = `<span class="brand-match-hint">(matches ${Utils.highlightText(matchedBrand, highlightTerms)})</span>`;
       }
@@ -432,9 +432,9 @@ class CartRenderer {
       return Utils.escapeHtml(part);
     }).join(", ");
 
-    // Build med name display - append brands if showing
+    // Build med name display - always include brand span (visibility controlled by CSS)
     let medNameDisplay = Utils.escapeHtml(med.med);
-    if (this.state.showingBrands && med.brands && med.brands.length > 0) {
+    if (med.brands && med.brands.length > 0) {
       const brandText = MedicationUtils.formatBrandNames(med.brands);
       medNameDisplay += ` <span class="brand-name">${Utils.escapeHtml(brandText)}</span>`;
     }
@@ -798,11 +798,6 @@ class LocationUIRenderer {
     };
   }
 
-  // Legacy methods for compatibility
-  renderDropdown(onSelect, onDelete) {
-    // No longer used - kept for compatibility
-  }
-
   toggleMenu(onSelect, onDelete, onAddNew) {
     if (this.isSearchMode) {
       this.exitSearchMode();
@@ -824,12 +819,18 @@ class ProviderUIRenderer {
   updateHeader() {
     const btn = document.getElementById("providerBtn");
     const label = document.getElementById("providerLabel");
-    
+
     if (!btn || !label) return;
-    
+
     const provider = this.providerManager.getProvider();
-    label.textContent = `Dr. ${provider.name}`;
-    btn.title = `${provider.name} (CPSO: ${provider.cpso})`;
+
+    if (provider.name && provider.cpso) {
+      label.textContent = `Dr. ${provider.name}`;
+      btn.title = `${provider.name} (CPSO: ${provider.cpso})`;
+    } else {
+      label.textContent = "Set Provider";
+      btn.title = "Click to set your provider information";
+    }
   }
 }
 
@@ -914,17 +915,21 @@ class ModalManager {
   saveWeight(onSuccess) {
     const input = document.getElementById("modalWeightInput");
     const value = parseFloat(input.value);
+    const MIN_WEIGHT = 0.01;
+    const MAX_WEIGHT = 500;
 
-    if (!isNaN(value) && value >= 0.01) {
+    if (!isNaN(value) && value >= MIN_WEIGHT && value <= MAX_WEIGHT) {
       this.state.setWeight(value);
       document.getElementById("weightInput").value = value.toFixed(2);
-      
+
       if (this.state.pendingMed) {
         onSuccess(this.state.pendingMed);
         this.state.pendingMed = null;
       }
-      
+
       this.closeWeight();
+    } else if (!isNaN(value) && value > MAX_WEIGHT) {
+      alert(`Weight cannot exceed ${MAX_WEIGHT} kg. Please enter a valid weight.`);
     } else {
       alert("Please enter a valid weight greater than 0 kg.");
     }

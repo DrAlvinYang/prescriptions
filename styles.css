@@ -767,10 +767,21 @@ details[open] > .subfolder-summary .subfolder-arrow {
   margin-left: 6px;
 }
 
-/* Brand Name Display (when showing brands with Tab) */
+/* Brand Name Display (hidden by default, shown when Tab is held) */
 .brand-name {
   font-weight: 700;
   color: #006400; /* Dark green */
+  display: none;
+}
+
+/* Show brands when body has show-brands class */
+body.show-brands .brand-name {
+  display: inline;
+}
+
+/* Hide brand match hint when brands are visible */
+body.show-brands .brand-match-hint {
+  display: none;
 }
 
 /* Add to styles.css */

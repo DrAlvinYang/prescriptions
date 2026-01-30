@@ -284,9 +284,18 @@ class WeightController {
 
   format(value) {
     const formatted = Utils.formatWeight(value);
+    const MAX_WEIGHT = 500;
+
     if (formatted) {
-      document.getElementById("weightInput").value = formatted;
-      this.state.setWeight(parseFloat(formatted));
+      const numValue = parseFloat(formatted);
+      if (numValue > MAX_WEIGHT) {
+        alert(`Weight cannot exceed ${MAX_WEIGHT} kg.`);
+        document.getElementById("weightInput").value = "";
+        this.state.setWeight(null);
+      } else {
+        document.getElementById("weightInput").value = formatted;
+        this.state.setWeight(numValue);
+      }
       this.cartController.render();
     }
   }
@@ -324,6 +333,7 @@ class KeyboardController {
     }
 
     // Handle Tab key for brand name display (only when no modal is active)
+    // Uses CSS class toggle for performance instead of full re-render
     if (event.key === "Tab") {
       const anyModalOpen = this.isAnyModalOpen();
 
@@ -332,18 +342,17 @@ class KeyboardController {
 
         if (!this.state.showingBrands) {
           this.state.showingBrands = true;
-          this.reRenderAll();
+          document.body.classList.add("show-brands");
 
-          // Set up keyup listener to restore generic names when Tab is released
+          // Set up keyup listener to hide brands when Tab is released
           const handleKeyUp = (e) => {
             if (e.key === "Tab") {
               this.state.showingBrands = false;
-              this.reRenderAll(); // This will preserve the highlight using the same logic
+              document.body.classList.remove("show-brands");
               document.removeEventListener("keyup", handleKeyUp);
             }
           };
 
-          // Bind the context properly using arrow function (already done above)
           document.addEventListener("keyup", handleKeyUp);
         }
 
@@ -501,9 +510,6 @@ class KeyboardController {
   }
 
   handleEditModalKeys(event) {
-    const item = this.state.findCartItem(this.state.editingId);
-    const isCustomMed = item && item.isCustomMed;
-    
     // Tab navigation
     if (event.key === "Tab") {
       if (event.shiftKey) {
@@ -690,6 +696,14 @@ class PrintController {
   print() {
     if (this.state.cart.length === 0) return;
 
+    const provider = this.providerManager.getProvider();
+
+    // Require provider info before printing
+    if (!provider.name || !provider.cpso) {
+      alert('Please set your provider information before printing.\n\nClick the "Set Provider" button in the top bar.');
+      return;
+    }
+
     const dateStr = new Date().toLocaleDateString("en-CA", {
       year: "numeric",
       month: "long",
@@ -697,7 +711,6 @@ class PrintController {
     });
 
     const location = this.locationManager.getCurrentLocation();
-    const provider = this.providerManager.getProvider();
 
     const payload = {
       prescriber: {
@@ -735,6 +748,8 @@ class PrintController {
     if (typeof window.jspdf === 'undefined') {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.integrity = 'sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==';
+      script.crossOrigin = 'anonymous';
       script.onload = () => this.createAndOpenPDF(data);
       script.onerror = () => alert('Failed to load PDF library. Please check your internet connection.');
       document.head.appendChild(script);
