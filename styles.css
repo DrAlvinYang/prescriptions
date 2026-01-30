@@ -944,10 +944,10 @@ button.add-new-med-btn {
 
 /* Add New Med From Search Button */
 .add-new-med-from-search-btn {
-  background: var(--btn);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 4px;
-  padding: 6px 12px;
+  padding: 5px 11px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -959,7 +959,7 @@ button.add-new-med-btn {
 }
 
 .add-new-med-from-search-btn:hover {
-  background: var(--btn-hover);
+  border-color: var(--border);
 }
 
 .add-new-med-from-search-btn .enter-symbol {

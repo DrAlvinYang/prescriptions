@@ -16,7 +16,7 @@ const CONFIG = {
 };
 
 // Fallback location if JSON fails to load
-const FALLBACK_LOCATION = { name: "Michael Garron Hospital (MGH)", address: "825 Coxwell Ave, East York, M4C 3E7" };
+const FALLBACK_LOCATION = { name: "Michael Garron Hospital", address: "825 Coxwell Ave, East York, M4C 3E7" };
 
 // Will be populated from Locations.json
 let BASE_LOCATIONS = [FALLBACK_LOCATION];
@@ -1188,7 +1188,7 @@ class SearchManager {
 
   /**
    * Check if a query numeric matches a field numeric
-   * Handles exact match, range containment, g<->mg conversion, and day<->week conversion
+   * Handles exact match, range containment, and g<->mg conversion
    */
   numericMatches(queryNumeric, fieldNumeric) {
     // If query has unit and field has unit, they must be compatible
@@ -1210,35 +1210,7 @@ class SearchManager {
         fieldValue = fieldValue !== null ? fieldValue * 1000 : null;
         fieldMin = fieldMin !== undefined ? fieldMin * 1000 : undefined;
         fieldMax = fieldMax !== undefined ? fieldMax * 1000 : undefined;
-      }
-      // Convert day <-> week for duration fields only (exact multiples of 7)
-      else if (queryNumeric.isDuration && fieldNumeric.isDuration) {
-        if (queryNumeric.unit === 'day' && fieldNumeric.unit === 'week') {
-          // Convert query days to weeks for comparison
-          // Only if query is an exact multiple of 7 days
-          if (!queryNumeric.isRange && queryValue !== null && queryValue % 7 === 0) {
-            queryValue = queryValue / 7;
-            queryMin = queryMin !== undefined ? queryMin / 7 : undefined;
-            queryMax = queryMax !== undefined ? queryMax / 7 : undefined;
-          } else if (queryNumeric.isRange && queryMin !== undefined && queryMax !== undefined &&
-                     queryMin % 7 === 0 && queryMax % 7 === 0) {
-            queryMin = queryMin / 7;
-            queryMax = queryMax / 7;
-          } else {
-            // Not an exact multiple of 7 - no conversion possible
-            return false;
-          }
-        } else if (queryNumeric.unit === 'week' && fieldNumeric.unit === 'day') {
-          // Convert query weeks to days for comparison
-          queryValue = queryValue !== null ? queryValue * 7 : null;
-          queryMin = queryMin !== undefined ? queryMin * 7 : undefined;
-          queryMax = queryMax !== undefined ? queryMax * 7 : undefined;
-        } else if (queryNumeric.unit !== fieldNumeric.unit) {
-          // Units don't match and can't be converted
-          return false;
-        }
-      }
-      else if (queryNumeric.unit !== fieldNumeric.unit) {
+      } else if (queryNumeric.unit !== fieldNumeric.unit) {
         // Units don't match and can't be converted
         return false;
       }
@@ -1945,8 +1917,6 @@ class SearchManager {
   /**
    * Add numeric highlight variants for a given value and unit
    * Handles both exact values and ranges
-   * Also adds g<->mg conversions for dose highlighting
-   * Also adds day<->week conversions for duration highlighting (exact multiples only)
    */
   addNumericHighlightVariants(terms, value, unit, isRange, rangeMin, rangeMax) {
     if (!unit) return;
@@ -1968,74 +1938,16 @@ class SearchManager {
         terms.add(`${rangeMin}-${rangeMax} ${unitVar}`);
         terms.add(`${rangeMin} to ${rangeMax} ${unitVar}`);
       }
-
-      // Add g<->mg conversions for ranges
-      if (unit === 'g') {
-        const convertedMin = rangeMin * 1000;
-        const convertedMax = rangeMax * 1000;
-        const mgVariants = ['mg', 'mgs'];
-        for (const mgVar of mgVariants) {
-          terms.add(`${convertedMin}-${convertedMax}${mgVar}`);
-          terms.add(`${convertedMin}-${convertedMax} ${mgVar}`);
-          terms.add(`${convertedMin} to ${convertedMax} ${mgVar}`);
-        }
-      } else if (unit === 'mg') {
-        const convertedMin = rangeMin / 1000;
-        const convertedMax = rangeMax / 1000;
-        const gVariants = ['g', 'gm', 'gms', 'gram', 'grams'];
-        for (const gVar of gVariants) {
-          terms.add(`${convertedMin}-${convertedMax}${gVar}`);
-          terms.add(`${convertedMin}-${convertedMax} ${gVar}`);
-          terms.add(`${convertedMin} to ${convertedMax} ${gVar}`);
-        }
-      }
     } else if (value !== null) {
       // Add single value patterns with all unit variations
       for (const unitVar of unitVariants) {
         terms.add(`${value}${unitVar}`);
         terms.add(`${value} ${unitVar}`);
       }
-
-      // Add g<->mg conversions for single values
-      if (unit === 'g') {
-        const convertedValue = value * 1000;
-        const mgVariants = ['mg', 'mgs'];
-        for (const mgVar of mgVariants) {
-          terms.add(`${convertedValue}${mgVar}`);
-          terms.add(`${convertedValue} ${mgVar}`);
-        }
-      } else if (unit === 'mg') {
-        const convertedValue = value / 1000;
-        const gVariants = ['g', 'gm', 'gms', 'gram', 'grams'];
-        for (const gVar of gVariants) {
-          terms.add(`${convertedValue}${gVar}`);
-          terms.add(`${convertedValue} ${gVar}`);
-        }
-      }
-
       // Note: We intentionally do NOT add the bare number here.
       // Range matching in highlightText uses parseFloat() on terms like "5d" to extract
       // the numeric value for range checking, so "6d" will still highlight "5-7 days".
       // Adding bare numbers would incorrectly highlight "5mg" when searching "5d".
-
-      // Add day<->week conversions for duration values (exact multiples only)
-      if (unit === 'day' && value % 7 === 0) {
-        // Convert days to weeks
-        const weeks = value / 7;
-        const weekVariants = ['week', 'weeks', 'wk', 'wks'];
-        for (const weekVar of weekVariants) {
-          terms.add(`${weeks} ${weekVar}`);
-          terms.add(`${weeks}${weekVar}`);
-        }
-      } else if (unit === 'week') {
-        // Convert weeks to days
-        const days = value * 7;
-        const dayVariants = ['day', 'days', 'd'];
-        for (const dayVar of dayVariants) {
-          terms.add(`${days} ${dayVar}`);
-          terms.add(`${days}${dayVar}`);
-        }
-      }
     }
   }
 

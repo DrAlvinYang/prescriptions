@@ -1,7 +1,7 @@
 {
   "source": {
     "file": "/Users/alvin/Documents/Documents - Alvin's Macbook/Alvin/Medicine/Work/ED Website/Prescriptions/Prescriptions.xlsx",
-    "record_count": 403
+    "record_count": 409
   },
   "meds": [
     {
@@ -287,6 +287,58 @@
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
       "search_text": "allergy, analgesia, antiemetic | adult | analgesia | pain | naproxen | aleve naprosyn | 500mg | pain | do not take with other nsaids (e.g. ibuprofen). may take with tylenol. may cause stomach irritation, take with food."
+    },
+    {
+      "specialty": "Allergy, Analgesia, Antiemetic",
+      "med": "Tylenol with Codeine No. 1",
+      "brands": [
+        "Tylenol No. 1",
+        "Tylenol #1",
+        "Lenoltec No. 1",
+        "Lenoltec #1"
+      ],
+      "indication": "Pain",
+      "dose_text": "1-2 tab",
+      "route": "PO",
+      "frequency": "q4h",
+      "duration": "",
+      "dispense": "20 tab",
+      "refill": "0",
+      "prn": "pain",
+      "form": "tab",
+      "comments": "Maximum acetaminophen 4000mg/codeine 360mg per 24 hours from all sources. Watch for sedation. Do not drive or operate heavy machinery. Take minimum amount to achieve pain control. Consider stool softener while taking medication.",
+      "population": "Adult",
+      "subcategory": "Analgesia",
+      "weight_based": false,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
+      "search_text": "allergy, analgesia, antiemetic | adult | analgesia | pain | tylenol with codeine no. 1 | tylenol no. 1 tylenol #1 lenoltec no. 1 lenoltec #1 | 1-2 tab | pain | maximum acetaminophen 4000mg/codeine 360mg per 24 hours from all sources. watch for sedation. do not drive or operate heavy machinery. take minimum amount to achieve pain control. consider stool softener while taking medication."
+    },
+    {
+      "specialty": "Allergy, Analgesia, Antiemetic",
+      "med": "Tylenol with Codeine No. 2",
+      "brands": [
+        "Tylenol No. 2",
+        "Tylenol #2",
+        "Lenoltec No. 2",
+        "Lenoltec #2"
+      ],
+      "indication": "Pain",
+      "dose_text": "1-2 tab",
+      "route": "PO",
+      "frequency": "q4h",
+      "duration": "",
+      "dispense": "20 tab",
+      "refill": "0",
+      "prn": "pain",
+      "form": "tab",
+      "comments": "Maximum acetaminophen 4000mg/codeine 360mg per 24 hours from all sources. Watch for sedation. Do not drive or operate heavy machinery. Take minimum amount to achieve pain control. Consider stool softener while taking medication.",
+      "population": "Adult",
+      "subcategory": "Analgesia",
+      "weight_based": false,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
+      "search_text": "allergy, analgesia, antiemetic | adult | analgesia | pain | tylenol with codeine no. 2 | tylenol no. 2 tylenol #2 lenoltec no. 2 lenoltec #2 | 1-2 tab | pain | maximum acetaminophen 4000mg/codeine 360mg per 24 hours from all sources. watch for sedation. do not drive or operate heavy machinery. take minimum amount to achieve pain control. consider stool softener while taking medication."
     },
     {
       "specialty": "Allergy, Analgesia, Antiemetic",
@@ -1779,6 +1831,31 @@
       "indication": "",
       "dose_text": "100mg",
       "route": "PO",
+      "frequency": "BID",
+      "duration": "14 day",
+      "dispense": "28 tab",
+      "refill": "0",
+      "prn": "",
+      "form": "tab",
+      "comments": "Avoid in pregnancy or lactating people.",
+      "population": "Adult",
+      "subcategory": "",
+      "weight_based": false,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
+      "search_text": "anti-infective | adult | doxycycline | vibramycin doxycin apprilon | 100mg | avoid in pregnancy or lactating people."
+    },
+    {
+      "specialty": "Anti-infective",
+      "med": "Doxycycline",
+      "brands": [
+        "Vibramycin",
+        "Doxycin",
+        "Apprilon"
+      ],
+      "indication": "",
+      "dose_text": "100mg",
+      "route": "PO",
       "frequency": "OD",
       "duration": "3 week",
       "dispense": "21 tab",
@@ -1968,6 +2045,29 @@
       "frequency": "q8h",
       "duration": "7 day",
       "dispense": "21 tab",
+      "refill": "0",
+      "prn": "",
+      "form": "tab",
+      "comments": "",
+      "population": "Adult",
+      "subcategory": "",
+      "weight_based": false,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
+      "search_text": "anti-infective | adult | metronidazole | flagyl | 500mg"
+    },
+    {
+      "specialty": "Anti-infective",
+      "med": "Metronidazole",
+      "brands": [
+        "Flagyl"
+      ],
+      "indication": "",
+      "dose_text": "500mg",
+      "route": "PO",
+      "frequency": "BID",
+      "duration": "14 day",
+      "dispense": "28 tab",
       "refill": "0",
       "prn": "",
       "form": "tab",
@@ -2450,7 +2550,7 @@
       "comments": "45mg amox/kg/day. Maximum dose = 875mg amoxicillin/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 22.5,
       "max_dose_mg": 875.0,
       "search_text": "anti-infective | pediatric | amox-clav | clavulin augmentin | 22.5mg/kg/dose | 45mg amox/kg/day. maximum dose = 875mg amoxicillin/dose."
@@ -2474,7 +2574,7 @@
       "comments": "45mg amox/kg/day. Maximum dose = 875mg amoxicillin/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 22.5,
       "max_dose_mg": 875.0,
       "search_text": "anti-infective | pediatric | amox-clav | clavulin augmentin | 22.5mg/kg/dose | 45mg amox/kg/day. maximum dose = 875mg amoxicillin/dose."
@@ -2498,7 +2598,7 @@
       "comments": "90mg amox/kg/day. Maximum dose = 4000mg amox/day.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 45.0,
       "max_dose_mg": 2000.0,
       "search_text": "anti-infective | pediatric | amox-clav (200/8.5mg/5ml) | clavulin augmentin | 45mg/kg/dose | 90mg amox/kg/day. maximum dose = 4000mg amox/day."
@@ -2522,7 +2622,7 @@
       "comments": "45mg amox/kg/day. Maximum dose = 3000mg amox/day.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 22.5,
       "max_dose_mg": 1500.0,
       "search_text": "anti-infective | pediatric | amoxicillin | amoxil trimox | 22.5mg/kg/dose | 45mg amox/kg/day. maximum dose = 3000mg amox/day."
@@ -2546,7 +2646,7 @@
       "comments": "90mg amox/kg/day. Maximum dose = 4000mg amox/day.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 30.0,
       "max_dose_mg": 1333.0,
       "search_text": "anti-infective | pediatric | amoxicillin | amoxil trimox | 30mg/kg/dose | 90mg amox/kg/day. maximum dose = 4000mg amox/day."
@@ -2570,7 +2670,7 @@
       "comments": "90mg amox/kg/day. Maximum dose = 4000mg amox/day.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 30.0,
       "max_dose_mg": 1333.0,
       "search_text": "anti-infective | pediatric | amoxicillin | amoxil trimox | 30mg/kg/dose | 90mg amox/kg/day. maximum dose = 4000mg amox/day."
@@ -2594,7 +2694,7 @@
       "comments": "50mg amox/kg/day. Maximum dose = 1000mg amox/day.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 50.0,
       "max_dose_mg": 1000.0,
       "search_text": "anti-infective | pediatric | amoxicillin | amoxil trimox | 50mg/kg/day | 50mg amox/kg/day. maximum dose = 1000mg amox/day."
@@ -2642,7 +2742,7 @@
       "comments": "12mg/kg/dose PO daily for 5 days. Maximum dose = 500mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 12.0,
       "max_dose_mg": 500.0,
       "search_text": "anti-infective | pediatric | azithromycin | zithromax zmax | 12mg/kg/dose | 12mg/kg/dose po daily for 5 days. maximum dose = 500mg/dose."
@@ -2689,7 +2789,7 @@
       "comments": "Maximum dose = 500mg/dose. If unavailable, may replace with cephalexin 25mg/kg/dose PO q8h for 7 days (maximum dose = 500mg/dose).",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 15.0,
       "max_dose_mg": 500.0,
       "search_text": "anti-infective | pediatric | cefadroxil | duricef | 15mg/kg/dose | maximum dose = 500mg/dose. if unavailable, may replace with cephalexin 25mg/kg/dose po q8h for 7 days (maximum dose = 500mg/dose)."
@@ -2712,7 +2812,7 @@
       "comments": "30mg/kg/day. Maximum dose = 500mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 15.0,
       "max_dose_mg": 500.0,
       "search_text": "anti-infective | pediatric | cefprozil | cefzil | 15mg/kg/dose | 30mg/kg/day. maximum dose = 500mg/dose."
@@ -2735,7 +2835,7 @@
       "comments": "Maximum dose = 250mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 10.0,
       "max_dose_mg": 250.0,
       "search_text": "anti-infective | pediatric | cefuroxime | ceftin | 10mg/kg/dose | maximum dose = 250mg/dose."
@@ -2758,7 +2858,7 @@
       "comments": "30mg/kg/day. Maximum dose = 500mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 15.0,
       "max_dose_mg": 500.0,
       "search_text": "anti-infective | pediatric | cefuroxime | ceftin | 15mg/kg/dose | 30mg/kg/day. maximum dose = 500mg/dose."
@@ -2781,7 +2881,7 @@
       "comments": "30mg/kg/day. Maximum dose = 500mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 15.0,
       "max_dose_mg": 500.0,
       "search_text": "anti-infective | pediatric | cefuroxime | ceftin | 15mg/kg/dose | 30mg/kg/day. maximum dose = 500mg/dose."
@@ -2804,7 +2904,7 @@
       "comments": "150mg/kg/day. Maximum dose = 2000mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 50.0,
       "max_dose_mg": 2000.0,
       "search_text": "anti-infective | pediatric | cefuroxime | ceftin | 50mg/kg/dose | 150mg/kg/day. maximum dose = 2000mg/dose."
@@ -2827,7 +2927,7 @@
       "comments": "75mg/kg/day. Maximum dose = 500mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 25.0,
       "max_dose_mg": 500.0,
       "search_text": "anti-infective | pediatric | cephalexin | keflex | 25mg/kg/dose | 75mg/kg/day. maximum dose = 500mg/dose."
@@ -2897,7 +2997,7 @@
       "comments": "30mg/kg/day. Maximum dose = 1800mg/day or 600mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 10.0,
       "max_dose_mg": 600.0,
       "search_text": "anti-infective | pediatric | clindamycin | dalacin cleocin | 10mg/kg/dose | 30mg/kg/day. maximum dose = 1800mg/day or 600mg/dose."
@@ -2946,7 +3046,7 @@
       "comments": "Avoid in age <8 years. 4mg/kg/day. Maximum dose = 100mg/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 2.2,
       "max_dose_mg": 100.0,
       "search_text": "anti-infective | pediatric | doxycycline | vibramycin doxycin apprilon | 2.2mg/kg/dose | avoid in age <8 years. 4mg/kg/day. maximum dose = 100mg/dose."
@@ -3161,7 +3261,7 @@
       "comments": "6mg trimethoprim/kg PO q12h for 7 days. 12mg/kg/day. Maximum dose = 160mg trimethoprim/dose.",
       "population": "Pediatric",
       "subcategory": "",
-      "weight_based": true,
+      "weight_based": false,
       "dose_per_kg_mg": 6.0,
       "max_dose_mg": 160.0,
       "search_text": "anti-infective | pediatric | tmp/smx | septra bactrim sulfamethoxazole + trimethroprim tmp-smx | 6mg trimethoprim/kg po q12h for 7 days. 12mg/kg/day. maximum dose = 160mg trimethoprim/dose."
@@ -3754,7 +3854,7 @@
         "Amoxil",
         "Trimox"
       ],
-      "indication": "Otitis media (adult, high risk: age >65, immunocompromised, antibiotics within last month)",
+      "indication": "Otitis media (high risk: age >65, immunocompromised, antibiotics within last month)",
       "dose_text": "1000mg",
       "route": "PO",
       "frequency": "TID",
@@ -3769,7 +3869,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "ent | adult | ear | otitis media (adult, high risk: age >65, immunocompromised, antibiotics within last month) | amoxicillin | amoxil trimox | 1000mg"
+      "search_text": "ent | adult | ear | otitis media (high risk: age >65, immunocompromised, antibiotics within last month) | amoxicillin | amoxil trimox | 1000mg"
     },
     {
       "specialty": "ENT",
@@ -4123,6 +4223,55 @@
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
       "search_text": "ent | adult | throat | strep throat (penicillin anaphylaxis) | azithromycin | zithromax zmax | 500mg"
+    },
+    {
+      "specialty": "ENT",
+      "med": "Amox-Clav (875/125mg)",
+      "brands": [
+        "Clavulin",
+        "Augmentin"
+      ],
+      "indication": "Sinusitis",
+      "dose_text": "1 tab",
+      "route": "PO",
+      "frequency": "BID",
+      "duration": "7 day",
+      "dispense": "14 tab",
+      "refill": "0",
+      "prn": "",
+      "form": "tab",
+      "comments": "",
+      "population": "Adult",
+      "subcategory": "Other",
+      "weight_based": false,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
+      "search_text": "ent | adult | other | sinusitis | amox-clav (875/125mg) | clavulin augmentin | 1 tab"
+    },
+    {
+      "specialty": "ENT",
+      "med": "Doxycycline",
+      "brands": [
+        "Vibramycin",
+        "Doxycin",
+        "Apprilon"
+      ],
+      "indication": "Sinusitis (penicillin allergy)",
+      "dose_text": "100mg",
+      "route": "PO",
+      "frequency": "BID",
+      "duration": "7 day",
+      "dispense": "14 tab",
+      "refill": "0",
+      "prn": "",
+      "form": "tab",
+      "comments": "",
+      "population": "Adult",
+      "subcategory": "Other",
+      "weight_based": false,
+      "dose_per_kg_mg": null,
+      "max_dose_mg": null,
+      "search_text": "ent | adult | other | sinusitis (penicillin allergy) | doxycycline | vibramycin doxycin apprilon | 100mg"
     },
     {
       "specialty": "ENT",
