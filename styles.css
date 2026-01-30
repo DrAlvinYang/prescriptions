@@ -335,12 +335,12 @@ body {
 }
 .weight-section label {
   font-weight: 600;
-  color: #444;
+  color: #000;
   font-size: 12px;
 }
 .weight-section span {
   font-size: 12px;
-  color: #666;
+  color: #000;
   font-weight: 600;
 }
 
@@ -392,23 +392,25 @@ body {
 .search-clear-btn:hover { color: #333; }
 .search-clear-btn.visible { display: block; }
 
-.status { 
-  display: flex; 
+.status {
+  display: flex;
   align-items: center;
+  margin-right: -5px;
 }
 
 .reset-btn {
   font-size: 18px;
-  color: #555;
+  color: #000;
   padding: 4px 8px;
+  border: 1px solid transparent;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: border-color 0.1s;
 }
 .reset-btn:hover {
-  background-color: #eee;
-  color: #000;
+  border-color: var(--border);
 }
 
 /* --- Content Area --- */
@@ -597,6 +599,27 @@ details[open] > .subfolder-summary .subfolder-arrow {
   align-items: center;
 }
 
+.clear-cart-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--header-text);
+  transition: border-color 0.1s;
+}
+
+.clear-cart-btn:hover {
+  border-color: var(--border);
+}
+
+.clear-cart-btn svg {
+  display: block;
+}
+
 .cart-list {
   flex: 1 1 0; 
   overflow-y: auto;
@@ -695,6 +718,24 @@ details[open] > .subfolder-summary .subfolder-arrow {
   width: 20px;
 }
 .icon-btn:hover { color: #d00; }
+
+/* Override for reset button - match clear cart button styling */
+.icon-btn.reset-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px;
+  color: #000;
+  width: auto;
+  transition: border-color 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-btn.reset-btn:hover {
+  border-color: var(--border);
+  color: #000;
+}
 
 /* --- Modal --- */
 .modal-overlay {
