@@ -78,23 +78,29 @@ def convert_excel_to_json():
             else:
                 brands = []
 
-            # 3. Parse Weight Based Logic
-            # Handle Excel booleans or "True"/"False" strings
-            wb_raw = row.get('WeightBased', False)
-            weight_based = str(wb_raw).lower() == 'true'
-
-            # 4. Parse Numbers (handle empty cells)
+            # 3. Parse Numbers (handle empty cells)
             dose_per_kg = row.get('DosePerKg')
             if pd.isna(dose_per_kg) or dose_per_kg == "":
                 dose_per_kg = None
             else:
-                dose_per_kg = float(dose_per_kg)
+                try:
+                    dose_per_kg = float(dose_per_kg)
+                except (ValueError, TypeError):
+                    dose_per_kg = None
 
             max_dose = row.get('MaxDose')
             if pd.isna(max_dose) or max_dose == "":
                 max_dose = None
             else:
-                max_dose = float(max_dose)
+                try:
+                    max_dose = float(max_dose)
+                except (ValueError, TypeError):
+                    max_dose = None
+
+            # 4. Determine Weight Based Logic
+            # A medication is weight-based if it has a valid dose_per_kg value
+            # This is more reliable than relying on a separate boolean column
+            weight_based = dose_per_kg is not None and dose_per_kg > 0
 
             # 5. Extract Indication
             indication = clean_text(row.get('Indication'))

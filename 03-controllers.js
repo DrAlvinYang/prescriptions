@@ -150,7 +150,8 @@ class SearchController {
     // If only one result, auto-select it
     if (results.length === 1) {
       results[0].click();
-      this.clear(); // Clear search after selection
+      // Don't clear search here - if weight modal opened, we need to keep focus there
+      // The search will be cleared naturally when user continues workflow
       return true;
     }
 
@@ -422,15 +423,27 @@ class KeyboardController {
     // Save active search index - critical to save BEFORE calling search()
     const savedActiveSearchIndex = this.state.activeSearchIndex;
     
-    // Re-render dashboard
-    window.app.renderers.dashboard.render(
-      {
-        col1: SPECIALTY_COLUMNS.col1,
-        col2: SPECIALTY_COLUMNS.col2,
-        col3: SPECIALTY_COLUMNS.col3
-      },
-      (med, element) => window.cartController.toggle(med, element)
-    );
+    // Re-render dashboard (respecting current layout mode)
+    const isSingleColumn = window.innerWidth <= 1200;
+    if (isSingleColumn) {
+      window.app.renderers.dashboard.render(
+        {
+          col1: SPECIALTY_SINGLE_COLUMN,
+          col2: [],
+          col3: []
+        },
+        (med, element) => window.cartController.toggle(med, element)
+      );
+    } else {
+      window.app.renderers.dashboard.render(
+        {
+          col1: SPECIALTY_COLUMNS.col1,
+          col2: SPECIALTY_COLUMNS.col2,
+          col3: SPECIALTY_COLUMNS.col3
+        },
+        (med, element) => window.cartController.toggle(med, element)
+      );
+    }
     
     // Restore open state for folders
     document.querySelectorAll('details').forEach(details => {
@@ -618,23 +631,9 @@ class KeyboardController {
   }
 
   handleLocationJump(event) {
-    const locationMenu = document.getElementById("locationMenu");
-    
-    if (locationMenu.classList.contains("hidden")) return;
-    if (event.key.length !== 1 || !event.key.match(/[a-z]/i)) return;
-
-    event.preventDefault();
-    
-    const char = event.key.toLowerCase();
-    const items = document.querySelectorAll("#locationList .loc-item");
-
-    for (let item of items) {
-      const name = item.querySelector(".loc-name").textContent.trim().toLowerCase();
-      if (name.startsWith(char)) {
-        item.scrollIntoView({ block: "start", behavior: "auto" });
-        break;
-      }
-    }
+    // Location dropdown now uses search mode - this handler is no longer needed
+    // The search dropdown handles its own keyboard navigation
+    return;
   }
 }
 

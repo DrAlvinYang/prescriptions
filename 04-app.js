@@ -8,6 +8,8 @@ class Application {
     this.controllers = {};
     this.renderers = {};
     this.managers = {};
+    this.isSingleColumn = false;
+    this.SINGLE_COLUMN_BREAKPOINT = 1200;
   }
 
   async initialize() {
@@ -166,6 +168,18 @@ class Application {
     this.setupActionButtons();
     this.setupHelpListeners();
     this.setupGlobalKeyboard();
+    this.setupResizeListener();
+  }
+
+  setupResizeListener() {
+    // Debounce resize handler for performance
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.handleResize();
+      }, 100);
+    });
   }
 
   setupSearchListeners() {
@@ -554,18 +568,83 @@ class Application {
   }
 
   render() {
-    // Render dashboard
-    this.renderers.dashboard.render(
-      {
-        col1: SPECIALTY_COLUMNS.col1,
-        col2: SPECIALTY_COLUMNS.col2,
-        col3: SPECIALTY_COLUMNS.col3
-      },
-      (med, element) => this.controllers.cart.toggle(med, element)
-    );
+    // Check current layout mode
+    this.isSingleColumn = window.innerWidth <= this.SINGLE_COLUMN_BREAKPOINT;
+
+    // Render dashboard based on layout mode
+    if (this.isSingleColumn) {
+      // Single column: all folders alphabetically in col1
+      this.renderers.dashboard.render(
+        {
+          col1: SPECIALTY_SINGLE_COLUMN,
+          col2: [],
+          col3: []
+        },
+        (med, element) => this.controllers.cart.toggle(med, element)
+      );
+    } else {
+      // Three columns: original layout
+      this.renderers.dashboard.render(
+        {
+          col1: SPECIALTY_COLUMNS.col1,
+          col2: SPECIALTY_COLUMNS.col2,
+          col3: SPECIALTY_COLUMNS.col3
+        },
+        (med, element) => this.controllers.cart.toggle(med, element)
+      );
+    }
 
     // Render initial cart
     this.controllers.cart.render();
+  }
+
+  handleResize() {
+    const wasSingleColumn = this.isSingleColumn;
+    this.isSingleColumn = window.innerWidth <= this.SINGLE_COLUMN_BREAKPOINT;
+
+    // Only re-render if layout mode changed
+    if (wasSingleColumn !== this.isSingleColumn) {
+      // Save open folder states
+      const openFolders = new Set();
+      document.querySelectorAll('details[open]').forEach(details => {
+        const summary = details.querySelector('summary');
+        if (summary) {
+          openFolders.add(summary.textContent.trim());
+        }
+      });
+
+      // Re-render dashboard
+      if (this.isSingleColumn) {
+        this.renderers.dashboard.render(
+          {
+            col1: SPECIALTY_SINGLE_COLUMN,
+            col2: [],
+            col3: []
+          },
+          (med, element) => this.controllers.cart.toggle(med, element)
+        );
+      } else {
+        this.renderers.dashboard.render(
+          {
+            col1: SPECIALTY_COLUMNS.col1,
+            col2: SPECIALTY_COLUMNS.col2,
+            col3: SPECIALTY_COLUMNS.col3
+          },
+          (med, element) => this.controllers.cart.toggle(med, element)
+        );
+      }
+
+      // Restore open folder states
+      document.querySelectorAll('details').forEach(details => {
+        const summary = details.querySelector('summary');
+        if (summary && openFolders.has(summary.textContent.trim())) {
+          details.open = true;
+        }
+      });
+
+      // Update cart indicators
+      this.renderers.cart.updateSelectedIndicators();
+    }
   }
 
   focus() {

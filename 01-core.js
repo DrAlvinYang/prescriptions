@@ -28,6 +28,14 @@ const SPECIALTY_COLUMNS = {
   col3: ["Anti-infective", "Eye", "GI & GU", "Derm", "Non-Med"]
 };
 
+// All specialties sorted alphabetically for single-column view
+const SPECIALTY_SINGLE_COLUMN = [
+  "Add New Med",
+  ...["Allergy, Analgesia, Antiemetic", "Anti-infective", "Cardiac & Heme", "Derm",
+      "ENT", "Eye", "GI & GU", "Neuro & Endocrine", "Non-Med", "OBGYN",
+      "Psych", "Respiratory", "STI", "Substance Use"]
+];
+
 const NESTED_SPECIALTIES = ["Allergy, Analgesia, Antiemetic", "ENT", "GI & GU"];
 
 const SORT_ORDER = {
