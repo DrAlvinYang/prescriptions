@@ -197,14 +197,23 @@ class Application {
 
     weightInput.value = "";
 
-    // Select all text when clicking/focusing the input
+    // Select all text when focusing the input
     weightInput.addEventListener("focus", (e) => {
-      e.target.select();
+      setTimeout(() => {
+        e.target.select();
+      }, 0);
     });
 
-    // Also select on click (for cases where input already has focus)
-    weightInput.addEventListener("click", (e) => {
-      e.target.select();
+    // Prevent mouseup from deselecting text
+    weightInput.addEventListener("mouseup", (e) => {
+      e.preventDefault();
+    });
+
+    // Blur on Enter key
+    weightInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.target.blur();
+      }
     });
 
     // Real-time update

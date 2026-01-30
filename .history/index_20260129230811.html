@@ -34,14 +34,8 @@
         </div>
 
         <div class="searchbar">
-          <input id="searchInput" type="text" placeholder="Search indication or med" autocomplete="off" />
+          <input id="searchInput" type="text" placeholder="Search indication" autocomplete="off" />
           <button id="clearSearchBtn" class="search-clear-btn" type="button" aria-label="Clear search">&times;</button>
-        </div>
-
-        <div class="weight-section">
-          <label for="weightInput">Wt:</label>
-          <input id="weightInput" type="text" inputmode="decimal" placeholder="..." autocomplete="off" />
-          <span>kg</span>
         </div>
 
         <div class="status">
@@ -67,14 +61,21 @@
 
     <aside id="cart" class="cart">
       <div class="cart-header">
-        <div class="cart-count"><span id="cartCount">0</span> prescriptions</div>
-        <div class="cart-header-buttons">
-          <button id="clearCartBtn" class="btn btn-secondary" type="button">Clear</button>
-          <button id="printBtn" class="btn btn-green" type="button">Print</button>
+        <div class="cart-title">Prescriptions</div>
+        <div class="weight-section">
+          <label for="weightInput">Weight:</label>
+          <input id="weightInput" type="number" placeholder="..." min="0" step="0.01" autocomplete="off" />
+          <span>kg</span>
         </div>
       </div>
 
       <div id="cartList" class="cart-list"></div>
+
+      <div class="cart-footer">
+        <div class="cart-count"><span id="cartCount">0</span> prescriptions</div>
+        <button id="clearCartBtn" class="btn btn-secondary" type="button">Clear</button>
+        <button id="printBtn" class="btn btn-green" type="button">Print</button>
+      </div>
     </aside>
   </div>
 
@@ -119,7 +120,7 @@
         <input id="newProviderName" type="text" placeholder="e.g. John Smith" />
       </div>
       <div class="modal-input-group">
-        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">CPSO #</label>
+        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">CPSO Number</label>
         <input id="newProviderCpso" type="text" placeholder="111111" maxlength="6" />
       </div>
       <div class="modal-actions">
