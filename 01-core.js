@@ -653,9 +653,10 @@ class SearchManager {
       'every 6h': 'freq_q6h', 'q 6 h': 'freq_q6h', 'q 6h': 'freq_q6h',
       // q4-6h (range frequencies)
       'q4-6h': 'freq_q4-6h', 'q 4-6 h': 'freq_q4-6h', 'q 4-6h': 'freq_q4-6h',
+      'q4 6h': 'freq_q4-6h', 'q 4 6 h': 'freq_q4-6h',
       'every 4 to 6 hours': 'freq_q4-6h', 'every 4 to 6 hour': 'freq_q4-6h',
       'every 4-6 hours': 'freq_q4-6h', 'every 4-6 hour': 'freq_q4-6h',
-      'every 4-6h': 'freq_q4-6h',
+      'every 4-6h': 'freq_q4-6h', 'every 4 6 hours': 'freq_q4-6h', 'every 4 6h': 'freq_q4-6h',
       // q2h
       'q2h': 'freq_q2h', 'every 2 hours': 'freq_q2h', 'every 2 hour': 'freq_q2h',
       'every 2h': 'freq_q2h',
@@ -685,7 +686,7 @@ class SearchManager {
       'freq_qid': ['qid', 'four times daily'],
       'freq_q4h': ['q4h', 'every 4 hours'],
       'freq_q6h': ['q6h', 'every 6 hours'],
-      'freq_q4-6h': ['q4-6h', 'every 4-6 hours', 'every 4 to 6 hours'],
+      'freq_q4-6h': ['q4-6h', 'q4 6h', 'every 4-6 hours', 'every 4 to 6 hours'],
       'freq_q2h': ['q2h', 'every 2 hours'],
       'freq_q3h': ['q3h', 'every 3 hours'],
       'freq_qhs': ['qhs', 'at bedtime', 'bedtime'],
