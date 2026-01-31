@@ -60,8 +60,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  order: 1;
-  margin-right: auto;
+  margin-right: auto; 
 }
 
 .brand {
@@ -74,7 +73,6 @@ body {
 /* Provider Button */
 .provider-wrapper {
   position: relative;
-  order: 3;
 }
 
 .provider-btn {
@@ -126,7 +124,6 @@ body {
 /* Location Dropdown */
 .location-wrapper {
   position: relative;
-  order: 4;
 }
 
 .location-btn {
@@ -386,7 +383,6 @@ body {
   border: 1px solid var(--border);
   border-radius: 6px;
   height: 35px;
-  order: 6;
 }
 .weight-section label {
   font-weight: 600;
@@ -419,7 +415,6 @@ body {
   width: 230px;
   min-width: 130px; /* Allow shrinking by 100px */
   flex-shrink: 2; /* Shrinks more than location */
-  order: 5;
 }
 .searchbar input {
   width: 100%;
@@ -453,7 +448,7 @@ body {
 .status {
   display: flex;
   align-items: center;
-  order: 2;
+  margin-right: -5px;
 }
 
 .reset-btn {
@@ -949,13 +944,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
     order: 2;
   }
 
-  /* Reset button moves to row 2 in responsive */
-  .status {
-    order: 7;
-    margin-right: 0;
-    flex-shrink: 0;
-  }
-
   .provider-btn {
     width: 130px;
   }
@@ -993,6 +981,11 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
   .weight-section {
     order: 6;
+    flex-shrink: 0;
+  }
+
+  .status {
+    order: 7;
     flex-shrink: 0;
   }
 
