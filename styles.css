@@ -146,13 +146,13 @@ body {
 /* Provider Edit Dropdown */
 .provider-edit-dropdown {
   position: absolute;
-  top: 0;
-  left: -60px; /* Offset so input field aligns with button left edge (50px label + 10px gap) */
+  top: -13px; /* Align input with button (accounting for 12px top padding + 1px border) */
+  left: -57px; /* Offset so input field aligns with button left edge (35px label + 10px gap + 12px padding) */
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  padding: 12px;
+  padding: 12px; /* Equal padding on all sides */
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -173,9 +173,8 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: #333;
-  width: 50px;
+  width: auto;
   flex-shrink: 0;
-  text-align: right;
 }
 
 .provider-edit-input {
