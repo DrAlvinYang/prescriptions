@@ -123,6 +123,84 @@ body {
   height: 14px;
 }
 
+/* Provider Edit Backdrop */
+.provider-edit-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+}
+.provider-edit-backdrop.hidden {
+  display: none;
+}
+
+/* Keep provider wrapper above backdrop when editing */
+.provider-wrapper.edit-active {
+  position: relative;
+  z-index: 201;
+}
+
+/* Provider Edit Dropdown */
+.provider-edit-dropdown {
+  position: absolute;
+  top: 0;
+  left: -60px; /* Offset so input field aligns with button left edge (50px label + 10px gap) */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 12px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.provider-edit-dropdown.hidden {
+  display: none;
+}
+
+/* Provider Edit Row - horizontal layout */
+.provider-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.provider-edit-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  width: 50px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.provider-edit-input {
+  width: 175px;
+  padding: 8px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  height: 35px;
+}
+
+.provider-edit-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.15);
+}
+
+/* Provider Edit Actions */
+.provider-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
 /* Location Dropdown */
 .location-wrapper {
   position: relative;

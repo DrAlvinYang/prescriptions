@@ -1137,10 +1137,13 @@ class ModalManager {
     }
   }
 
-  // Provider Modal
+  // Provider Edit Dropdown (inline form)
   openProvider(currentProvider = null) {
     const nameInput = document.getElementById("newProviderName");
     const cpsoInput = document.getElementById("newProviderCpso");
+    const backdrop = document.getElementById("providerEditBackdrop");
+    const dropdown = document.getElementById("providerEditDropdown");
+    const wrapper = document.querySelector(".provider-wrapper");
 
     // Default placeholders
     const defaultNamePlaceholder = "e.g. John Smith";
@@ -1179,17 +1182,26 @@ class ModalManager {
       cpsoInput.addEventListener("input", this.providerInputHandler);
     }
 
-    const modal = document.getElementById("providerModal");
-    modal.classList.remove("hidden");
+    // Show backdrop and dropdown
+    backdrop.classList.remove("hidden");
+    dropdown.classList.remove("hidden");
+    wrapper.classList.add("edit-active");
+
     nameInput.focus();
 
-    // Trap focus in modal
-    this.trapFocus(modal);
+    // Trap focus in dropdown
+    this.trapFocus(dropdown);
   }
 
   closeProvider() {
     this.removeFocusTrap();
-    document.getElementById("providerModal").classList.add("hidden");
+    const backdrop = document.getElementById("providerEditBackdrop");
+    const dropdown = document.getElementById("providerEditDropdown");
+    const wrapper = document.querySelector(".provider-wrapper");
+
+    backdrop.classList.add("hidden");
+    dropdown.classList.add("hidden");
+    wrapper.classList.remove("edit-active");
   }
 
   saveProvider(providerManager, onSuccess) {

@@ -381,7 +381,7 @@ class Application {
         const editModal = Utils.getElement("editModal");
         const addNewMedModal = Utils.getElement("addNewMedModal");
         const locationModal = Utils.getElement("locationModal");
-        const providerModal = Utils.getElement("providerModal");
+        const providerDropdown = Utils.getElement("providerEditDropdown");
 
         // Close whichever modal is currently open
         if (weightModal && !weightModal.classList.contains("hidden")) {
@@ -392,7 +392,7 @@ class Application {
           this.managers.modal.closeAddNewMed();
         } else if (locationModal && !locationModal.classList.contains("hidden")) {
           this.managers.modal.closeLocation();
-        } else if (providerModal && !providerModal.classList.contains("hidden")) {
+        } else if (providerDropdown && !providerDropdown.classList.contains("hidden")) {
           this.managers.modal.closeProvider();
         }
       }
@@ -415,7 +415,14 @@ class Application {
     setupModalClickOutside("editModal", () => this.managers.modal.closeEdit());
     setupModalClickOutside("addNewMedModal", () => this.managers.modal.closeAddNewMed());
     setupModalClickOutside("locationModal", () => this.managers.modal.closeLocation());
-    setupModalClickOutside("providerModal", () => this.managers.modal.closeProvider());
+
+    // Provider edit uses a backdrop instead of a modal overlay
+    const providerBackdrop = Utils.getElement("providerEditBackdrop");
+    if (providerBackdrop) {
+      providerBackdrop.addEventListener("click", () => {
+        this.managers.modal.closeProvider();
+      });
+    }
   }
 
   setupLocationListeners() {
@@ -493,6 +500,11 @@ class Application {
           e.preventDefault();
           this.controllers.provider.saveProvider();
         }
+      });
+
+      // Only allow numeric input in CPSO field
+      providerCpsoInput.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
       });
     }
   }

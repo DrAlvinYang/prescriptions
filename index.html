@@ -24,6 +24,22 @@
               </svg>
             </span>
           </button>
+
+          <!-- Inline Provider Edit Form (dropdown style) -->
+          <div id="providerEditDropdown" class="provider-edit-dropdown hidden">
+            <div class="provider-edit-row">
+              <label class="provider-edit-label">Name</label>
+              <input id="newProviderName" type="text" class="provider-edit-input" placeholder="e.g. John Smith" />
+            </div>
+            <div class="provider-edit-row">
+              <label class="provider-edit-label">CPSO</label>
+              <input id="newProviderCpso" type="text" class="provider-edit-input" placeholder="e.g. 123456" maxlength="6" inputmode="numeric" />
+            </div>
+            <div class="provider-edit-actions">
+              <button id="cancelProviderBtn" class="btn btn-secondary">Cancel</button>
+              <button id="saveProviderBtn" class="btn btn-green">Save Provider</button>
+            </div>
+          </div>
         </div>
 
         <div class="location-wrapper">
@@ -45,7 +61,7 @@
         </div>
 
         <div class="status">
-          <button id="resetViewBtn" class="icon-btn reset-btn" title="Reset View & Weight">
+          <button id="resetViewBtn" class="icon-btn reset-btn" title="Reset cart, search, and view">
             &#x21bb;
           </button>
         </div>
@@ -121,23 +137,8 @@
     </div>
   </div>
 
-  <div id="providerModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="providerModalTitle">
-    <div class="modal-box">
-      <h3 id="providerModalTitle" style="margin-top:0;">Edit Provider Information</h3>
-      <div class="modal-input-group">
-        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Name</label>
-        <input id="newProviderName" type="text" placeholder="e.g. John Smith" />
-      </div>
-      <div class="modal-input-group">
-        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">CPSO #</label>
-        <input id="newProviderCpso" type="text" placeholder="e.g. 123456" maxlength="6" />
-      </div>
-      <div class="modal-actions">
-        <button id="cancelProviderBtn" class="btn btn-secondary">Cancel</button>
-        <button id="saveProviderBtn" class="btn btn-green">Save Provider</button>
-      </div>
-    </div>
-  </div>
+  <!-- Provider Edit Backdrop (greys out the rest of the site) -->
+  <div id="providerEditBackdrop" class="provider-edit-backdrop hidden"></div>
 
   <div id="editModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
     <div class="modal-box modal-wide">

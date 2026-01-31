@@ -397,14 +397,14 @@ class KeyboardController {
   isAnyModalOpen() {
     const weightModal = document.getElementById("weightModal");
     const locationModal = document.getElementById("locationModal");
-    const providerModal = document.getElementById("providerModal");
+    const providerDropdown = document.getElementById("providerEditDropdown");
     const editModal = document.getElementById("editModal");
     const addNewMedModal = document.getElementById("addNewMedModal");
-    
+
     return (
       !weightModal.classList.contains("hidden") ||
       !locationModal.classList.contains("hidden") ||
-      !providerModal.classList.contains("hidden") ||
+      !providerDropdown.classList.contains("hidden") ||
       !editModal.classList.contains("hidden") ||
       !addNewMedModal.classList.contains("hidden")
     );
