@@ -587,10 +587,45 @@ class LocationManager {
 class ProviderManager {
   constructor() {
     this.currentProvider = { ...CONFIG.prescriber };
+    this.sessionFlagKey = "rx_provider_session";
   }
 
   load() {
     try {
+      // Strategy: Use sessionStorage flag + localStorage data
+      // - sessionStorage flag indicates "this browser session has been initialized"
+      // - sessionStorage is per-tab BUT we use localStorage ping/pong to sync across tabs
+
+      const hasSessionFlag = sessionStorage.getItem(this.sessionFlagKey);
+
+      if (!hasSessionFlag) {
+        // This tab doesn't have the session flag yet
+        // Check if another tab in this session exists by looking for recent activity
+        const lastActivity = localStorage.getItem("rx_provider_last_activity");
+        const now = Date.now();
+
+        // If another tab was active in the last 3 seconds, we're in the same session
+        // This handles the case of opening a new tab while site is already open
+        if (lastActivity && (now - parseInt(lastActivity, 10)) < 3000) {
+          // Same session, different tab - set our flag and load provider
+          sessionStorage.setItem(this.sessionFlagKey, "true");
+        } else {
+          // New browser session - clear provider data
+          localStorage.removeItem(CONFIG.storage.provider);
+          sessionStorage.setItem(this.sessionFlagKey, "true");
+          this.updateActivityTimestamp();
+          this.startHeartbeat();
+          return; // Keep default "Set Provider" state
+        }
+      }
+
+      // Update activity timestamp so other new tabs know we're active
+      this.updateActivityTimestamp();
+
+      // Start heartbeat to keep timestamp fresh while this tab is open
+      this.startHeartbeat();
+
+      // Load provider from localStorage
       const stored = localStorage.getItem(CONFIG.storage.provider);
       if (stored) {
         const parsed = JSON.parse(stored);
@@ -615,6 +650,27 @@ class ProviderManager {
     }
   }
 
+  updateActivityTimestamp() {
+    localStorage.setItem("rx_provider_last_activity", Date.now().toString());
+  }
+
+  startHeartbeat() {
+    // Update timestamp every 2 seconds while this tab is open
+    // This ensures new tabs opened within the same session can detect active tabs
+    if (this.heartbeatInterval) return; // Already running
+
+    this.heartbeatInterval = setInterval(() => {
+      this.updateActivityTimestamp();
+    }, 2000);
+
+    // Also update on visibility change (when tab becomes visible)
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        this.updateActivityTimestamp();
+      }
+    });
+  }
+
   getProvider() {
     return { ...this.currentProvider };
   }
@@ -622,22 +678,92 @@ class ProviderManager {
   updateProvider(name, cpso) {
     const cleanName = Utils.normalize(name);
     const cleanCpso = Utils.normalize(cpso);
-    
+
     if (!cleanName) {
       throw new Error("Provider name is required");
     }
-    
+
     if (!cleanCpso) {
       throw new Error("CPSO number is required");
     }
-    
+
     // Validate CPSO format: must be numeric and 5 or 6 digits
     if (!/^\d{5,6}$/.test(cleanCpso)) {
       throw new Error("CPSO number must be 5 or 6 digits");
     }
-    
-    this.currentProvider = { name: cleanName, cpso: cleanCpso };
+
+    const capitalizedName = this.capitalizeName(cleanName);
+    this.currentProvider = { name: capitalizedName, cpso: cleanCpso };
     localStorage.setItem(CONFIG.storage.provider, JSON.stringify(this.currentProvider));
+    // Update activity timestamp so new tabs know this session is active
+    this.updateActivityTimestamp();
+  }
+
+  /**
+   * Capitalize provider name with special handling for:
+   * - Hyphenated names: capitalize first part only (Smith-jones)
+   * - Apostrophes: capitalize first letter, preserve user input after apostrophe
+   * - Particles: keep van, de, von, etc. lowercase (unless only/last word)
+   */
+  capitalizeName(name) {
+    if (!name) return '';
+
+    // Common name particles to keep lowercase
+    const particles = new Set([
+      'van', 'de', 'von', 'der', 'la', 'le', 'du', 'des',
+      'di', 'da', 'del', 'della', 'dos', 'das', 'ten', 'ter'
+    ]);
+
+    const words = name.trim().split(/\s+/);
+
+    const capitalizedWords = words.map((word, index) => {
+      const lowerWord = word.toLowerCase();
+
+      // Keep particles lowercase, unless it's the only word or the last word
+      if (particles.has(lowerWord) && words.length > 1 && index < words.length - 1) {
+        return lowerWord;
+      }
+
+      // Handle hyphenated names - capitalize first part only
+      if (word.includes('-')) {
+        const parts = word.split('-');
+        return parts.map((part, i) => {
+          if (i === 0) {
+            return this.capitalizeWord(part);
+          }
+          return part.toLowerCase();
+        }).join('-');
+      }
+
+      return this.capitalizeWord(word);
+    });
+
+    return capitalizedWords.join(' ');
+  }
+
+  /**
+   * Capitalize a single word, preserving user input for apostrophe names
+   * and preserving intentional mixed-case (e.g., McDonald, MacArthur)
+   */
+  capitalizeWord(word) {
+    if (!word) return '';
+
+    // Preserve apostrophe names exactly as typed (e.g., o'brien, O'Brien, o'Brien)
+    if (word.includes("'")) {
+      return word;
+    }
+
+    // Check if user has intentional mixed-case (uppercase after first char)
+    // e.g., McDonald, MacDonald, DeVito - preserve their input exactly
+    const afterFirst = word.slice(1);
+    const hasIntentionalMixedCase = afterFirst !== afterFirst.toLowerCase() && afterFirst !== afterFirst.toUpperCase();
+    if (hasIntentionalMixedCase) {
+      // Preserve the word exactly as user typed it
+      return word;
+    }
+
+    // Standard capitalization - first letter upper, rest lower
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   }
 
   reset() {

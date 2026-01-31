@@ -87,11 +87,14 @@
 
   <div id="weightModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="weightModalTitle">
     <div class="modal-box">
-      <p id="weightModalTitle" style="margin-top:0; font-size:15px; line-height:1.5; color:#333;">
-        Medication is weight-based, enter patient's weight to calculate dose.
+      <p id="weightModalTitle" style="margin-top:0; font-size:14px; line-height:1.5; color:#333;">
+        Medication is weight-based.<br>Enter weight to calculate dose.
       </p>
       <div class="modal-input-group">
-        <input id="modalWeightInput" type="number" placeholder="Weight (kg)" min="0" step="0.01" />
+        <div class="weight-input-wrapper">
+          <input id="modalWeightInput" type="text" inputmode="decimal" placeholder="Weight" autocomplete="off" />
+          <span class="weight-unit-suffix">kg</span>
+        </div>
       </div>
       <div class="modal-actions">
         <button id="modalSkipBtn" class="btn btn-secondary">Skip</button>
@@ -122,12 +125,12 @@
     <div class="modal-box">
       <h3 id="providerModalTitle" style="margin-top:0;">Edit Provider Information</h3>
       <div class="modal-input-group">
-        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Full Name</label>
+        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Name</label>
         <input id="newProviderName" type="text" placeholder="e.g. John Smith" />
       </div>
       <div class="modal-input-group">
         <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">CPSO #</label>
-        <input id="newProviderCpso" type="text" placeholder="111111" maxlength="6" />
+        <input id="newProviderCpso" type="text" placeholder="e.g. 123456" maxlength="6" />
       </div>
       <div class="modal-actions">
         <button id="cancelProviderBtn" class="btn btn-secondary">Cancel</button>

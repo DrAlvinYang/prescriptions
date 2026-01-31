@@ -212,6 +212,20 @@ class Application {
 
     weightInput.value = "";
 
+    // Helper function to sanitize weight input - only allow valid numeric characters
+    const sanitizeWeightInput = (value) => {
+      // Remove all characters except digits and decimal point
+      let sanitized = value.replace(/[^0-9.]/g, '');
+
+      // Handle multiple decimal points - keep only the first one
+      const parts = sanitized.split('.');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '.' + parts.slice(1).join('');
+      }
+
+      return sanitized;
+    };
+
     // Select all text when focusing the input
     weightInput.addEventListener("focus", (e) => {
       setTimeout(() => {
@@ -231,9 +245,13 @@ class Application {
       }
     });
 
-    // Real-time update
+    // Real-time update with sanitization
     weightInput.addEventListener("input", (e) => {
-      this.controllers.weight.update(e.target.value);
+      const sanitized = sanitizeWeightInput(e.target.value);
+      if (sanitized !== e.target.value) {
+        e.target.value = sanitized;
+      }
+      this.controllers.weight.update(sanitized);
     });
 
     // Format on blur/enter
@@ -248,6 +266,20 @@ class Application {
     const modalSkipBtn = Utils.getElement("modalSkipBtn");
     const modalWeightInput = Utils.getElement("modalWeightInput");
 
+    // Helper function to sanitize weight input - only allow valid numeric characters
+    const sanitizeWeightInput = (value) => {
+      // Remove all characters except digits and decimal point
+      let sanitized = value.replace(/[^0-9.]/g, '');
+
+      // Handle multiple decimal points - keep only the first one
+      const parts = sanitized.split('.');
+      if (parts.length > 2) {
+        sanitized = parts[0] + '.' + parts.slice(1).join('');
+      }
+
+      return sanitized;
+    };
+
     if (modalSaveBtn && modalSkipBtn && modalWeightInput) {
       // Select all text when clicking/focusing the modal weight input
       modalWeightInput.addEventListener("focus", (e) => {
@@ -256,6 +288,14 @@ class Application {
 
       modalWeightInput.addEventListener("click", (e) => {
         e.target.select();
+      });
+
+      // Sanitize input on every change to ensure only valid numeric values
+      modalWeightInput.addEventListener("input", (e) => {
+        const sanitized = sanitizeWeightInput(e.target.value);
+        if (sanitized !== e.target.value) {
+          e.target.value = sanitized;
+        }
       });
 
       modalSaveBtn.addEventListener("click", (e) => {

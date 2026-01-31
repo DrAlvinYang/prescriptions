@@ -484,13 +484,17 @@ class LocationUIRenderer {
   enterSearchMode(onSelect, onDelete, onAddNew) {
     const button = document.getElementById("locationBtn");
     const wrapper = document.getElementById("locationWrapper") || button.parentElement;
-    
+
     this.isSearchMode = true;
     this.activeLocationIndex = -1; // Reset keyboard navigation
-    
+
+    // Add search-active class to wrapper (keeps it above backdrop)
+    wrapper.classList.add("search-active");
+    wrapper.classList.add("typing-mode"); // Start in typing mode
+
     // Replace button content with search input
     button.innerHTML = `<input id="locationSearchInput" type="text" class="location-search-input" placeholder="Search hospital" autocomplete="off" />`;
-    
+
     this.searchInput = document.getElementById("locationSearchInput");
     
     // Create dropdown if it doesn't exist
@@ -509,12 +513,21 @@ class LocationUIRenderer {
     // Setup search input listeners
     this.searchInput.addEventListener("input", (e) => {
       this.activeLocationIndex = -1; // Reset navigation on new search
+      // Switch back to typing mode when user types
+      wrapper.classList.add("typing-mode");
       this.updateDropdownResults(e.target.value, onSelect, onDelete, onAddNew);
     });
     
     // Prevent button click from triggering while in search mode
     this.searchInput.addEventListener("click", (e) => {
       e.stopPropagation();
+      // Restore typing mode when clicking back into input
+      wrapper.classList.add("typing-mode");
+    });
+
+    // Restore typing mode when focusing the input
+    this.searchInput.addEventListener("focus", () => {
+      wrapper.classList.add("typing-mode");
     });
     
     // Handle keyboard navigation
@@ -541,9 +554,13 @@ class LocationUIRenderer {
         this.exitSearchMode();
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
+        // Switch to navigation mode (remove typing mode)
+        wrapper.classList.remove("typing-mode");
         this.navigateLocations("down", onSelect, onDelete, onAddNew);
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
+        // Switch to navigation mode (remove typing mode)
+        wrapper.classList.remove("typing-mode");
         this.navigateLocations("up", onSelect, onDelete, onAddNew);
       } else if (e.key === "Enter") {
         e.preventDefault();
@@ -573,36 +590,40 @@ class LocationUIRenderer {
     this.updateActiveLocationItem(items, direction);
   }
 
-  updateActiveLocationItem(items, direction = null) {
+  updateActiveLocationItem(items, direction = null, focusItem = true) {
     items.forEach((element, index) => {
       if (index === this.activeLocationIndex) {
         element.classList.add("is-active");
-        // Prevent automatic scroll on focus to avoid flickering
-        element.focus({ preventScroll: true });
 
-        // Check if element is already visible in the dropdown
-        const dropdownResults = this.dropdown.querySelector(".location-search-results");
-        const elementRect = element.getBoundingClientRect();
-        const containerRect = dropdownResults.getBoundingClientRect();
+        // Only focus and scroll if focusItem is true (keyboard navigation)
+        if (focusItem) {
+          // Prevent automatic scroll on focus to avoid flickering
+          element.focus({ preventScroll: true });
 
-        const isFullyVisible =
-          elementRect.top >= containerRect.top &&
-          elementRect.bottom <= containerRect.bottom;
+          // Check if element is already visible in the dropdown
+          const dropdownResults = this.dropdown.querySelector(".location-search-results");
+          const elementRect = element.getBoundingClientRect();
+          const containerRect = dropdownResults.getBoundingClientRect();
 
-        const scrollOptions = {
-          behavior: "auto" // Instant scroll for seamless item replacement
-        };
+          const isFullyVisible =
+            elementRect.top >= containerRect.top &&
+            elementRect.bottom <= containerRect.bottom;
 
-        // Only use directional scrolling if element is not fully visible
-        if (direction === "up" && !isFullyVisible) {
-          scrollOptions.block = "start"; // Align to top when going up
-        } else if (direction === "down" && !isFullyVisible) {
-          scrollOptions.block = "end"; // Align to bottom when going down
-        } else {
-          scrollOptions.block = "nearest"; // Use nearest if already visible or no direction
+          const scrollOptions = {
+            behavior: "auto" // Instant scroll for seamless item replacement
+          };
+
+          // Only use directional scrolling if element is not fully visible
+          if (direction === "up" && !isFullyVisible) {
+            scrollOptions.block = "start"; // Align to top when going up
+          } else if (direction === "down" && !isFullyVisible) {
+            scrollOptions.block = "end"; // Align to bottom when going down
+          } else {
+            scrollOptions.block = "nearest"; // Use nearest if already visible or no direction
+          }
+
+          element.scrollIntoView(scrollOptions);
         }
-
-        element.scrollIntoView(scrollOptions);
       } else {
         element.classList.remove("is-active");
       }
@@ -643,6 +664,8 @@ class LocationUIRenderer {
           item.scrollIntoView({ block: "center", behavior: "smooth" });
           // Set active index so arrow keys continue from this position
           this.activeLocationIndex = index;
+          // Apply visual highlight with enter hint (don't steal focus from search input)
+          this.updateActiveLocationItem(Array.from(items), null, false);
         }
       });
     }, 50);
@@ -650,9 +673,17 @@ class LocationUIRenderer {
 
   exitSearchMode() {
     if (!this.isSearchMode) return;
-    
+
     this.isSearchMode = false;
     this.activeLocationIndex = -1; // Reset navigation state
+
+    // Remove search mode classes from wrapper
+    const wrapper = document.getElementById("locationWrapper");
+    if (wrapper) {
+      wrapper.classList.remove("search-active");
+      wrapper.classList.remove("typing-mode");
+    }
+
     this.hideDropdown();
     this.updateHeader();
   }
@@ -722,19 +753,24 @@ class LocationUIRenderer {
     resultsContainer.innerHTML = "";
     
     // Create result items (up to 10 visible, rest scrollable)
-    matches.forEach(location => {
+    matches.forEach((location, index) => {
       const isCustom = this.locationManager.isCustomLocation(location.name);
       const isSelected = location.name === currentName;
-      
+
       const div = document.createElement("div");
       div.className = `loc-search-item ${isSelected ? 'selected' : ''}`;
       div.tabIndex = 0; // Make focusable for keyboard navigation
-      
+
       const span = document.createElement("span");
       span.className = "loc-search-name";
       span.textContent = location.name;
       div.appendChild(span);
-      
+
+      // Add enter hint icon (visible only when item is active)
+      const enterHint = document.createElement("span");
+      enterHint.className = "loc-enter-hint";
+      div.appendChild(enterHint);
+
       // Show delete button only for custom locations
       if (isCustom) {
         const deleteBtn = document.createElement("button");
@@ -801,7 +837,14 @@ class LocationUIRenderer {
       
       resultsContainer.appendChild(div);
     });
-    
+
+    // Auto-highlight if there's exactly one match (don't steal focus from search input)
+    if (matches.length === 1) {
+      this.activeLocationIndex = 0;
+      const items = resultsContainer.querySelectorAll(".loc-search-item");
+      this.updateActiveLocationItem(Array.from(items), null, false);
+    }
+
     // If no results, show a message
     if (matches.length === 0) {
       const noResults = document.createElement("div");
@@ -1095,14 +1138,51 @@ class ModalManager {
   }
 
   // Provider Modal
-  openProvider() {
-    document.getElementById("newProviderName").value = "";
-    document.getElementById("newProviderCpso").value = "";
-    
+  openProvider(currentProvider = null) {
+    const nameInput = document.getElementById("newProviderName");
+    const cpsoInput = document.getElementById("newProviderCpso");
+
+    // Default placeholders
+    const defaultNamePlaceholder = "e.g. John Smith";
+    const defaultCpsoPlaceholder = "e.g. 123456";
+
+    // Clear field values
+    nameInput.value = "";
+    cpsoInput.value = "";
+
+    // If there's existing provider info, show it as placeholder
+    const hasExistingProvider = currentProvider && currentProvider.name && currentProvider.cpso;
+    if (hasExistingProvider) {
+      nameInput.placeholder = currentProvider.name;
+      cpsoInput.placeholder = currentProvider.cpso;
+    } else {
+      nameInput.placeholder = defaultNamePlaceholder;
+      cpsoInput.placeholder = defaultCpsoPlaceholder;
+    }
+
+    // Remove any existing listeners to avoid duplicates
+    if (this.providerInputHandler) {
+      nameInput.removeEventListener("input", this.providerInputHandler);
+      cpsoInput.removeEventListener("input", this.providerInputHandler);
+    }
+
+    // Add listener to clear both placeholders when user types in either field
+    if (hasExistingProvider) {
+      this.providerInputHandler = () => {
+        nameInput.placeholder = defaultNamePlaceholder;
+        cpsoInput.placeholder = defaultCpsoPlaceholder;
+        // Remove listeners after first input
+        nameInput.removeEventListener("input", this.providerInputHandler);
+        cpsoInput.removeEventListener("input", this.providerInputHandler);
+      };
+      nameInput.addEventListener("input", this.providerInputHandler);
+      cpsoInput.addEventListener("input", this.providerInputHandler);
+    }
+
     const modal = document.getElementById("providerModal");
     modal.classList.remove("hidden");
-    document.getElementById("newProviderName").focus();
-    
+    nameInput.focus();
+
     // Trap focus in modal
     this.trapFocus(modal);
   }

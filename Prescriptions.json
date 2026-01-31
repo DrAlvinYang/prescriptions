@@ -3521,7 +3521,7 @@
         "Ilotycin",
         "Diomycin"
       ],
-      "indication": "Refractory/severe blepharitis/stye",
+      "indication": "Blepharitis/stye (refractory/severe)",
       "dose_text": "1 application",
       "route": "to affected eye(s)",
       "frequency": "QID",
@@ -3536,7 +3536,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "eye | adult | refractory/severe blepharitis/stye | erythromycin ophthalmic ointment (0.5%) | ilotycin diomycin | 1 application | stop once symptoms resolve."
+      "search_text": "eye | adult | blepharitis/stye (refractory/severe) | erythromycin ophthalmic ointment (0.5%) | ilotycin diomycin | 1 application | stop once symptoms resolve."
     },
     {
       "specialty": "Eye",
@@ -3547,7 +3547,7 @@
         "Apprilon",
         "Oracea"
       ],
-      "indication": "Refractory/severe blepharitis/stye",
+      "indication": "Blepharitis/stye (refractory/severe)",
       "dose_text": "100mg",
       "route": "PO",
       "frequency": "OD",
@@ -3562,7 +3562,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "eye | adult | refractory/severe blepharitis/stye | doxycycline | vibramycin doxycin apprilon oracea | 100mg | avoid in pregnancy or lactating people."
+      "search_text": "eye | adult | blepharitis/stye (refractory/severe) | doxycycline | vibramycin doxycin apprilon oracea | 100mg | avoid in pregnancy or lactating people."
     },
     {
       "specialty": "Eye",
@@ -3714,7 +3714,7 @@
         "Ilotycin",
         "Diomycin"
       ],
-      "indication": "Refractory/severe blepharitis/stye",
+      "indication": "Blepharitis/stye (refractory/severe)",
       "dose_text": "1 application",
       "route": "to affected eye(s)",
       "frequency": "QID",
@@ -3729,7 +3729,7 @@
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "eye | pediatric | refractory/severe blepharitis/stye | erythromycin ophthalmic ointment (0.5%) | ilotycin diomycin | 1 application | stop once symptoms resolve."
+      "search_text": "eye | pediatric | blepharitis/stye (refractory/severe) | erythromycin ophthalmic ointment (0.5%) | ilotycin diomycin | 1 application | stop once symptoms resolve."
     },
     {
       "specialty": "Eye",

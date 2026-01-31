@@ -257,7 +257,8 @@ class ProviderController {
   }
 
   openEditModal() {
-    this.modalManager.openProvider();
+    const currentProvider = this.providerManager.getProvider();
+    this.modalManager.openProvider(currentProvider);
   }
 
   saveProvider() {
