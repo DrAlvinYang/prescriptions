@@ -357,16 +357,48 @@ class SearchResultsRenderer {
         onlyItem.classList.add("is-sole-match");
       }
     }
+
+    // Set up sticky header shadow detection
+    this.setupStickyHeaders(resultsContainer);
+  }
+
+  setupStickyHeaders(container) {
+    const contentScroll = document.querySelector('.content-scroll');
+    if (!contentScroll) return;
+
+    const headers = container.querySelectorAll('.search-group-header');
+    if (headers.length === 0) return;
+
+    // Remove any existing scroll listener
+    if (this._stickyScrollHandler) {
+      contentScroll.removeEventListener('scroll', this._stickyScrollHandler);
+    }
+
+    this._stickyScrollHandler = () => {
+      const scrollTop = contentScroll.scrollTop;
+      const containerTop = container.getBoundingClientRect().top - contentScroll.getBoundingClientRect().top;
+
+      headers.forEach(header => {
+        const headerTop = header.offsetTop + containerTop;
+        // Header is stuck when its natural position would be above the scroll position
+        if (scrollTop > headerTop) {
+          header.classList.add('is-stuck');
+        } else {
+          header.classList.remove('is-stuck');
+        }
+      });
+    };
+
+    contentScroll.addEventListener('scroll', this._stickyScrollHandler);
   }
 
   renderGroup(title, items, container, terms, onMedClick) {
     if (items.length === 0) return;
 
-    const header = DOMBuilder.createElement('div', '', {
-      innerHTML: title,
-      style: 'background: #eef3f8; color: #2c3e50; padding: 10px 12px; font-weight: 700; font-size: 14px; border-bottom: 1px solid #dbe0e6;'
+    const header = DOMBuilder.createElement('div', 'search-group-header', {
+      innerHTML: title
     });
-    
+
     container.appendChild(header);
 
     items.forEach(med => {

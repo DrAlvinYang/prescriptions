@@ -496,7 +496,7 @@ body {
 .search-section {
   display: flex;
   justify-content: center;
-  padding: 15px 75px 0 75px;
+  padding: 15px 75px 15px 75px;
   background: var(--bg);
   flex-shrink: 0;
 }
@@ -560,20 +560,12 @@ body {
 
 /* --- Content Area --- */
 .content-scroll {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow-y: auto;
+  flex: 1 1 0; 
+  min-height: 0; 
+  overflow-y: auto; 
   overflow-x: hidden;
   padding: 15px;
-  padding-bottom: 100px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* When search view is active, disable parent scrolling */
-.content-scroll:has(#dashboardView.hidden) {
-  overflow: hidden;
-  padding-bottom: 15px;
+  padding-bottom: 100px; 
 }
 
 /* --- Dashboard --- */
@@ -677,7 +669,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   cursor: pointer;
   line-height: 1.4;
   transition: background 0.1s;
-  scroll-margin-top: 45px;
+  scroll-margin-top: 30px;
   scroll-margin-bottom: 80px;
 }
 .med-item:last-child { border-bottom: none; }
@@ -709,10 +701,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
 /* --- Search View --- */
 .hidden { display: none !important; }
 .search-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
   overflow: visible;
   padding: 0;
 }
@@ -727,24 +715,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 6px;
-}
-
-/* Search Results Group Headers (Adult/Pediatric/Other) */
-.search-group-header {
-  background: #eef3f8;
-  color: #2c3e50;
-  padding: 8px 12px;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 1.4;
-  border-bottom: 1px solid #dbe0e6;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.search-group-header.is-stuck {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* --- Right Sidebar Cart --- */
@@ -1315,11 +1285,8 @@ body.show-brands .brand-match-hint {
 
 /* Create a 'lane' for the hint on the right of the search results */
 #searchResults {
-  flex: 0 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  margin-right: 60px;
-  margin-left: 60px;
+  margin-right: 60px; 
+  margin-left: 60px;  /* Added matching margin to the left */
   position: relative;
   background: var(--panel);
   border: 1px solid var(--border);
