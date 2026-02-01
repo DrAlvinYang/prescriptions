@@ -1214,10 +1214,16 @@ class ModalManager {
       cpsoInput.addEventListener("input", this.providerInputHandler);
     }
 
-    // Show backdrop and dropdown
+    // Show backdrop and dropdown with animation
     backdrop.classList.remove("hidden");
     dropdown.classList.remove("hidden");
+    dropdown.classList.add("animating");
     wrapper.classList.add("edit-active");
+
+    // Remove animating class after animation completes
+    setTimeout(() => {
+      dropdown.classList.remove("animating");
+    }, 400);
 
     nameInput.focus();
 
