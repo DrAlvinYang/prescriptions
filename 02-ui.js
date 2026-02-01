@@ -95,22 +95,70 @@ class MedicationRenderer {
   }
 
   createMedItem(med, options = {}) {
-    const { showPopulation = false, highlightTerms = [], onClick } = options;
-    
-    const div = DOMBuilder.createElement('div', 'med-item', {
-      tabIndex: 0,
-      innerHTML: this.renderHTML(med, { showPopulation, highlightTerms })
+    const { showPopulation = false, highlightTerms = [], onClick, showActions = false } = options;
+
+    const className = showActions ? 'med-item has-actions' : 'med-item';
+    const div = DOMBuilder.createElement('div', className, {
+      tabIndex: 0
     });
-    
+
     div.dataset.key = MedicationUtils.getCartKey(med);
-    
+
+    // Wrap content in a container for flexbox layout when actions are present
+    if (showActions) {
+      const contentDiv = DOMBuilder.createElement('div', 'med-item-content', {
+        innerHTML: this.renderHTML(med, { showPopulation, highlightTerms })
+      });
+      div.appendChild(contentDiv);
+
+      const actionsDiv = DOMBuilder.createElement('div', 'med-item-actions');
+
+      const editBtn = DOMBuilder.createElement('button', 'med-action-btn', {
+        textContent: 'Edit',
+        type: 'button'
+      });
+      editBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Placeholder - functionality to be added later
+      };
+
+      const addBtn = DOMBuilder.createElement('button', 'med-action-btn', {
+        textContent: 'Add',
+        type: 'button'
+      });
+      addBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Placeholder - functionality to be added later
+      };
+
+      const printBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-print', {
+        textContent: 'Print',
+        type: 'button'
+      });
+      printBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Quick-print: Add to cart and print immediately
+        if (window.printController) {
+          window.printController.quickPrint(med);
+        }
+      };
+
+      actionsDiv.appendChild(editBtn);
+      actionsDiv.appendChild(addBtn);
+      actionsDiv.appendChild(printBtn);
+      div.appendChild(actionsDiv);
+    } else {
+      // No actions - just set innerHTML directly
+      div.innerHTML = this.renderHTML(med, { showPopulation, highlightTerms });
+    }
+
     if (onClick) {
       div.onclick = (e) => {
         e.stopPropagation();
         onClick(med, div);
       };
     }
-    
+
     return div;
   }
 
@@ -405,9 +453,10 @@ class SearchResultsRenderer {
       const item = this.medRenderer.createMedItem(med, {
         showPopulation: false,
         highlightTerms: terms,
-        onClick: onMedClick
+        onClick: onMedClick,
+        showActions: true
       });
-      
+
       item.style.borderBottom = "1px solid #eee";
       container.appendChild(item);
     });
@@ -1019,11 +1068,21 @@ class ModalManager {
       document.getElementById("weightInput").value = value.toFixed(2);
 
       if (this.state.pendingMed) {
-        onSuccess(this.state.pendingMed);
+        const med = this.state.pendingMed;
         this.state.pendingMed = null;
-      }
 
-      this.closeWeight();
+        // Check if in quick-print mode - use stored callback
+        if (this.state.isQuickPrintMode && this.state.quickPrintCallback) {
+          const callback = this.state.quickPrintCallback;
+          this.closeWeight();
+          callback(med);
+        } else {
+          onSuccess(med);
+          this.closeWeight();
+        }
+      } else {
+        this.closeWeight();
+      }
     } else if (!isNaN(value) && value > MAX_WEIGHT) {
       alert(`Weight cannot exceed ${MAX_WEIGHT} kg. Please enter a valid weight.`);
     } else {
@@ -1033,10 +1092,21 @@ class ModalManager {
 
   skipWeight(onSkip) {
     if (this.state.pendingMed) {
-      onSkip(this.state.pendingMed);
+      const med = this.state.pendingMed;
       this.state.pendingMed = null;
+
+      // Check if in quick-print mode - use stored callback
+      if (this.state.isQuickPrintMode && this.state.quickPrintCallback) {
+        const callback = this.state.quickPrintCallback;
+        this.closeWeight();
+        callback(med);
+      } else {
+        onSkip(med);
+        this.closeWeight();
+      }
+    } else {
+      this.closeWeight();
     }
-    this.closeWeight();
   }
 
   // Edit Modal

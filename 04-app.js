@@ -153,6 +153,7 @@ class Application {
     window.cartController = this.controllers.cart;
     window.locationController = this.controllers.location;
     window.providerController = this.controllers.provider;
+    window.printController = this.controllers.print;
     window.cartActions = {
       remove: (uid) => this.controllers.cart.remove(uid),
       edit: (uid) => this.managers.modal.openEdit(uid)
@@ -374,7 +375,8 @@ class Application {
       });
     }
 
-    // Escape key handler for all modals
+    // Escape key handler for modals
+    // NOTE: Weight modal Escape is handled by KeyboardController (supports quick-print mode)
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         const weightModal = Utils.getElement("weightModal");
@@ -383,10 +385,13 @@ class Application {
         const locationModal = Utils.getElement("locationModal");
         const providerDropdown = Utils.getElement("providerEditDropdown");
 
-        // Close whichever modal is currently open
+        // Skip weight modal - handled by KeyboardController with quick-print support
         if (weightModal && !weightModal.classList.contains("hidden")) {
-          this.managers.modal.closeWeight();
-        } else if (editModal && !editModal.classList.contains("hidden")) {
+          return;
+        }
+
+        // Close whichever modal is currently open
+        if (editModal && !editModal.classList.contains("hidden")) {
           this.managers.modal.closeEdit();
         } else if (addNewMedModal && !addNewMedModal.classList.contains("hidden")) {
           this.managers.modal.closeAddNewMed();
@@ -411,7 +416,11 @@ class Application {
       }
     };
 
-    setupModalClickOutside("weightModal", () => this.managers.modal.closeWeight());
+    setupModalClickOutside("weightModal", () => {
+      // During quick-print mode, clicking outside weight modal does nothing
+      if (this.state.isQuickPrintMode) return;
+      this.managers.modal.closeWeight();
+    });
     setupModalClickOutside("editModal", () => this.managers.modal.closeEdit());
     setupModalClickOutside("addNewMedModal", () => this.managers.modal.closeAddNewMed());
     setupModalClickOutside("locationModal", () => this.managers.modal.closeLocation());

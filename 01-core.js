@@ -71,6 +71,10 @@ class AppState {
     this.tabbingUnlocked = false;
     this.activeSearchIndex = -1;
     this.showingBrands = false;
+    // Print state tracking
+    this.isPrintInProgress = false;
+    this.isQuickPrintMode = false;
+    this.quickPrintCallback = null; // Callback to execute after weight modal completes in quick-print mode
   }
 
   addToCart(medication) {

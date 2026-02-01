@@ -505,6 +505,9 @@ class KeyboardController {
     // Escape key for all modals
     if (event.key === "Escape") {
       if (!weightModal.classList.contains("hidden")) {
+        // Prevent other Escape handlers from also firing
+        event.preventDefault();
+        event.stopImmediatePropagation();
         window.modalManager.skipWeight((med) => window.cartController.add(med));
         return true;
       }
@@ -693,7 +696,38 @@ class PrintController {
     this.providerManager = providerManager;
   }
 
+  // Helper: Disable all print buttons during print flow
+  disableAllPrintButtons() {
+    // Disable main cart print button
+    const mainPrintBtn = document.getElementById("printBtn");
+    if (mainPrintBtn) {
+      mainPrintBtn.disabled = true;
+    }
+
+    // Disable all quick-print buttons in search results
+    document.querySelectorAll(".med-action-btn-print").forEach(btn => {
+      btn.disabled = true;
+    });
+  }
+
+  // Helper: Re-enable all print buttons after print flow
+  enableAllPrintButtons() {
+    // Enable main cart print button
+    const mainPrintBtn = document.getElementById("printBtn");
+    if (mainPrintBtn) {
+      mainPrintBtn.disabled = false;
+    }
+
+    // Enable all quick-print buttons in search results
+    document.querySelectorAll(".med-action-btn-print").forEach(btn => {
+      btn.disabled = false;
+    });
+  }
+
   print() {
+    // Guard: Check if print already in progress
+    if (this.state.isPrintInProgress) return;
+
     if (this.state.cart.length === 0) return;
 
     const provider = this.providerManager.getProvider();
@@ -704,6 +738,146 @@ class PrintController {
       return;
     }
 
+    // Set print in progress and disable all print buttons
+    this.state.isPrintInProgress = true;
+    this.disableAllPrintButtons();
+
+    // Use shared print execution logic
+    this.executePrint();
+  }
+
+  generatePDF(data) {
+    // Load jsPDF dynamically if not already loaded
+    if (typeof window.jspdf === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.integrity = 'sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==';
+      script.crossOrigin = 'anonymous';
+      script.onload = () => this.createAndOpenPDF(data);
+      script.onerror = () => {
+        alert('Failed to load PDF library. Please check your internet connection.');
+        this.handlePrintFailure();
+      };
+      document.head.appendChild(script);
+    } else {
+      this.createAndOpenPDF(data);
+    }
+  }
+
+  // Handle print failure - keep cart and weight intact, re-enable buttons
+  handlePrintFailure() {
+    this.state.isPrintInProgress = false;
+    this.enableAllPrintButtons();
+  }
+
+  // Handle print success - clear cart, reset weight, re-enable buttons
+  handlePrintSuccess() {
+    // Clear cart
+    this.state.clearCart();
+
+    // Reset weight
+    this.state.currentWeight = null;
+    const weightInput = document.getElementById("weightInput");
+    if (weightInput) {
+      weightInput.value = "";
+    }
+
+    // Re-render cart to show empty state
+    if (window.cartRenderer) {
+      window.cartRenderer.render();
+      window.cartRenderer.updateSelectedIndicators();
+    }
+
+    // Re-enable print buttons
+    this.state.isPrintInProgress = false;
+    this.enableAllPrintButtons();
+  }
+
+  /**
+   * Quick-print: Add medication to cart and print immediately
+   * Flow:
+   * 1. Validate provider is set
+   * 2. If weight-based and no global weight, show weight modal (in quick-print mode)
+   * 3. Add med to cart (if not already present)
+   * 4. Print all cart items
+   * 5. Clear cart and reset weight on success
+   */
+  quickPrint(medication) {
+    // Guard: Check if print already in progress
+    if (this.state.isPrintInProgress) return;
+
+    // Guard: Check if weight modal is open
+    const weightModal = document.getElementById("weightModal");
+    if (weightModal && !weightModal.classList.contains("hidden")) return;
+
+    const provider = this.providerManager.getProvider();
+
+    // Validate provider is set
+    if (!provider.name || !provider.cpso) {
+      alert('Please set your provider information before printing.\n\nClick the "Set Provider" button in the top bar.');
+      return;
+    }
+
+    // Disable all print buttons immediately
+    this.state.isPrintInProgress = true;
+    this.disableAllPrintButtons();
+
+    // Check if medication is weight-based and no global weight is set
+    if (medication.weight_based && this.state.currentWeight === null) {
+      // Set quick-print mode and store callback
+      this.state.isQuickPrintMode = true;
+      this.state.quickPrintCallback = (med) => {
+        this.addToCartAndPrint(med);
+      };
+
+      // Open weight modal - the modal will call the callback when done
+      window.modalManager.openWeight(medication);
+    } else {
+      // Not weight-based or weight already set - proceed directly
+      this.addToCartAndPrint(medication);
+    }
+  }
+
+  /**
+   * Helper: Add medication to cart (if not already present) and trigger print
+   */
+  addToCartAndPrint(medication) {
+    // Check if med is already in cart (based on cart key, excluding edited items)
+    const templateKey = MedicationUtils.getCartKey(medication);
+    const alreadyInCart = this.state.cart.some(
+      item => !item.wasEdited && MedicationUtils.getCartKey(item) === templateKey
+    );
+
+    // Add to cart if not already present
+    if (!alreadyInCart) {
+      this.state.addToCart(medication);
+      // Re-render cart to show the new item
+      if (window.cartRenderer) {
+        window.cartRenderer.render();
+        window.cartRenderer.updateSelectedIndicators();
+      }
+    }
+
+    // Reset quick-print mode state
+    this.state.isQuickPrintMode = false;
+    this.state.quickPrintCallback = null;
+
+    // Now trigger the actual print (which will clear cart on success)
+    // Note: isPrintInProgress is already true, so we call the internal print logic directly
+    this.executePrint();
+  }
+
+  /**
+   * Internal print execution - called after cart is ready
+   * Separated from print() to avoid double-checking guards
+   */
+  executePrint() {
+    if (this.state.cart.length === 0) {
+      this.handlePrintFailure();
+      return;
+    }
+
+    const provider = this.providerManager.getProvider();
     const dateStr = new Date().toLocaleDateString("en-CA", {
       year: "numeric",
       month: "long",
@@ -741,21 +915,6 @@ class PrintController {
     };
 
     this.generatePDF(payload);
-  }
-
-  generatePDF(data) {
-    // Load jsPDF dynamically if not already loaded
-    if (typeof window.jspdf === 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-      script.integrity = 'sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==';
-      script.crossOrigin = 'anonymous';
-      script.onload = () => this.createAndOpenPDF(data);
-      script.onerror = () => alert('Failed to load PDF library. Please check your internet connection.');
-      document.head.appendChild(script);
-    } else {
-      this.createAndOpenPDF(data);
-    }
   }
 
   createAndOpenPDF(data) {
@@ -1073,20 +1232,19 @@ class PrintController {
     });
     
     // Get PDF as blob and open in new tab
-    const pdfBlob = pdf.output('blob');
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-    
-    // Open PDF in new tab - this works because we're in the main window context
-    window.open(pdfUrl, '_blank');
-    
-    // Reset weight after generating
-    this.state.currentWeight = null;
-    const weightInput = document.getElementById("weightInput");
-    if (weightInput) {
-      weightInput.value = "";
-    }
-    if (window.cartRenderer) {
-      window.cartRenderer.render();
+    try {
+      const pdfBlob = pdf.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+
+      // Open PDF in new tab - this works because we're in the main window context
+      window.open(pdfUrl, '_blank');
+
+      // Handle successful print
+      this.handlePrintSuccess();
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+      alert("Failed to generate PDF. Please try again.");
+      this.handlePrintFailure();
     }
   }
 

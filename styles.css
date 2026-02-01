@@ -739,6 +739,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 /* --- Medication Item --- */
 .med-item {
+  position: relative;
   padding: 8px 12px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
@@ -746,6 +747,18 @@ details[open] > .subfolder-summary .subfolder-arrow {
   transition: background 0.1s;
   scroll-margin-top: 45px;
   scroll-margin-bottom: 80px;
+}
+
+/* Flexbox layout for search results with action buttons */
+.med-item.has-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.med-item-content {
+  flex: 1;
+  min-width: 0; /* Allow text to shrink and wrap */
 }
 .med-item:last-child { border-bottom: none; }
 .med-item:hover { background: #f7f9fc; }
@@ -946,6 +959,11 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .btn.btn-green:hover {
   background: #c3e6cb;
   border-color: #b0dbb8;
+}
+.btn.btn-green:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .icon-btn {
@@ -1373,6 +1391,44 @@ body.show-brands .brand-match-hint {
   background-color: #eef3f8;
   outline: 2px solid var(--accent);
   outline-offset: -2px;
+}
+
+/* --- Search Result Action Buttons --- */
+.med-item-actions {
+  display: none;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Show action buttons on hover or keyboard highlight */
+.med-item:hover .med-item-actions,
+.med-item.is-active .med-item-actions {
+  display: flex;
+}
+
+.med-action-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: var(--btn);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.med-action-btn:hover {
+  background: var(--btn-hover);
+  border-color: #ccc;
+}
+
+.med-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Create a 'lane' for the hint on the right of the search results */
