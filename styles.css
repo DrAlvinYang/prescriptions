@@ -393,7 +393,8 @@ body {
 .location-search-dropdown {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
+  left: auto;
   margin-top: 4px;
   background: #fff;
   border: 1px solid #ccc;
@@ -1101,11 +1102,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
   .location-btn {
     width: 230px;
     min-width: 230px;
-  }
-
-  .location-search-dropdown {
-    left: auto;
-    right: 0; /* Align right border with location button */
   }
 
   /* Invisible flex-break element to force second row */
