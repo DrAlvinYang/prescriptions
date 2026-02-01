@@ -122,15 +122,6 @@ class MedicationRenderer {
         // Placeholder - functionality to be added later
       };
 
-      const addBtn = DOMBuilder.createElement('button', 'med-action-btn', {
-        textContent: 'Add',
-        type: 'button'
-      });
-      addBtn.onclick = (e) => {
-        e.stopPropagation();
-        // Placeholder - functionality to be added later
-      };
-
       const printBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-print', {
         textContent: 'Print',
         type: 'button'
@@ -144,7 +135,6 @@ class MedicationRenderer {
       };
 
       actionsDiv.appendChild(editBtn);
-      actionsDiv.appendChild(addBtn);
       actionsDiv.appendChild(printBtn);
       div.appendChild(actionsDiv);
     } else {

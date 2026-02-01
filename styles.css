@@ -983,20 +983,26 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 /* Override for reset button - match clear cart button styling */
 .icon-btn.reset-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
   padding: 6px;
   color: #000;
-  width: auto;
-  transition: border-color 0.1s;
+  width: 35px;
+  height: 35px;
+  transition: background 0.1s, border-color 0.1s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .icon-btn.reset-btn:hover {
-  border-color: var(--border);
+  background: #f9f9f9;
+  border-color: #ccc;
   color: #000;
+}
+.icon-btn.reset-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* --- Modal --- */
