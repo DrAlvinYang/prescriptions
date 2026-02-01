@@ -297,7 +297,7 @@ const MedicationUtils = {
 
   getSearchDedupeKey(med) {
     const fields = [
-      'population', 'med', 'dose_text', 'route', 'frequency',
+      'indication', 'population', 'med', 'dose_text', 'route', 'frequency',
       'duration', 'dispense', 'refill', 'prn', 'form', 'comments'
     ];
     return fields.map(field => Utils.normalize(med[field])).join("||");
