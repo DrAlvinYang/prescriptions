@@ -496,9 +496,23 @@ body {
 .search-section {
   display: flex;
   justify-content: center;
-  padding: 15px 75px 0 75px;
+  padding: 15px 75px 4px 75px;
   background: var(--bg);
   flex-shrink: 0;
+  position: relative;
+  z-index: 6;
+}
+
+/* Top fade effect - extends below search section into scroll area */
+.search-section::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 35px;
+  background: linear-gradient(to bottom, var(--bg) 0%, var(--bg) 15px, transparent 35px);
+  pointer-events: none;
 }
 
 /* --- Searchbar --- */
@@ -568,7 +582,9 @@ body {
   padding-bottom: 100px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
+
 
 /* When search view is active, disable parent scrolling */
 .content-scroll:has(#dashboardView.hidden) {
@@ -581,6 +597,7 @@ body {
   display: flex;
   gap: 15px;
   align-items: flex-start;
+  margin-top: 15px;
   margin-left: 60px;
   margin-right: 60px;
 }
@@ -1332,69 +1349,6 @@ body.show-brands .brand-match-hint {
   border: 2px solid var(--accent) !important;
 }
 
-/* Enter key icon for sole match */
-.med-item.is-sole-match::after {
-  content: "";
-  position: absolute;
-  
-  /* Place outside the box on the right */
-  left: calc(100% + 10px); 
-  
-  /* Perfect vertical center regardless of text wrapping */
-  top: 50%;
-  transform: translateY(-50%);
-
-  /* Icon sizing */
-  width: 24px;
-  height: 24px;
-  
-  /* SVG enter/return arrow icon */
-  background-color: #ffffff;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230056b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 17l-5-5 5-5'/%3E%3Cpath d='M20 7v4a2 2 0 0 1-2 2H4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-  
-  /* Box styling */
-  border: 2px solid var(--accent);
-  border-radius: 6px;
-  
-  /* Visual properties */
-  pointer-events: none;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* Enter key icon for active/highlighted item in multi-result search */
-.med-item.is-active::after {
-  content: "";
-  position: absolute;
-  
-  /* Place outside the box on the right */
-  left: calc(100% + 10px); 
-  
-  /* Perfect vertical center */
-  top: 50%;
-  transform: translateY(-50%);
-
-  /* Icon sizing */
-  width: 24px;
-  height: 24px;
-  
-  /* SVG enter/return arrow icon */
-  background-color: #ffffff;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230056b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 17l-5-5 5-5'/%3E%3Cpath d='M20 7v4a2 2 0 0 1-2 2H4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-  
-  /* Box styling */
-  border: 2px solid var(--accent);
-  border-radius: 6px;
-  
-  /* Visual properties */
-  pointer-events: none;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
 /* --- Add New Med Button --- */
 button.add-new-med-btn {
   background: var(--header-bg);
