@@ -204,6 +204,7 @@ body {
 .location-wrapper {
   position: relative;
   order: 4;
+  margin-left: 3px;
 }
 
 .location-btn {
@@ -212,8 +213,8 @@ body {
   border-radius: 6px;
   padding: 0 10px;
   height: 35px;
-  width: 200px;
-  min-width: 200px;
+  width: 215px;
+  min-width: 215px;
   flex-shrink: 0;
 
   display: flex;
@@ -464,6 +465,7 @@ body {
   border-radius: 6px;
   height: 35px;
   order: 6;
+  margin-left: 3px;
 }
 .weight-section label {
   font-weight: 600;
@@ -490,13 +492,20 @@ body {
   background: #f0f7ff;
 }
 
+/* --- Search Section (below header) --- */
+.search-section {
+  display: flex;
+  justify-content: center;
+  padding: 15px 75px 15px 75px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
 /* --- Searchbar --- */
 .searchbar {
   position: relative;
-  width: 230px;
-  min-width: 130px; /* Allow shrinking by 100px */
-  flex-shrink: 2; /* Shrinks more than location */
-  order: 5;
+  width: 450px;
+  max-width: 100%;
 }
 .searchbar input {
   width: 100%;
@@ -505,6 +514,7 @@ body {
   border-radius: 6px;
   font-size: 12px;
   height: 35px;
+  background: var(--panel);
 }
 .searchbar input::placeholder {
   color: #999;
@@ -659,8 +669,8 @@ details[open] > .subfolder-summary .subfolder-arrow {
   cursor: pointer;
   line-height: 1.4;
   transition: background 0.1s;
-  scroll-margin-top: 10px;    /* Optional: padding for upward navigation */
-  scroll-margin-bottom: 80px; /* Adjust this value to get the "past the item" look */
+  scroll-margin-top: 30px;
+  scroll-margin-bottom: 80px;
 }
 .med-item:last-child { border-bottom: none; }
 .med-item:hover { background: #f7f9fc; }
@@ -696,10 +706,10 @@ details[open] > .subfolder-summary .subfolder-arrow {
 }
 .section-title {
   font-size: 17px;
+  margin-top: 0;
   margin-bottom: 15px;
   color: var(--text);
-  /* Optional: Align the title with the new margins of the results */
-  margin-left: 60px; 
+  margin-left: 60px;
 }
 .med-list-flat {
   background: var(--panel);
@@ -1028,7 +1038,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
   /* Reset button moves to row 2 in responsive */
   .status {
-    order: 7;
+    order: 6;
     margin-right: 0;
     flex-shrink: 0;
   }
@@ -1042,8 +1052,8 @@ details[open] > .subfolder-summary .subfolder-arrow {
   }
 
   .location-btn {
-    width: 200px;
-    min-width: 200px;
+    width: 230px;
+    min-width: 230px;
   }
 
   .location-search-dropdown {
@@ -1059,18 +1069,21 @@ details[open] > .subfolder-summary .subfolder-arrow {
     height: 0;
   }
 
-  /* Row 2: Search (stretches to meet weight), Weight, Reset */
-  .searchbar {
+  /* Row 2: Weight, Reset */
+  .weight-section {
     order: 5;
-    flex: 1 1 auto;
-    width: auto;
-    min-width: 150px;
-    max-width: none;
+    flex-shrink: 0;
+    margin-right: auto;
   }
 
-  .weight-section {
-    order: 6;
-    flex-shrink: 0;
+  /* Search section responsive adjustments */
+  .search-section {
+    padding: 12px 40px 12px 40px;
+  }
+
+  .searchbar {
+    width: 100%;
+    max-width: 500px;
   }
 
   /* Cart header: 2-line layout matching topbar exactly */
@@ -1132,6 +1145,14 @@ details[open] > .subfolder-summary .subfolder-arrow {
   }
 
   .location-btn {
+    width: 100%;
+  }
+
+  .search-section {
+    padding: 10px 20px 10px 20px;
+  }
+
+  .searchbar {
     width: 100%;
   }
 }
