@@ -212,6 +212,38 @@
     </div>
   </div>
 
+  <div id="searchEditModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="searchEditModalTitle">
+    <div class="modal-box modal-wide">
+      <h3 id="searchEditModalTitle" style="margin-top:0; font-size:16px;">Edit Prescription</h3>
+      <div class="edit-full-row">
+        <label>Medication Name</label>
+        <input id="searchEditMedName" type="text" />
+      </div>
+      <div class="edit-grid-row">
+        <div class="edit-field"><label>Dose</label><input id="searchEditDose" type="text" /></div>
+        <div class="edit-field"><label>Route</label><input id="searchEditRoute" type="text" /></div>
+        <div class="edit-field"><label>Frequency</label><input id="searchEditFreq" type="text" /></div>
+        <div class="edit-field"><label>Duration</label><input id="searchEditDur" type="text" /></div>
+        <div class="edit-field"><label>Dispense</label><input id="searchEditDispense" type="text" /></div>
+        <div class="edit-field"><label>Refill</label><input id="searchEditRefill" type="text" /></div>
+        <div class="edit-field"><label>Form</label><input id="searchEditForm" type="text" placeholder="e.g. tab" /></div>
+      </div>
+      <div class="edit-full-row">
+        <label>PRN (As needed for...)</label>
+        <input id="searchEditPrn" type="text" placeholder="e.g. pain, fever..." />
+      </div>
+      <div class="edit-full-row">
+        <label>Note</label>
+        <textarea id="searchEditComments" rows="3" maxlength="1000"></textarea>
+      </div>
+      <div class="modal-actions modal-actions-three">
+        <button id="cancelSearchEditBtn" class="btn btn-secondary">Cancel</button>
+        <button id="addToCartSearchEditBtn" class="btn">Add to Cart</button>
+        <button id="printSearchEditBtn" class="btn">Print</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Desktop-Only Overlay (shown below 800px) -->
   <div id="desktopOnlyOverlay" class="desktop-only-overlay">
     <div class="desktop-only-message">

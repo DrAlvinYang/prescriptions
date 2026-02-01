@@ -75,6 +75,12 @@ class AppState {
     this.isPrintInProgress = false;
     this.isQuickPrintMode = false;
     this.quickPrintCallback = null; // Callback to execute after weight modal completes in quick-print mode
+    // Search edit state tracking
+    this.isSearchEditMode = false;
+    this.searchEditCallback = null; // Callback to execute after weight modal completes in search-edit mode
+    this.searchEditPendingMed = null;
+    this.searchEditMed = null; // The medication being edited in search edit modal
+    this.searchEditCalculatedDose = null; // Calculated dose for weight-based meds
   }
 
   addToCart(medication) {
@@ -401,6 +407,234 @@ const MedicationUtils = {
     }
     
     return groups;
+  }
+};
+
+// ============================================================================
+// DUPLICATE CHECKER - For detecting duplicate prescriptions in cart
+// ============================================================================
+
+const DuplicateChecker = {
+  // Route normalization map - maps all variants to canonical lowercase form
+  // Aligned with SearchManager.routeMap for consistency
+  routeNormalization: {
+    // PO (by mouth) - oral administration
+    'po': 'oral', 'oral': 'oral', 'orally': 'oral', 'by mouth': 'oral', 'mouth': 'oral',
+    // IM (intramuscular)
+    'im': 'intramuscular', 'intramuscular': 'intramuscular', 'intramuscularly': 'intramuscular',
+    // IV (intravenous)
+    'iv': 'intravenous', 'intravenous': 'intravenous', 'intravenously': 'intravenous',
+    // SC/SQ/subcut (subcutaneous)
+    'sc': 'subcutaneous', 'sq': 'subcutaneous', 'subcut': 'subcutaneous',
+    'subcutaneous': 'subcutaneous', 'subcutaneously': 'subcutaneous',
+    // SL (sublingual)
+    'sl': 'sublingual', 'sublingual': 'sublingual', 'sublingually': 'sublingual',
+    // PR (per rectum)
+    'pr': 'rectal', 'rectal': 'rectal', 'rectally': 'rectal', 'per rectum': 'rectal',
+    // PV (per vaginal)
+    'pv': 'vaginal', 'vaginal': 'vaginal', 'vaginally': 'vaginal', 'per vaginal': 'vaginal',
+    // TOP (topical)
+    'top': 'topical', 'topical': 'topical', 'topically': 'topical',
+    // INH (inhalation)
+    'inh': 'inhalation', 'inhalation': 'inhalation', 'inhaled': 'inhalation', 'by inhalation': 'inhalation',
+    // NEB (nebulized)
+    'neb': 'nebulized', 'nebulized': 'nebulized', 'nebulizer': 'nebulized',
+    // IN/nasal (intranasal)
+    'nasal': 'intranasal', 'in': 'intranasal', 'intranasal': 'intranasal', 'intranasally': 'intranasal',
+    // TD (transdermal)
+    'td': 'transdermal', 'transdermal': 'transdermal', 'transdermally': 'transdermal', 'patch': 'transdermal',
+    // Ophthalmic (to affected eye(s))
+    'ophth': 'ophthalmic', 'ophthalmic': 'ophthalmic', 'to affected eye': 'ophthalmic',
+    'to affected eyes': 'ophthalmic', 'to affected eye(s)': 'ophthalmic', 'eye drops': 'ophthalmic',
+    // Specific eye routes
+    'od': 'right eye', 'right eye': 'right eye',
+    'os': 'left eye', 'left eye': 'left eye',
+    'ou': 'both eyes', 'both eyes': 'both eyes',
+    // Otic (to affected ear(s))
+    'otic': 'otic', 'to affected ear': 'otic', 'to affected ears': 'otic',
+    'to affected ear(s)': 'otic', 'ear drops': 'otic',
+    // Specific ear routes
+    'ad': 'right ear', 'right ear': 'right ear',
+    'as': 'left ear', 'left ear': 'left ear',
+    'au': 'both ears', 'both ears': 'both ears',
+    // Chewed
+    'chewed': 'chewed',
+    // Buccal
+    'buccal': 'buccal',
+    // NG (nasogastric tube)
+    'ng': 'nasogastric', 'nasogastric': 'nasogastric', 'ng tube': 'nasogastric', 'nasogastric tube': 'nasogastric',
+    // GT/PEG/G-tube (gastrostomy tube)
+    'gt': 'gastrostomy', 'peg': 'gastrostomy', 'g-tube': 'gastrostomy', 'g tube': 'gastrostomy',
+    'gastrostomy': 'gastrostomy', 'gastrostomy tube': 'gastrostomy', 'peg tube': 'gastrostomy',
+    // J-tube (jejunostomy tube)
+    'j tube': 'jejunostomy', 'j-tube': 'jejunostomy', 'jtube': 'jejunostomy',
+    'jejunostomy': 'jejunostomy', 'jejunostomy tube': 'jejunostomy',
+    // PO/SL (by mouth or sublingual)
+    'po/sl': 'oral/sublingual', 'po sl': 'oral/sublingual',
+    // ID (intradermal)
+    'id': 'intradermal', 'intradermal': 'intradermal',
+    // IO (intraosseous)
+    'io': 'intraosseous', 'intraosseous': 'intraosseous',
+    // IT (intrathecal)
+    'it': 'intrathecal', 'intrathecal': 'intrathecal',
+    // IA (intraarticular)
+    'ia': 'intraarticular', 'intraarticular': 'intraarticular'
+  },
+
+  // Frequency normalization map - maps all variants to canonical lowercase form
+  frequencyNormalization: {
+    'od': 'once daily', 'daily': 'once daily', 'qdaily': 'once daily',
+    'once daily': 'once daily', 'qd': 'once daily', 'once': 'once daily',
+    'bid': 'twice daily', 'twice daily': 'twice daily',
+    'tid': 'three times daily', 'three times daily': 'three times daily',
+    'qid': 'four times daily', 'four times daily': 'four times daily',
+    'q2h': 'every 2 hours', 'every 2 hours': 'every 2 hours', 'every 2 hour': 'every 2 hours', 'every 2h': 'every 2 hours',
+    'q3h': 'every 3 hours', 'every 3 hours': 'every 3 hours', 'every 3 hour': 'every 3 hours', 'every 3h': 'every 3 hours',
+    'q4h': 'every 4 hours', 'every 4 hours': 'every 4 hours', 'every 4 hour': 'every 4 hours', 'every 4h': 'every 4 hours',
+    'q6h': 'every 6 hours', 'every 6 hours': 'every 6 hours', 'every 6 hour': 'every 6 hours', 'every 6h': 'every 6 hours',
+    'q8h': 'every 8 hours', 'every 8 hours': 'every 8 hours', 'every 8 hour': 'every 8 hours', 'every 8h': 'every 8 hours',
+    'q12h': 'every 12 hours', 'every 12 hours': 'every 12 hours', 'every 12 hour': 'every 12 hours', 'every 12h': 'every 12 hours',
+    'q4-6h': 'every 4-6 hours', 'every 4-6 hours': 'every 4-6 hours', 'every 4 to 6 hours': 'every 4-6 hours',
+    'qhs': 'at bedtime', 'at bedtime': 'at bedtime', 'bedtime': 'at bedtime', 'nightly': 'at bedtime',
+    'qam': 'in the morning', 'in the morning': 'in the morning', 'every morning': 'in the morning',
+    'qmwf': 'monday wednesday friday', 'monday wednesday friday': 'monday wednesday friday',
+    'q5mins': 'every 5 minutes', 'q5min': 'every 5 minutes', 'every 5 minutes': 'every 5 minutes', 'every 5 minute': 'every 5 minutes',
+    'prn': 'as needed', 'as needed': 'as needed'
+  },
+
+  /**
+   * Normalize a route string for comparison
+   */
+  normalizeRoute(route) {
+    if (!route) return '';
+    const lower = route.toString().toLowerCase().trim();
+    return this.routeNormalization[lower] || lower;
+  },
+
+  /**
+   * Normalize a frequency string for comparison
+   */
+  normalizeFrequency(frequency) {
+    if (!frequency) return '';
+    const lower = frequency.toString().toLowerCase().trim();
+    return this.frequencyNormalization[lower] || lower;
+  },
+
+  /**
+   * Normalize a duration string for comparison
+   * Converts week/wk to days (e.g., "1 week" = "7 days", "2 wk" = "14 days")
+   */
+  normalizeDuration(duration) {
+    if (!duration) return '';
+    const lower = duration.toString().toLowerCase().trim();
+
+    // Match patterns like "1 week", "2 wk", "1wk", "2 weeks"
+    const weekMatch = lower.match(/^(\d+\.?\d*)\s*(wk|wks|week|weeks)$/i);
+    if (weekMatch) {
+      const weeks = parseFloat(weekMatch[1]);
+      const days = weeks * 7;
+      return `${days} days`;
+    }
+
+    // Normalize day patterns to consistent format
+    const dayMatch = lower.match(/^(\d+\.?\d*)\s*(d|day|days)$/i);
+    if (dayMatch) {
+      const days = parseFloat(dayMatch[1]);
+      return `${days} days`;
+    }
+
+    // Normalize month patterns
+    const monthMatch = lower.match(/^(\d+\.?\d*)\s*(mo|mth|mths|month|months)$/i);
+    if (monthMatch) {
+      const months = parseFloat(monthMatch[1]);
+      return `${months} months`;
+    }
+
+    // Normalize year patterns
+    const yearMatch = lower.match(/^(\d+\.?\d*)\s*(yr|yrs|year|years)$/i);
+    if (yearMatch) {
+      const years = parseFloat(yearMatch[1]);
+      return `${years} years`;
+    }
+
+    return lower;
+  },
+
+  /**
+   * Normalize a string for case-insensitive comparison
+   */
+  normalizeString(str) {
+    if (!str) return '';
+    return str.toString().toLowerCase().trim();
+  },
+
+  /**
+   * Check if two prescriptions are duplicates
+   * Compares: name, dose, route, frequency, duration, dispense, refill, form, PRN, note
+   * All comparisons are case-insensitive
+   * Route, frequency, and duration use normalized forms
+   */
+  isDuplicate(newMed, cartItem) {
+    // Compare name (case-insensitive)
+    if (this.normalizeString(newMed.med) !== this.normalizeString(cartItem.med)) {
+      return false;
+    }
+
+    // Compare dose (case-insensitive)
+    if (this.normalizeString(newMed.dose_text) !== this.normalizeString(cartItem.dose_text)) {
+      return false;
+    }
+
+    // Compare route (normalized)
+    if (this.normalizeRoute(newMed.route) !== this.normalizeRoute(cartItem.route)) {
+      return false;
+    }
+
+    // Compare frequency (normalized)
+    if (this.normalizeFrequency(newMed.frequency) !== this.normalizeFrequency(cartItem.frequency)) {
+      return false;
+    }
+
+    // Compare duration (normalized - week = 7 days)
+    if (this.normalizeDuration(newMed.duration) !== this.normalizeDuration(cartItem.duration)) {
+      return false;
+    }
+
+    // Compare dispense (case-insensitive)
+    if (this.normalizeString(newMed.dispense) !== this.normalizeString(cartItem.dispense)) {
+      return false;
+    }
+
+    // Compare refill (case-insensitive)
+    if (this.normalizeString(newMed.refill) !== this.normalizeString(cartItem.refill)) {
+      return false;
+    }
+
+    // Compare form (case-insensitive)
+    if (this.normalizeString(newMed.form) !== this.normalizeString(cartItem.form)) {
+      return false;
+    }
+
+    // Compare PRN (case-insensitive)
+    if (this.normalizeString(newMed.prn) !== this.normalizeString(cartItem.prn)) {
+      return false;
+    }
+
+    // Compare note/comments (case-insensitive)
+    if (this.normalizeString(newMed.comments) !== this.normalizeString(cartItem.comments)) {
+      return false;
+    }
+
+    // All fields match - this is a duplicate
+    return true;
+  },
+
+  /**
+   * Check if a medication already exists in the cart
+   * Returns true if a duplicate is found
+   */
+  existsInCart(newMed, cart) {
+    return cart.some(cartItem => this.isDuplicate(newMed, cartItem));
   }
 };
 
@@ -2274,3 +2508,4 @@ class SearchManager {
 // Note: Actual instances are created by the Application class in 04-app.js
 window.Utils = Utils;
 window.MedicationUtils = MedicationUtils;
+window.DuplicateChecker = DuplicateChecker;

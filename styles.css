@@ -1044,6 +1044,15 @@ details[open] > .subfolder-summary .subfolder-arrow {
   gap: 10px;
 }
 
+.modal-actions-three {
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions-three .btn {
+  min-width: 100px;
+}
+
 /* Weight Input with Unit Suffix */
 .weight-input-wrapper {
   display: flex;

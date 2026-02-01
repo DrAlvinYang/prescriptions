@@ -400,13 +400,15 @@ class KeyboardController {
     const providerDropdown = document.getElementById("providerEditDropdown");
     const editModal = document.getElementById("editModal");
     const addNewMedModal = document.getElementById("addNewMedModal");
+    const searchEditModal = document.getElementById("searchEditModal");
 
     return (
       !weightModal.classList.contains("hidden") ||
       !locationModal.classList.contains("hidden") ||
       !providerDropdown.classList.contains("hidden") ||
       !editModal.classList.contains("hidden") ||
-      !addNewMedModal.classList.contains("hidden")
+      !addNewMedModal.classList.contains("hidden") ||
+      !searchEditModal.classList.contains("hidden")
     );
   }
 
@@ -491,6 +493,7 @@ class KeyboardController {
     const locationModal = document.getElementById("locationModal");
     const editModal = document.getElementById("editModal");
     const addNewMedModal = document.getElementById("addNewMedModal");
+    const searchEditModal = document.getElementById("searchEditModal");
 
     // Edit Modal
     if (!editModal.classList.contains("hidden")) {
@@ -500,6 +503,11 @@ class KeyboardController {
     // Add New Med Modal
     if (!addNewMedModal.classList.contains("hidden")) {
       return this.handleAddNewMedModalKeys(event);
+    }
+
+    // Search Edit Modal - Enter does nothing, Escape closes
+    if (!searchEditModal.classList.contains("hidden")) {
+      return this.handleSearchEditModalKeys(event);
     }
 
     // Escape key for all modals
@@ -598,6 +606,31 @@ class KeyboardController {
     return true;
   }
 
+  handleSearchEditModalKeys(event) {
+    // Prevent arrow key scrolling in background
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      return true;
+    }
+
+    // Escape to close
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.searchEditController.cancel();
+      return true;
+    }
+
+    // Enter does nothing in search edit modal
+    // Just consume the event to prevent default behavior
+    if (event.key === "Enter") {
+      event.preventDefault();
+      return true;
+    }
+
+    return true;
+  }
+
   handleSearchKeys(event) {
     const searchView = document.getElementById("searchView");
     if (searchView.classList.contains("hidden")) return false;
@@ -605,6 +638,12 @@ class KeyboardController {
     // Prevent search navigation when weight modal is active
     const weightModal = document.getElementById("weightModal");
     if (weightModal && !weightModal.classList.contains("hidden")) {
+      return false;
+    }
+
+    // Prevent search navigation when search edit modal is active
+    const searchEditModal = document.getElementById("searchEditModal");
+    if (searchEditModal && !searchEditModal.classList.contains("hidden")) {
       return false;
     }
 
@@ -1291,6 +1330,193 @@ class PrintController {
 }
 
 // ============================================================================
+// SEARCH EDIT CONTROLLER
+// ============================================================================
+// Handles the edit flow from search results:
+// 1. Pre-validate provider/location
+// 2. Handle weight-based medications (show weight modal first)
+// 3. Open search edit modal
+// 4. Handle Add to Cart (with duplicate detection)
+// 5. Handle Print (add to cart, print all, clear cart)
+// ============================================================================
+
+class SearchEditController {
+  constructor(state, modalManager, providerManager, locationManager, cartController, printController) {
+    this.state = state;
+    this.modalManager = modalManager;
+    this.providerManager = providerManager;
+    this.locationManager = locationManager;
+    this.cartController = cartController;
+    this.printController = printController;
+  }
+
+  /**
+   * Validate that provider and location are set
+   * Returns true if valid, shows alert and returns false if not
+   */
+  validateProviderLocation() {
+    const provider = this.providerManager.getProvider();
+    const hasProvider = provider.name && provider.cpso;
+    const hasLocation = this.locationManager.state.currentLocationName &&
+                        this.locationManager.state.currentLocationName !== "Select Location";
+
+    if (!hasProvider && !hasLocation) {
+      alert("Please input provider info and practice location.");
+      return false;
+    }
+    if (!hasProvider) {
+      alert("Please input provider info.");
+      return false;
+    }
+    if (!hasLocation) {
+      alert("Please enter practice location.");
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Main entry point: Open edit modal for a medication from search results
+   * Validates provider/location first, then handles weight-based medications
+   */
+  openEdit(medication) {
+    // Step 1: Validate provider and location
+    if (!this.validateProviderLocation()) {
+      return;
+    }
+
+    // Step 2: Check if weight-based medication
+    if (medication.weight_based) {
+      // Store medication for after weight modal
+      this.state.searchEditPendingMed = medication;
+
+      // Set up callback for after weight modal completes
+      this.state.isSearchEditMode = true;
+      this.state.searchEditCallback = (med) => {
+        this.openModalWithDose(med);
+      };
+
+      // Open weight modal
+      this.modalManager.openWeight(medication);
+    } else {
+      // Not weight-based - open modal directly
+      this.openModalWithDose(medication);
+    }
+  }
+
+  /**
+   * Open the search edit modal with the appropriate dose
+   * Called after weight modal (if applicable)
+   */
+  openModalWithDose(medication) {
+    let calculatedDose = null;
+
+    // If weight-based and weight is available, calculate dose
+    if (medication.weight_based && this.state.currentWeight) {
+      const calc = MedicationUtils.calculateDose(medication, this.state.currentWeight);
+      if (calc) {
+        calculatedDose = `${calc.value} mg`;
+      }
+    } else if (medication.weight_based) {
+      // No weight entered - show dose/kg
+      if (medication.dose_per_kg_mg) {
+        calculatedDose = `${medication.dose_per_kg_mg} mg/kg`;
+      }
+    }
+
+    // Reset search edit mode flags
+    this.state.isSearchEditMode = false;
+    this.state.searchEditCallback = null;
+    this.state.searchEditPendingMed = null;
+
+    // Open the modal
+    this.modalManager.openSearchEdit(medication, calculatedDose);
+  }
+
+  /**
+   * Handle Add to Cart button click from search edit modal
+   */
+  addToCart() {
+    // Validate form
+    const validation = this.modalManager.validateSearchEdit();
+    if (!validation.valid) {
+      alert(validation.message);
+      return false;
+    }
+
+    // Get current form values
+    const medValues = this.modalManager.getSearchEditValues();
+
+    // Check for duplicates in cart
+    if (DuplicateChecker.existsInCart(medValues, this.state.cart)) {
+      alert("Exact same prescription already in cart.");
+      return false;
+    }
+
+    // Add to cart
+    this.state.addToCart(medValues);
+
+    // Re-render cart
+    this.cartController.render();
+
+    // Close modal
+    this.modalManager.closeSearchEdit();
+
+    return true;
+  }
+
+  /**
+   * Handle Print button click from search edit modal
+   * Adds medication to cart, prints all cart items, then clears cart
+   */
+  print() {
+    // Validate form
+    const validation = this.modalManager.validateSearchEdit();
+    if (!validation.valid) {
+      alert(validation.message);
+      return false;
+    }
+
+    // Get current form values
+    const medValues = this.modalManager.getSearchEditValues();
+
+    // Check for duplicates in cart
+    if (DuplicateChecker.existsInCart(medValues, this.state.cart)) {
+      alert("Exact same prescription already in cart.");
+      return false;
+    }
+
+    // Disable buttons during print
+    this.modalManager.disableSearchEditButtons();
+
+    // Add medication to cart
+    this.state.addToCart(medValues);
+
+    // Re-render cart to show the new item
+    this.cartController.render();
+
+    // Set print in progress
+    this.state.isPrintInProgress = true;
+    this.printController.disableAllPrintButtons();
+
+    // Execute print
+    this.printController.executePrint();
+
+    // Close modal (print success/failure will handle cart clearing)
+    this.modalManager.closeSearchEdit();
+
+    return true;
+  }
+
+  /**
+   * Handle Cancel button click from search edit modal
+   */
+  cancel() {
+    this.modalManager.closeSearchEdit();
+  }
+}
+
+// ============================================================================
 // EXPORT FOR USE
 // ============================================================================
 
@@ -1302,3 +1528,4 @@ window.WeightController = WeightController;
 window.KeyboardController = KeyboardController;
 window.ResetController = ResetController;
 window.PrintController = PrintController;
+window.SearchEditController = SearchEditController;

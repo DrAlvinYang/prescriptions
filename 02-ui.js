@@ -119,7 +119,10 @@ class MedicationRenderer {
       });
       editBtn.onclick = (e) => {
         e.stopPropagation();
-        // Placeholder - functionality to be added later
+        // Open search edit modal via the search edit controller
+        if (window.searchEditController) {
+          window.searchEditController.openEdit(med);
+        }
       };
 
       const printBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-print', {
@@ -1061,8 +1064,14 @@ class ModalManager {
         const med = this.state.pendingMed;
         this.state.pendingMed = null;
 
+        // Check if in search edit mode - use stored callback
+        if (this.state.isSearchEditMode && this.state.searchEditCallback) {
+          const callback = this.state.searchEditCallback;
+          this.closeWeight();
+          callback(med);
+        }
         // Check if in quick-print mode - use stored callback
-        if (this.state.isQuickPrintMode && this.state.quickPrintCallback) {
+        else if (this.state.isQuickPrintMode && this.state.quickPrintCallback) {
           const callback = this.state.quickPrintCallback;
           this.closeWeight();
           callback(med);
@@ -1085,8 +1094,14 @@ class ModalManager {
       const med = this.state.pendingMed;
       this.state.pendingMed = null;
 
+      // Check if in search edit mode - use stored callback
+      if (this.state.isSearchEditMode && this.state.searchEditCallback) {
+        const callback = this.state.searchEditCallback;
+        this.closeWeight();
+        callback(med);
+      }
       // Check if in quick-print mode - use stored callback
-      if (this.state.isQuickPrintMode && this.state.quickPrintCallback) {
+      else if (this.state.isQuickPrintMode && this.state.quickPrintCallback) {
         const callback = this.state.quickPrintCallback;
         this.closeWeight();
         callback(med);
@@ -1381,6 +1396,114 @@ class ModalManager {
   closeAddNewMed() {
     this.removeFocusTrap();
     document.getElementById("addNewMedModal").classList.add("hidden");
+  }
+
+  // Search Edit Modal - for editing medications from search results
+  // Stores the original medication being edited (fresh from database each time)
+  openSearchEdit(medication, calculatedDose = null) {
+    // Store the original medication for reference
+    this.state.searchEditMed = medication;
+    this.state.searchEditCalculatedDose = calculatedDose;
+
+    // Populate form fields with fresh database values
+    document.getElementById("searchEditMedName").value = medication.med || "";
+
+    // Use calculated dose if provided (for weight-based meds), otherwise use original dose
+    if (calculatedDose) {
+      document.getElementById("searchEditDose").value = calculatedDose;
+    } else {
+      document.getElementById("searchEditDose").value = medication.dose_text || "";
+    }
+
+    document.getElementById("searchEditRoute").value = medication.route || "";
+    document.getElementById("searchEditFreq").value = medication.frequency || "";
+    document.getElementById("searchEditDur").value = medication.duration || "";
+    document.getElementById("searchEditDispense").value = medication.dispense || "";
+    document.getElementById("searchEditRefill").value = medication.refill || "";
+    document.getElementById("searchEditForm").value = medication.form || "";
+    document.getElementById("searchEditPrn").value = medication.prn || "";
+    document.getElementById("searchEditComments").value = medication.comments || "";
+
+    // Show the modal
+    const modal = document.getElementById("searchEditModal");
+    modal.classList.remove("hidden");
+
+    // Enable buttons (they may have been disabled from previous print)
+    document.getElementById("cancelSearchEditBtn").disabled = false;
+    document.getElementById("addToCartSearchEditBtn").disabled = false;
+    document.getElementById("printSearchEditBtn").disabled = false;
+  }
+
+  closeSearchEdit() {
+    this.removeFocusTrap();
+    document.getElementById("searchEditModal").classList.add("hidden");
+    this.state.searchEditMed = null;
+    this.state.searchEditCalculatedDose = null;
+  }
+
+  /**
+   * Get the current values from the search edit modal form
+   * Returns a medication object with all the edited values
+   */
+  getSearchEditValues() {
+    const originalMed = this.state.searchEditMed || {};
+
+    return {
+      // Keep original metadata that isn't editable
+      specialty: originalMed.specialty,
+      subcategory: originalMed.subcategory,
+      population: originalMed.population,
+      indication: originalMed.indication,
+      brands: originalMed.brands,
+      weight_based: originalMed.weight_based,
+      dose_per_kg_mg: originalMed.dose_per_kg_mg,
+      max_dose_mg: originalMed.max_dose_mg,
+
+      // Editable fields from the form
+      med: document.getElementById("searchEditMedName").value.trim(),
+      dose_text: document.getElementById("searchEditDose").value.trim(),
+      route: document.getElementById("searchEditRoute").value.trim(),
+      frequency: document.getElementById("searchEditFreq").value.trim(),
+      duration: document.getElementById("searchEditDur").value.trim(),
+      dispense: document.getElementById("searchEditDispense").value.trim(),
+      refill: document.getElementById("searchEditRefill").value.trim(),
+      form: document.getElementById("searchEditForm").value.trim(),
+      prn: document.getElementById("searchEditPrn").value.trim(),
+      comments: document.getElementById("searchEditComments").value.trim(),
+
+      // Mark as edited if any field differs from original
+      wasEdited: true
+    };
+  }
+
+  /**
+   * Validate search edit form - currently just checks that name is not empty
+   * Returns { valid: boolean, message: string }
+   */
+  validateSearchEdit() {
+    const name = document.getElementById("searchEditMedName").value.trim();
+    if (!name) {
+      return { valid: false, message: "Please enter a medication name." };
+    }
+    return { valid: true, message: "" };
+  }
+
+  /**
+   * Disable all buttons in the search edit modal (during print)
+   */
+  disableSearchEditButtons() {
+    document.getElementById("cancelSearchEditBtn").disabled = true;
+    document.getElementById("addToCartSearchEditBtn").disabled = true;
+    document.getElementById("printSearchEditBtn").disabled = true;
+  }
+
+  /**
+   * Enable all buttons in the search edit modal
+   */
+  enableSearchEditButtons() {
+    document.getElementById("cancelSearchEditBtn").disabled = false;
+    document.getElementById("addToCartSearchEditBtn").disabled = false;
+    document.getElementById("printSearchEditBtn").disabled = false;
   }
 }
 

@@ -149,11 +149,21 @@ class Application {
       this.controllers.location
     );
 
+    this.controllers.searchEdit = new SearchEditController(
+      this.state,
+      this.managers.modal,
+      this.managers.provider,
+      this.managers.location,
+      this.controllers.cart,
+      this.controllers.print
+    );
+
     // Expose globally for onclick handlers
     window.cartController = this.controllers.cart;
     window.locationController = this.controllers.location;
     window.providerController = this.controllers.provider;
     window.printController = this.controllers.print;
+    window.searchEditController = this.controllers.searchEdit;
     window.cartActions = {
       remove: (uid) => this.controllers.cart.remove(uid),
       edit: (uid) => this.managers.modal.openEdit(uid)
@@ -361,6 +371,25 @@ class Application {
       });
     }
 
+    // Search Edit Modal
+    const cancelSearchEditBtn = Utils.getElement("cancelSearchEditBtn");
+    const addToCartSearchEditBtn = Utils.getElement("addToCartSearchEditBtn");
+    const printSearchEditBtn = Utils.getElement("printSearchEditBtn");
+
+    if (cancelSearchEditBtn && addToCartSearchEditBtn && printSearchEditBtn) {
+      cancelSearchEditBtn.addEventListener("click", () => {
+        this.controllers.searchEdit.cancel();
+      });
+
+      addToCartSearchEditBtn.addEventListener("click", () => {
+        this.controllers.searchEdit.addToCart();
+      });
+
+      printSearchEditBtn.addEventListener("click", () => {
+        this.controllers.searchEdit.print();
+      });
+    }
+
     // Location Modal
     const saveLocBtn = Utils.getElement("saveLocBtn");
     const cancelLocBtn = Utils.getElement("cancelLocBtn");
@@ -382,6 +411,7 @@ class Application {
         const weightModal = Utils.getElement("weightModal");
         const editModal = Utils.getElement("editModal");
         const addNewMedModal = Utils.getElement("addNewMedModal");
+        const searchEditModal = Utils.getElement("searchEditModal");
         const locationModal = Utils.getElement("locationModal");
         const providerDropdown = Utils.getElement("providerEditDropdown");
 
@@ -391,7 +421,12 @@ class Application {
         }
 
         // Close whichever modal is currently open
-        if (editModal && !editModal.classList.contains("hidden")) {
+        if (searchEditModal && !searchEditModal.classList.contains("hidden")) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          this.controllers.searchEdit.cancel();
+          return; // Prevent other handlers from clearing search
+        } else if (editModal && !editModal.classList.contains("hidden")) {
           this.managers.modal.closeEdit();
         } else if (addNewMedModal && !addNewMedModal.classList.contains("hidden")) {
           this.managers.modal.closeAddNewMed();
