@@ -125,32 +125,33 @@ class MedicationRenderer {
         }
       };
 
-      const printBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-print', {
-        textContent: 'Print',
+      const addBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
+        textContent: 'Add',
         type: 'button'
       });
-      printBtn.onclick = (e) => {
+      addBtn.onclick = (e) => {
         e.stopPropagation();
-        // Quick-print: Add to cart and print immediately
-        if (window.printController) {
-          window.printController.quickPrint(med);
+        // Add to cart
+        if (onClick) {
+          onClick(med, div);
         }
       };
 
       actionsDiv.appendChild(editBtn);
-      actionsDiv.appendChild(printBtn);
+      actionsDiv.appendChild(addBtn);
       div.appendChild(actionsDiv);
     } else {
       // No actions - just set innerHTML directly
       div.innerHTML = this.renderHTML(med, { showPopulation, highlightTerms });
     }
 
-    if (onClick) {
-      div.onclick = (e) => {
-        e.stopPropagation();
-        onClick(med, div);
-      };
-    }
+    // Click/Enter on med item triggers quick-print
+    div.onclick = (e) => {
+      e.stopPropagation();
+      if (window.printController) {
+        window.printController.quickPrint(med);
+      }
+    };
 
     return div;
   }

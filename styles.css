@@ -1410,7 +1410,8 @@ body.show-brands .brand-match-hint {
 
 /* --- Search Result Action Buttons --- */
 .med-item-actions {
-  display: none;
+  display: flex;
+  visibility: hidden;
   flex-shrink: 0;
   gap: 6px;
   align-items: center;
@@ -1419,7 +1420,7 @@ body.show-brands .brand-match-hint {
 /* Show action buttons on hover or keyboard highlight */
 .med-item:hover .med-item-actions,
 .med-item.is-active .med-item-actions {
-  display: flex;
+  visibility: visible;
 }
 
 .med-action-btn {
@@ -1430,7 +1431,7 @@ body.show-brands .brand-match-hint {
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.1s;
+  transition: background 0.1s, border-color 0.1s;
   color: var(--text);
   white-space: nowrap;
 }
