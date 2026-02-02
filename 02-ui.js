@@ -95,9 +95,12 @@ class MedicationRenderer {
   }
 
   createMedItem(med, options = {}) {
-    const { showPopulation = false, highlightTerms = [], onClick, showActions = false } = options;
+    const { showPopulation = false, highlightTerms = [], onClick, showActions = false, overlayActions = false } = options;
 
-    const className = showActions ? 'med-item has-actions' : 'med-item';
+    let className = 'med-item';
+    if (showActions) className += ' has-actions';
+    if (overlayActions) className += ' has-overlay-actions';
+
     const div = DOMBuilder.createElement('div', className, {
       tabIndex: 0
     });
@@ -141,8 +144,39 @@ class MedicationRenderer {
       actionsDiv.appendChild(addBtn);
       div.appendChild(actionsDiv);
     } else {
-      // No actions - just set innerHTML directly
+      // Set innerHTML directly
       div.innerHTML = this.renderHTML(med, { showPopulation, highlightTerms });
+
+      // Add overlay action buttons for folder view
+      if (overlayActions) {
+        const overlayDiv = DOMBuilder.createElement('div', 'med-item-overlay-actions');
+
+        const editBtn = DOMBuilder.createElement('button', 'med-action-btn', {
+          textContent: 'Edit',
+          type: 'button'
+        });
+        editBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (window.searchEditController) {
+            window.searchEditController.openEdit(med);
+          }
+        };
+
+        const addBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
+          textContent: 'Add',
+          type: 'button'
+        });
+        addBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (onClick) {
+            onClick(med, div);
+          }
+        };
+
+        overlayDiv.appendChild(editBtn);
+        overlayDiv.appendChild(addBtn);
+        div.appendChild(overlayDiv);
+      }
     }
 
     // Click/Enter on med item triggers quick-print
@@ -221,8 +255,8 @@ class DashboardRenderer {
 
       subcategories.forEach(subcategory => {
         const meds = sortMeds(bySubcategory.get(subcategory));
-        const medNodes = meds.map(med => 
-          this.medRenderer.createMedItem(med, { onClick: onMedClick })
+        const medNodes = meds.map(med =>
+          this.medRenderer.createMedItem(med, { onClick: onMedClick, overlayActions: true })
         );
         subNodes.push(this.medRenderer.createSubfolder(subcategory, medNodes, true));
       });
@@ -266,11 +300,11 @@ class DashboardRenderer {
       
       if (isSingle) {
         meds.forEach(med => {
-          body.appendChild(this.medRenderer.createMedItem(med, { onClick: onMedClick }));
+          body.appendChild(this.medRenderer.createMedItem(med, { onClick: onMedClick, overlayActions: true }));
         });
       } else {
-        const medNodes = meds.map(med => 
-          this.medRenderer.createMedItem(med, { onClick: onMedClick })
+        const medNodes = meds.map(med =>
+          this.medRenderer.createMedItem(med, { onClick: onMedClick, overlayActions: true })
         );
         body.appendChild(this.medRenderer.createSubfolder(label, medNodes, false));
       }

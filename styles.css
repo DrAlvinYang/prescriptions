@@ -1447,6 +1447,43 @@ body.show-brands .brand-match-hint {
   pointer-events: none;
 }
 
+/* --- Folder View Overlay Action Buttons --- */
+.med-item.has-overlay-actions {
+  position: relative;
+}
+
+.med-item.has-overlay-actions .med-indication {
+  margin-bottom: 6px;
+}
+
+.med-item-overlay-actions {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: flex;
+  visibility: hidden;
+  gap: 4px;
+  align-items: center;
+  padding-left: 30px;
+  background: linear-gradient(to right, transparent 0%, #f7f9fc 30px);
+  height: 20px;
+}
+
+.med-item.has-overlay-actions:hover .med-item-overlay-actions {
+  visibility: visible;
+}
+
+/* Adjust gradient for in-cart items */
+.med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
+  background: linear-gradient(to right, transparent 0%, #e3f2fd 30px);
+}
+
+/* Smaller buttons for folder view overlay */
+.med-item-overlay-actions .med-action-btn {
+  padding: 2px 6px;
+  font-size: 10px;
+}
+
 /* Create a 'lane' for the hint on the right of the search results */
 #searchResults {
   flex: 0 1 auto;
