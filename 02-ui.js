@@ -707,6 +707,7 @@ class LocationUIRenderer {
 
       if (e.key === "Escape") {
         e.preventDefault();
+        e.stopPropagation();
         this.exitSearchMode();
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -720,6 +721,7 @@ class LocationUIRenderer {
         this.navigateLocations("up", onSelect, onDelete, onAddNew);
       } else if (e.key === "Enter") {
         e.preventDefault();
+        e.stopPropagation();
         this.selectActiveLocation(onSelect);
       }
     });
@@ -952,10 +954,12 @@ class LocationUIRenderer {
       div.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
+          e.stopPropagation();
           onSelect(location.name);
           this.exitSearchMode();
         } else if (e.key === "Escape") {
           e.preventDefault();
+          e.stopPropagation();
           this.exitSearchMode();
         } else if (e.key === "ArrowDown") {
           e.preventDefault();

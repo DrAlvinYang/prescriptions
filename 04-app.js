@@ -102,7 +102,9 @@ class Application {
       this.renderers.cart,
       this.renderers.dashboard,
       this.renderers.search,
-      this.managers.modal
+      this.managers.modal,
+      this.managers.provider,
+      this.managers.location
     );
 
     this.controllers.search = new SearchController(

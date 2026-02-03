@@ -403,7 +403,7 @@ body {
   height: 16px;
   flex-shrink: 0;
   margin-left: 8px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230056b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 17l-5-5 5-5'/%3E%3Cpath d='M20 7v4a2 2 0 0 1-2 2H4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230056b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 16px 16px;
@@ -794,6 +794,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   min-height: 0;
   overflow: visible;
   padding: 0;
+  position: relative;
 }
 .section-title {
   font-size: 17px;
@@ -1392,6 +1393,25 @@ body.show-brands .brand-match-hint {
   visibility: visible;
 }
 
+/* Enter hint for search results (positioned outside scrollable area) */
+.search-enter-hint {
+  display: none;
+  position: absolute;
+  right: 32px;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230056b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.search-enter-hint.visible {
+  display: block;
+}
+
 .med-action-btn {
   padding: 4px 10px;
   border: 1px solid var(--border);
@@ -1443,12 +1463,6 @@ body.show-brands .brand-match-hint {
 
 .med-item.has-overlay-actions .med-indication {
   margin-bottom: 6px;
-}
-
-/* Keep indication text on single line - gradient overlay will fade any overflow */
-.med-item.has-overlay-actions .med-indication {
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .med-item-overlay-actions {
@@ -1549,7 +1563,7 @@ button.add-new-med-btn {
   width: 18px;
   height: 18px;
   background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 17l-5-5 5-5'/%3E%3Cpath d='M20 7v4a2 2 0 0 1-2 2H4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 16px 16px;

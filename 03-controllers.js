@@ -3,12 +3,39 @@
 // ============================================================================
 
 class CartController {
-  constructor(state, cartRenderer, dashboardRenderer, searchRenderer, modalManager) {
+  constructor(state, cartRenderer, dashboardRenderer, searchRenderer, modalManager, providerManager, locationManager) {
     this.state = state;
     this.cartRenderer = cartRenderer;
     this.dashboardRenderer = dashboardRenderer;
     this.searchRenderer = searchRenderer;
     this.modalManager = modalManager;
+    this.providerManager = providerManager;
+    this.locationManager = locationManager;
+  }
+
+  /**
+   * Validate that provider and location are set
+   * Returns true if valid, shows alert and returns false if not
+   */
+  validateProviderLocation() {
+    const provider = this.providerManager.getProvider();
+    const hasProvider = provider.name && provider.cpso;
+    const hasLocation = this.locationManager.state.currentLocationName &&
+                        this.locationManager.state.currentLocationName !== "Select Location";
+
+    if (!hasProvider && !hasLocation) {
+      alert("Please input provider info and practice location.");
+      return false;
+    }
+    if (!hasProvider) {
+      alert("Please input provider info.");
+      return false;
+    }
+    if (!hasLocation) {
+      alert("Please enter practice location.");
+      return false;
+    }
+    return true;
   }
 
   toggle(medication, element = null) {
@@ -42,6 +69,10 @@ class CartController {
   }
 
   add(medication) {
+    // Validate provider and location before adding
+    if (!this.validateProviderLocation()) {
+      return;
+    }
     this.state.addToCart(medication);
     this.render();
   }
@@ -79,7 +110,13 @@ class SearchController {
   search(query) {
     // Reset active index when search changes to prevent out-of-bounds issues
     this.state.activeSearchIndex = -1;
-    
+
+    // Hide enter hint
+    const enterHint = document.getElementById("searchEnterHint");
+    if (enterHint) {
+      enterHint.classList.remove("visible");
+    }
+
     this.searchRenderer.render(
       query,
       (med, element) => this.cartController.toggle(med, element)
@@ -165,6 +202,8 @@ class SearchController {
   }
 
   updateActiveItem(results, direction = null) {
+    const enterHint = document.getElementById("searchEnterHint");
+
     results.forEach((element, index) => {
       if (index === this.state.activeSearchIndex) {
         element.classList.add("is-active");
@@ -194,10 +233,25 @@ class SearchController {
         }
 
         element.scrollIntoView(scrollOptions);
+
+        // Position and show enter hint
+        if (enterHint) {
+          const searchView = document.getElementById("searchView");
+          const searchViewRect = searchView.getBoundingClientRect();
+          const updatedElementRect = element.getBoundingClientRect();
+          const topOffset = updatedElementRect.top - searchViewRect.top + (updatedElementRect.height / 2) - 10;
+          enterHint.style.top = topOffset + "px";
+          enterHint.classList.add("visible");
+        }
       } else {
         element.classList.remove("is-active");
       }
     });
+
+    // Hide enter hint if no active item
+    if (this.state.activeSearchIndex < 0 && enterHint) {
+      enterHint.classList.remove("visible");
+    }
   }
 }
 
@@ -644,6 +698,12 @@ class KeyboardController {
     // Prevent search navigation when search edit modal is active
     const searchEditModal = document.getElementById("searchEditModal");
     if (searchEditModal && !searchEditModal.classList.contains("hidden")) {
+      return false;
+    }
+
+    // Prevent search navigation when location dropdown is active
+    const locationWrapper = document.getElementById("locationWrapper");
+    if (locationWrapper && locationWrapper.classList.contains("search-active")) {
       return false;
     }
 
