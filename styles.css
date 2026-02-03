@@ -303,8 +303,8 @@ body {
 .location-menu {
   position: absolute;
   top: 100%;
-  right: 0;
-  left: auto;
+  left: 0;
+  right: auto;
   margin-top: 4px;
   background: #fff;
   border: 1px solid #ccc;
@@ -444,8 +444,8 @@ body {
 .location-search-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
-  left: auto;
+  left: 0;
+  right: auto;
   margin-top: 4px;
   background: #fff;
   border: 1px solid #ccc;
@@ -1443,6 +1443,12 @@ body.show-brands .brand-match-hint {
 
 .med-item.has-overlay-actions .med-indication {
   margin-bottom: 6px;
+}
+
+/* Keep indication text on single line - gradient overlay will fade any overflow */
+.med-item.has-overlay-actions .med-indication {
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .med-item-overlay-actions {

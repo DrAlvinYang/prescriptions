@@ -451,14 +451,11 @@ class Application {
       }
     };
 
-    setupModalClickOutside("weightModal", () => {
-      // During quick-print mode, clicking outside weight modal does nothing
-      if (this.state.isQuickPrintMode) return;
-      this.managers.modal.closeWeight();
-    });
+    // Weight modal: clicking outside does nothing (user must use buttons)
     setupModalClickOutside("editModal", () => this.managers.modal.closeEdit());
     setupModalClickOutside("addNewMedModal", () => this.managers.modal.closeAddNewMed());
     setupModalClickOutside("locationModal", () => this.managers.modal.closeLocation());
+    setupModalClickOutside("searchEditModal", () => this.controllers.searchEdit.cancel());
 
     // Provider edit uses a backdrop instead of a modal overlay
     const providerBackdrop = Utils.getElement("providerEditBackdrop");
