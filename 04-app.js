@@ -436,13 +436,21 @@ class Application {
           this.controllers.searchEdit.cancel();
           return; // Prevent other handlers from clearing search
         } else if (editModal && !editModal.classList.contains("hidden")) {
+          e.stopImmediatePropagation();
           this.managers.modal.closeEdit();
+          return;
         } else if (addNewMedModal && !addNewMedModal.classList.contains("hidden")) {
+          e.stopImmediatePropagation();
           this.managers.modal.closeAddNewMed();
+          return;
         } else if (locationModal && !locationModal.classList.contains("hidden")) {
+          e.stopImmediatePropagation();
           this.managers.modal.closeLocation();
+          return;
         } else if (providerDropdown && !providerDropdown.classList.contains("hidden")) {
+          e.stopImmediatePropagation();
           this.managers.modal.closeProvider();
+          return;
         }
       }
     });

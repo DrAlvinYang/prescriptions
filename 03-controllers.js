@@ -442,9 +442,18 @@ class KeyboardController {
           window.cartController.closeCartDropdown();
           return;
         }
-        // Block everything else when only dropdown is open
-        event.preventDefault();
-        return;
+        // Allow Tab through for brand name display in cart
+        if (event.key === "Tab") {
+          // Fall through to Tab handler below
+        }
+        // Allow Ctrl/Cmd+P through for printing from cart
+        else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'p') {
+          // Fall through to print handler below
+        } else {
+          // Block everything else when only dropdown is open
+          event.preventDefault();
+          return;
+        }
       }
       // Modal is open on top of dropdown - fall through to normal modal key handling
     }
@@ -470,6 +479,7 @@ class KeyboardController {
     // Handle Tab key for brand name display (only when no modal is active)
     // Uses CSS class toggle for performance instead of full re-render
     if (event.key === "Tab") {
+      const onlyCartOpen = this.isOnlyCartOpen();
       const anyModalOpen = this.isAnyModalOpen();
 
       if (!anyModalOpen) {
@@ -484,6 +494,29 @@ class KeyboardController {
             if (e.key === "Tab") {
               this.state.showingBrands = false;
               document.body.classList.remove("show-brands");
+              document.removeEventListener("keyup", handleKeyUp);
+            }
+          };
+
+          document.addEventListener("keyup", handleKeyUp);
+        }
+
+        return;
+      }
+
+      // When only the cart is open, show brands inside the cart only
+      if (onlyCartOpen) {
+        event.preventDefault();
+        const cartDropdown = document.querySelector(".cart-dropdown");
+
+        if (!this.state.showingBrands && cartDropdown) {
+          this.state.showingBrands = true;
+          cartDropdown.classList.add("show-brands");
+
+          const handleKeyUp = (e) => {
+            if (e.key === "Tab") {
+              this.state.showingBrands = false;
+              cartDropdown.classList.remove("show-brands");
               document.removeEventListener("keyup", handleKeyUp);
             }
           };
@@ -544,6 +577,25 @@ class KeyboardController {
       !searchEditModal.classList.contains("hidden") ||
       (window.cartController && window.cartController.isCartDropdownOpen)
     );
+  }
+
+  isOnlyCartOpen() {
+    const weightModal = document.getElementById("weightModal");
+    const locationModal = document.getElementById("locationModal");
+    const providerDropdown = document.getElementById("providerEditDropdown");
+    const editModal = document.getElementById("editModal");
+    const addNewMedModal = document.getElementById("addNewMedModal");
+    const searchEditModal = document.getElementById("searchEditModal");
+
+    const anyRealModalOpen =
+      !weightModal.classList.contains("hidden") ||
+      !locationModal.classList.contains("hidden") ||
+      !providerDropdown.classList.contains("hidden") ||
+      !editModal.classList.contains("hidden") ||
+      !addNewMedModal.classList.contains("hidden") ||
+      !searchEditModal.classList.contains("hidden");
+
+    return !anyRealModalOpen && window.cartController && window.cartController.isCartDropdownOpen;
   }
 
   reRenderAll() {

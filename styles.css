@@ -869,6 +869,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .icon-btn.cart-btn svg {
   width: 16px;
   height: 16px;
+  transform: translate(-0.5px, 1px);
 }
 
 .cart-badge {
@@ -1328,6 +1329,11 @@ body.show-brands .brand-match-hint {
   display: none;
 }
 
+/* Show brands inside cart dropdown when Tab held with cart open */
+.cart-dropdown.show-brands .brand-name {
+  display: inline;
+}
+
 /* Add to styles.css */
 .modal-box.modal-wide {
   max-width: 800px;
@@ -1458,6 +1464,15 @@ body.show-brands .brand-match-hint {
 .med-action-btn:hover {
   background: var(--btn-hover);
   border-color: #ccc;
+}
+
+/* Keyboard shortcut hint underlines - hidden by default, shown on keyboard highlight */
+.med-action-btn .shortcut-hint {
+  text-decoration: none;
+}
+
+.med-item.is-active .med-action-btn .shortcut-hint {
+  text-decoration: underline;
 }
 
 .med-action-btn:disabled {
@@ -1624,6 +1639,18 @@ button.add-new-med-btn {
   background: var(--btn-hover);
   box-shadow: 0 3px 8px rgba(0,0,0,0.2);
   transform: scale(1.05);
+}
+
+/* Grey out help button when any modal/overlay is open */
+body:has(.modal-overlay:not(.hidden)),
+body:has(.cart-overlay:not(.hidden)),
+body:has(.provider-edit-backdrop:not(.hidden)),
+body:has(.location-search-backdrop:not(.hidden)),
+body:has(.help-overlay:not(.hidden)) {
+  .help-btn {
+    opacity: 0.3;
+    pointer-events: none;
+  }
 }
 
 .help-btn svg {

@@ -117,7 +117,7 @@ class MedicationRenderer {
       const actionsDiv = DOMBuilder.createElement('div', 'med-item-actions');
 
       const editBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-edit', {
-        textContent: 'Edit',
+        innerHTML: '<u class="shortcut-hint">E</u>dit',
         type: 'button'
       });
       editBtn.onclick = (e) => {
@@ -129,7 +129,7 @@ class MedicationRenderer {
       };
 
       const addRemoveBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
-        textContent: 'Add',
+        innerHTML: '<u class="shortcut-hint">A</u>dd',
         type: 'button'
       });
       addRemoveBtn.onclick = (e) => {
@@ -636,10 +636,10 @@ class CartRenderer {
       const addRemoveBtn = element.querySelector(".med-action-btn-add");
       if (addRemoveBtn) {
         if (isSelected) {
-          addRemoveBtn.textContent = "Remove";
+          addRemoveBtn.innerHTML = '<u class="shortcut-hint">R</u>emove';
           addRemoveBtn.classList.add("med-action-btn-remove");
         } else {
-          addRemoveBtn.textContent = "Add";
+          addRemoveBtn.innerHTML = '<u class="shortcut-hint">A</u>dd';
           addRemoveBtn.classList.remove("med-action-btn-remove");
         }
       }

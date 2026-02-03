@@ -1430,7 +1430,7 @@
       ],
       "indication": "",
       "dose_text": "1 application",
-      "route": "top",
+      "route": "topical",
       "frequency": "BID",
       "duration": "2 week",
       "dispense": "1 tube",
@@ -7480,13 +7480,13 @@
       "refill": "0",
       "prn": "",
       "form": "cream",
-      "comments": "Apply to affected area, stop once symptoms resolve.",
+      "comments": "Stop once symptoms resolve.",
       "population": "Adult",
       "subcategory": "",
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "derm | adult | canesten (1%) + hydrocortisone (1%) cream | canesten hc lotrisone | 1 application | apply to affected area, stop once symptoms resolve."
+      "search_text": "derm | adult | canesten (1%) + hydrocortisone (1%) cream | canesten hc lotrisone | 1 application | stop once symptoms resolve."
     },
     {
       "specialty": "Derm",
@@ -7576,13 +7576,13 @@
       "refill": "0",
       "prn": "",
       "form": "cream",
-      "comments": "Apply to affected area, stop once healing has occurred.",
+      "comments": "Stop once healing has occurred.",
       "population": "Adult",
       "subcategory": "",
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "derm | adult | burn | silver sulfadiazine cream | flamazine silvadene | 1 application | apply to affected area, stop once healing has occurred."
+      "search_text": "derm | adult | burn | silver sulfadiazine cream | flamazine silvadene | 1 application | stop once healing has occurred."
     },
     {
       "specialty": "Derm",
@@ -8195,13 +8195,13 @@
       "refill": "0",
       "prn": "",
       "form": "cream",
-      "comments": "Apply to affected area, stop once healing has occurred.",
+      "comments": "Stop once healing has occurred.",
       "population": "Pediatric",
       "subcategory": "",
       "weight_based": false,
       "dose_per_kg_mg": null,
       "max_dose_mg": null,
-      "search_text": "derm | pediatric | burn | silver sulfadiazine cream | flamazine silvadene | 1 application | apply to affected area, stop once healing has occurred."
+      "search_text": "derm | pediatric | burn | silver sulfadiazine cream | flamazine silvadene | 1 application | stop once healing has occurred."
     },
     {
       "specialty": "Derm",
