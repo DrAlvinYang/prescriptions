@@ -409,8 +409,14 @@ class Application {
 
     // Escape key handler for modals
     // NOTE: Weight modal Escape is handled by KeyboardController (supports quick-print mode)
+    // NOTE: Cart dropdown Escape is handled by KeyboardController
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
+        // Cart dropdown Escape is handled by KeyboardController - skip here
+        if (this.controllers.cart && this.controllers.cart.isCartDropdownOpen) {
+          return;
+        }
+
         const weightModal = Utils.getElement("weightModal");
         const editModal = Utils.getElement("editModal");
         const addNewMedModal = Utils.getElement("addNewMedModal");
@@ -557,6 +563,8 @@ class Application {
     const printBtn = Utils.getElement("printBtn");
     const clearCartBtn = Utils.getElement("clearCartBtn");
     const resetViewBtn = Utils.getElement("resetViewBtn");
+    const cartBtn = Utils.getElement("cartBtn");
+    const cartOverlay = Utils.getElement("cartOverlay");
 
     if (printBtn) {
       printBtn.addEventListener("click", () => {
@@ -573,6 +581,20 @@ class Application {
     if (resetViewBtn) {
       resetViewBtn.addEventListener("click", () => {
         this.controllers.reset.reset();
+      });
+    }
+
+    // Cart button toggles dropdown
+    if (cartBtn) {
+      cartBtn.addEventListener("click", () => {
+        this.controllers.cart.toggleCartDropdown();
+      });
+    }
+
+    // Cart overlay click closes dropdown
+    if (cartOverlay) {
+      cartOverlay.addEventListener("click", () => {
+        this.controllers.cart.closeCartDropdown();
       });
     }
   }
@@ -695,6 +717,17 @@ class Application {
   }
 
   handleResize() {
+    // Reposition cart dropdown if open
+    if (this.controllers.cart && this.controllers.cart.isCartDropdownOpen) {
+      const dropdown = document.getElementById("cartDropdown");
+      const cartBtn = document.getElementById("cartBtn");
+      if (dropdown && cartBtn) {
+        const btnRect = cartBtn.getBoundingClientRect();
+        dropdown.style.right = (window.innerWidth - btnRect.right) + "px";
+        dropdown.style.top = (btnRect.bottom + 4) + "px";
+      }
+    }
+
     const wasTwoColumn = this.isTwoColumn;
     this.isTwoColumn = window.innerWidth <= this.TWO_COLUMN_BREAKPOINT;
 

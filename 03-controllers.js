@@ -11,6 +11,7 @@ class CartController {
     this.modalManager = modalManager;
     this.providerManager = providerManager;
     this.locationManager = locationManager;
+    this.isCartDropdownOpen = false;
   }
 
   /**
@@ -93,6 +94,53 @@ class CartController {
       (uid) => this.modalManager.openEdit(uid)
     );
     this.cartRenderer.updateSelectedIndicators();
+  }
+
+  // --- Cart Dropdown Methods ---
+
+  openCartDropdown() {
+    const overlay = document.getElementById("cartOverlay");
+    const dropdown = document.getElementById("cartDropdown");
+    const cartBtn = document.getElementById("cartBtn");
+    const cartBtnWrapper = cartBtn ? cartBtn.closest(".cart-btn-wrapper") : null;
+
+    if (!overlay || !dropdown || !cartBtn) return;
+
+    this.isCartDropdownOpen = true;
+
+    // Position dropdown: right edge aligned to cart button, 4px gap below button (matches location dropdown)
+    const btnRect = cartBtn.getBoundingClientRect();
+    dropdown.style.right = (window.innerWidth - btnRect.right) + "px";
+    dropdown.style.top = (btnRect.bottom + 4) + "px";
+
+    // Keep cart button above overlay
+    if (cartBtnWrapper) cartBtnWrapper.classList.add("dropdown-active");
+
+    overlay.classList.remove("hidden");
+    dropdown.classList.remove("hidden");
+
+    // Re-render cart to ensure up-to-date
+    this.render();
+  }
+
+  closeCartDropdown() {
+    const overlay = document.getElementById("cartOverlay");
+    const dropdown = document.getElementById("cartDropdown");
+    const cartBtnWrapper = document.querySelector(".cart-btn-wrapper");
+
+    if (overlay) overlay.classList.add("hidden");
+    if (dropdown) dropdown.classList.add("hidden");
+    if (cartBtnWrapper) cartBtnWrapper.classList.remove("dropdown-active");
+
+    this.isCartDropdownOpen = false;
+  }
+
+  toggleCartDropdown() {
+    if (this.isCartDropdownOpen) {
+      this.closeCartDropdown();
+    } else {
+      this.openCartDropdown();
+    }
   }
 }
 
@@ -377,6 +425,30 @@ class KeyboardController {
   }
 
   handleGlobalKeydown(event) {
+    // Block all keyboard shortcuts when cart dropdown is open (except Escape)
+    if (window.cartController && window.cartController.isCartDropdownOpen) {
+      // If a modal is open on top of the dropdown, let normal input through to the modal
+      const editModal = document.getElementById("editModal");
+      const addNewMedModal = document.getElementById("addNewMedModal");
+      const searchEditModal = document.getElementById("searchEditModal");
+      const modalOpen = (editModal && !editModal.classList.contains("hidden")) ||
+                        (addNewMedModal && !addNewMedModal.classList.contains("hidden")) ||
+                        (searchEditModal && !searchEditModal.classList.contains("hidden"));
+
+      if (!modalOpen) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.cartController.closeCartDropdown();
+          return;
+        }
+        // Block everything else when only dropdown is open
+        event.preventDefault();
+        return;
+      }
+      // Modal is open on top of dropdown - fall through to normal modal key handling
+    }
+
     // Allow normal keyboard input in location search field (except special keys)
     const locationSearchInput = document.getElementById("locationSearchInput");
     if (locationSearchInput && document.activeElement === locationSearchInput) {
@@ -469,7 +541,8 @@ class KeyboardController {
       !providerDropdown.classList.contains("hidden") ||
       !editModal.classList.contains("hidden") ||
       !addNewMedModal.classList.contains("hidden") ||
-      !searchEditModal.classList.contains("hidden")
+      !searchEditModal.classList.contains("hidden") ||
+      (window.cartController && window.cartController.isCartDropdownOpen)
     );
   }
 
@@ -802,9 +875,12 @@ class ResetController {
 
     // Clear inputs
     document.getElementById("weightInput").value = "";
-    
+
     // Clear search
     this.searchController.clear();
+
+    // Close cart dropdown if open
+    this.cartController.closeCartDropdown();
 
     // Clear cart
     this.cartController.clear();
@@ -909,7 +985,7 @@ class PrintController {
     this.enableAllPrintButtons();
   }
 
-  // Handle print success - clear cart, reset weight, re-enable buttons
+  // Handle print success - clear cart, reset weight, re-enable buttons, close dropdown
   handlePrintSuccess() {
     // Clear cart
     this.state.clearCart();
@@ -925,6 +1001,11 @@ class PrintController {
     if (window.cartRenderer) {
       window.cartRenderer.render();
       window.cartRenderer.updateSelectedIndicators();
+    }
+
+    // Close cart dropdown if open
+    if (window.cartController && window.cartController.isCartDropdownOpen) {
+      window.cartController.closeCartDropdown();
     }
 
     // Re-enable print buttons

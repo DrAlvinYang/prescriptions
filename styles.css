@@ -28,7 +28,7 @@ body {
 
 .app-shell {
   display: grid;
-  grid-template-columns: 1fr clamp(220px, 22vw, 300px);
+  grid-template-columns: 1fr;
   grid-template-rows: minmax(0, 1fr);
   height: 100vh;
   overflow: hidden;
@@ -38,9 +38,23 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 0; 
+  min-height: 0;
   background: var(--bg);
-  overflow: hidden; 
+  overflow: hidden;
+  position: relative;
+}
+
+/* Bottom fade effect - mirrors the top fade from search-section::after */
+.main::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35px;
+  background: linear-gradient(to top, var(--bg) 0%, var(--bg) 15px, transparent 35px);
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* --- Topbar --- */
@@ -827,19 +841,97 @@ details[open] > .subfolder-summary .subfolder-arrow {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* --- Right Sidebar Cart --- */
-.cart {
-  background: var(--panel);
-  border-left: 1px solid var(--border);
+/* --- Cart Button in Header --- */
+.cart-btn-wrapper {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  z-index: 10;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
+  align-items: center;
 }
 
-.cart-header {
+.icon-btn.cart-btn {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  color: #000;
+  width: 35px;
+  height: 35px;
+  transition: background 0.1s, border-color 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-btn.cart-btn:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+  color: #000;
+}
+.icon-btn.cart-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #d32f2f;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  padding: 0 3px;
+}
+.cart-badge.hidden {
+  display: none;
+}
+
+/* --- Cart Overlay --- */
+.cart-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 500;
+}
+.cart-overlay.hidden {
+  display: none;
+}
+
+/* Keep cart button above overlay when dropdown is open */
+.cart-btn-wrapper.dropdown-active {
+  position: relative;
+  z-index: 501;
+}
+
+/* --- Cart Dropdown --- */
+.cart-dropdown {
+  position: fixed;
+  top: 56px;
+  width: clamp(220px, 22vw, 300px);
+  bottom: 15px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 501;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cart-dropdown.hidden {
+  display: none;
+}
+
+.cart-dropdown-header {
   padding: 12px 15px;
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -868,6 +960,9 @@ details[open] > .subfolder-summary .subfolder-arrow {
   color: var(--header-text);
   transition: border-color 0.1s;
 }
+.clear-cart-btn.hidden {
+  display: none;
+}
 
 .clear-cart-btn:hover {
   border-color: var(--border);
@@ -877,36 +972,19 @@ details[open] > .subfolder-summary .subfolder-arrow {
   display: block;
 }
 
-.cart-list {
-  flex: 1 1 0; 
+.cart-dropdown-list {
+  flex: 1 1 0;
   overflow-y: auto;
   padding: 10px;
-  min-height: 0; 
+  min-height: 0;
 }
 
-.cart-item {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  position: relative; /* Essential for absolute positioning of the edit button */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-  min-height: 60px; 
-}
-.cart-item-main {
-  padding-right: 25px; 
-}
 .cart-med-name {
-  grid-area: name;
   font-weight: 700;
   font-size: 12px;
   color: #222;
 }
 .cart-med-details {
-  grid-area: details;
   font-size: 10px;
   color: var(--muted);
   line-height: 1.4;
@@ -917,18 +995,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 .cart-empty { 
   padding: 20px; text-align: center; color: var(--muted); font-style: italic; 
-}
-
-.cart-footer {
-  padding: 17.5px 15px;
-  border-top: 1px solid var(--border);
-  background: #f9f9f9;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
 }
 
 .cart-count {
@@ -1180,33 +1246,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
     max-width: 500px;
   }
 
-  /* Cart header: 2-line layout matching topbar exactly */
-  .cart-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px; /* Matches topbar effective gap (4px + 4px) */
-    padding: 8px 20px; /* Matches topbar padding */
-    height: auto;
-    min-height: auto;
-  }
-
-  .cart-count {
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 35px; /* Match topbar row 1 height */
-  }
-
-  .cart-header-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 35px; /* Match topbar row 2 height */
-  }
 }
 
 /* Fallback for very narrow screens (700px) */
@@ -1220,12 +1259,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
   .main {
     height: auto;
     overflow: visible;
-  }
-
-  .cart {
-    height: auto;
-    border-left: none;
-    border-top: 1px solid var(--border);
   }
 
   .content-scroll {
@@ -1338,36 +1371,33 @@ body.show-brands .brand-match-hint {
   padding: 10px;
   margin-bottom: 8px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas: 
-    "name close"
-    "details edit";
-  column-gap: 12px;
-  row-gap: 2px;
+  position: relative;
 }
 
-.edit-btn {
-  grid-area: edit;
-  align-self: end; /* Aligns with the last line of details */
+.cart-item-overlay-actions {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: flex;
+  visibility: hidden;
+  gap: 4px;
+  align-items: center;
+  padding-left: 30px;
+  background: linear-gradient(to right, transparent 0%, #fff 30px);
+  height: 20px;
+}
+
+.cart-item:hover .cart-item-overlay-actions {
+  visibility: visible;
+}
+
+.cart-item-overlay-actions .med-action-btn {
+  padding: 2px 6px;
   font-size: 10px;
-  color: var(--accent);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 400;
-  text-decoration: none;
-  padding: 0;
-  text-align: right;
-  width: 20px; /* Match width with X for a perfect column */
 }
 
 #editModal .modal-actions .btn:focus {
   outline: none;
-}
-
-.edit-btn:hover {
-  color: #003d80;
 }
 
 .med-item.is-active {

@@ -538,18 +538,48 @@ class CartRenderer {
   render(onRemove, onEdit) {
     const cartList = document.getElementById("cartList");
     const countLabel = document.querySelector(".cart-count");
+    const badge = document.getElementById("cartBadge");
+    const clearBtn = document.getElementById("clearCartBtn");
+    const printBtn = document.getElementById("printBtn");
 
+    const count = this.state.cart.length;
+
+    // Update count label
     if (countLabel) {
-      const count = this.state.cart.length;
       countLabel.textContent = `${count} prescription${count === 1 ? '' : 's'}`;
     }
 
-    if (this.state.cart.length === 0) {
-      cartList.innerHTML = `<div class="cart-empty">None selected</div>`;
+    // Update badge
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+
+    // Update trash button visibility (hidden when empty)
+    if (clearBtn) {
+      if (count > 0) {
+        clearBtn.classList.remove("hidden");
+      } else {
+        clearBtn.classList.add("hidden");
+      }
+    }
+
+    // Update print button disabled state (disabled when empty)
+    if (printBtn) {
+      printBtn.disabled = count === 0;
+    }
+
+    // Render cart items or empty state
+    if (count === 0) {
+      cartList.innerHTML = `<div class="cart-empty">No medication added</div>`;
       return;
     }
 
-    cartList.innerHTML = this.state.cart.map(med => 
+    cartList.innerHTML = this.state.cart.map(med =>
       this.renderCartItem(med, onRemove, onEdit)
     ).join("");
   }
@@ -585,10 +615,12 @@ class CartRenderer {
 
     return `
       <div class="cart-item">
+        <div class="cart-item-overlay-actions">
+          <button class="med-action-btn med-action-btn-edit" type="button" onclick="event.stopPropagation(); cartActions.edit('${med.uid}')">Edit</button>
+          <button class="med-action-btn med-action-btn-remove" type="button" onclick="event.stopPropagation(); cartActions.remove('${med.uid}')">Remove</button>
+        </div>
         <div class="cart-med-name">${medNameDisplay}</div>
-        <button class="icon-btn" onclick="cartActions.remove('${med.uid}')">×</button>
         <div class="cart-med-details">${safeDetails}</div>
-        <button class="edit-btn" onclick="cartActions.edit('${med.uid}')">Edit</button>
       </div>`;
   }
 
