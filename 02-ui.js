@@ -116,7 +116,7 @@ class MedicationRenderer {
 
       const actionsDiv = DOMBuilder.createElement('div', 'med-item-actions');
 
-      const editBtn = DOMBuilder.createElement('button', 'med-action-btn', {
+      const editBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-edit', {
         textContent: 'Edit',
         type: 'button'
       });
@@ -128,20 +128,37 @@ class MedicationRenderer {
         }
       };
 
-      const addBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
+      const addRemoveBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
         textContent: 'Add',
         type: 'button'
       });
-      addBtn.onclick = (e) => {
+      addRemoveBtn.onclick = (e) => {
         e.stopPropagation();
-        // Add to cart
-        if (onClick) {
-          onClick(med, div);
+        if (div.classList.contains('in-cart')) {
+          // Remove from cart
+          if (window.cartController) {
+            const key = div.dataset.key;
+            const item = window.cartController.state.cart.find(
+              c => !c.wasEdited && MedicationUtils.getCartKey(c) === key
+            );
+            if (item) {
+              window.cartController.remove(item.uid);
+            }
+          }
+        } else {
+          // Add to cart (handle weight-based meds)
+          if (window.cartController) {
+            if (med.weight_based && window.cartController.state.currentWeight === null) {
+              window.modalManager.openWeight(med);
+            } else {
+              window.cartController.add(med);
+            }
+          }
         }
       };
 
       actionsDiv.appendChild(editBtn);
-      actionsDiv.appendChild(addBtn);
+      actionsDiv.appendChild(addRemoveBtn);
       div.appendChild(actionsDiv);
     } else {
       // Set innerHTML directly
@@ -151,7 +168,7 @@ class MedicationRenderer {
       if (overlayActions) {
         const overlayDiv = DOMBuilder.createElement('div', 'med-item-overlay-actions');
 
-        const editBtn = DOMBuilder.createElement('button', 'med-action-btn', {
+        const editBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-edit', {
           textContent: 'Edit',
           type: 'button'
         });
@@ -162,19 +179,37 @@ class MedicationRenderer {
           }
         };
 
-        const addBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
+        const addRemoveBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
           textContent: 'Add',
           type: 'button'
         });
-        addBtn.onclick = (e) => {
+        addRemoveBtn.onclick = (e) => {
           e.stopPropagation();
-          if (onClick) {
-            onClick(med, div);
+          if (div.classList.contains('in-cart')) {
+            // Remove from cart
+            if (window.cartController) {
+              const key = div.dataset.key;
+              const item = window.cartController.state.cart.find(
+                c => !c.wasEdited && MedicationUtils.getCartKey(c) === key
+              );
+              if (item) {
+                window.cartController.remove(item.uid);
+              }
+            }
+          } else {
+            // Add to cart (handle weight-based meds)
+            if (window.cartController) {
+              if (med.weight_based && window.cartController.state.currentWeight === null) {
+                window.modalManager.openWeight(med);
+              } else {
+                window.cartController.add(med);
+              }
+            }
           }
         };
 
         overlayDiv.appendChild(editBtn);
-        overlayDiv.appendChild(addBtn);
+        overlayDiv.appendChild(addRemoveBtn);
         div.appendChild(overlayDiv);
       }
     }
@@ -562,8 +597,20 @@ class CartRenderer {
       const isSelected = this.state.cart.some(
         item => !item.wasEdited && MedicationUtils.getCartKey(item) === element.dataset.key
       );
-      
+
       element.classList.toggle("in-cart", isSelected);
+
+      // Update Add/Remove button state
+      const addRemoveBtn = element.querySelector(".med-action-btn-add");
+      if (addRemoveBtn) {
+        if (isSelected) {
+          addRemoveBtn.textContent = "Remove";
+          addRemoveBtn.classList.add("med-action-btn-remove");
+        } else {
+          addRemoveBtn.textContent = "Add";
+          addRemoveBtn.classList.remove("med-action-btn-remove");
+        }
+      }
     });
   }
 }

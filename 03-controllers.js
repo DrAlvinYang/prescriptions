@@ -670,6 +670,39 @@ class KeyboardController {
       return true;
     }
 
+    // E key to edit highlighted result (only when med-item has focus, no modifiers)
+    if (event.key.toLowerCase() === "e" && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      const activeItem = document.activeElement;
+      if (activeItem && activeItem.classList.contains("med-item")) {
+        event.preventDefault();
+        const editBtn = activeItem.querySelector(".med-item-actions .med-action-btn-edit");
+        if (editBtn) editBtn.click();
+        return true;
+      }
+    }
+
+    // A key to add highlighted result to cart (only when med-item has focus and NOT in cart)
+    if (event.key.toLowerCase() === "a" && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      const activeItem = document.activeElement;
+      if (activeItem && activeItem.classList.contains("med-item") && !activeItem.classList.contains("in-cart")) {
+        event.preventDefault();
+        const addBtn = activeItem.querySelector(".med-item-actions .med-action-btn-add");
+        if (addBtn) addBtn.click();
+        return true;
+      }
+    }
+
+    // R key to remove highlighted result from cart (only when med-item has focus and IS in cart)
+    if (event.key.toLowerCase() === "r" && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      const activeItem = document.activeElement;
+      if (activeItem && activeItem.classList.contains("med-item") && activeItem.classList.contains("in-cart")) {
+        event.preventDefault();
+        const removeBtn = activeItem.querySelector(".med-item-actions .med-action-btn-add");
+        if (removeBtn) removeBtn.click();
+        return true;
+      }
+    }
+
     return false;
   }
 

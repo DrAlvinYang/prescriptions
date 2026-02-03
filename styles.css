@@ -46,7 +46,7 @@ body {
 /* --- Topbar --- */
 .topbar {
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
   align-items: center;
   padding: 10px 75px;
   background: var(--panel);
@@ -55,13 +55,18 @@ body {
   height: 56px;
 }
 
-/* Brand & Location Wrapper */
+/* Brand, Provider & Location - Left side */
 .topbar-left {
   display: flex;
   align-items: center;
   gap: 12px;
-  order: 1;
-  margin-right: auto;
+}
+
+/* Reset & Weight - Right side */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .brand {
@@ -74,7 +79,6 @@ body {
 /* Provider Button */
 .provider-wrapper {
   position: relative;
-  order: 3;
 }
 
 .provider-btn {
@@ -252,8 +256,6 @@ body {
 /* Location Dropdown */
 .location-wrapper {
   position: relative;
-  order: 4;
-  margin-left: 3px;
 }
 
 .location-btn {
@@ -514,8 +516,6 @@ body {
   border: 1px solid var(--border);
   border-radius: 6px;
   height: 35px;
-  order: 6;
-  margin-left: 3px;
 }
 .weight-section label {
   font-weight: 600;
@@ -604,7 +604,6 @@ body {
 .status {
   display: flex;
   align-items: center;
-  order: 2;
 }
 
 .reset-btn {
@@ -1049,10 +1048,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
   gap: 10px;
 }
 
-.modal-actions-three .btn {
-  min-width: 100px;
-}
-
 /* Weight Input with Unit Suffix */
 .weight-input-wrapper {
   display: flex;
@@ -1153,52 +1148,25 @@ details[open] > .subfolder-summary .subfolder-arrow {
     height: auto;
     min-height: 56px;
     padding: 8px 75px;
-    row-gap: 4px; /* Effective gap is 8px due to pseudo-element */
+    row-gap: 8px;
   }
 
-  /* Row 1: Brand (left), Provider & Location (right) */
   .topbar-left {
-    order: 1;
-    margin-right: auto; /* Push provider and location to the right */
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
-  .provider-wrapper {
-    order: 2;
-  }
-
-  /* Reset button moves to row 2 in responsive */
-  .status {
-    order: 6;
-    margin-right: 0;
-    flex-shrink: 0;
+  .topbar-right {
+    gap: 8px;
   }
 
   .provider-btn {
     width: 130px;
   }
 
-  .location-wrapper {
-    order: 3;
-  }
-
   .location-btn {
-    width: 230px;
-    min-width: 230px;
-  }
-
-  /* Invisible flex-break element to force second row */
-  .topbar::before {
-    content: "";
-    order: 4;
-    flex-basis: 100%;
-    height: 0;
-  }
-
-  /* Row 2: Weight, Reset */
-  .weight-section {
-    order: 5;
-    flex-shrink: 0;
-    margin-right: auto;
+    width: 200px;
+    min-width: 200px;
   }
 
   /* Search section responsive adjustments */
@@ -1417,9 +1385,10 @@ body.show-brands .brand-match-hint {
   align-items: center;
 }
 
-/* Show action buttons on hover or keyboard highlight */
+/* Show action buttons on hover, keyboard highlight, or when in cart */
 .med-item:hover .med-item-actions,
-.med-item.is-active .med-item-actions {
+.med-item.is-active .med-item-actions,
+.med-item.in-cart .med-item-actions {
   visibility: visible;
 }
 
@@ -1447,6 +1416,26 @@ body.show-brands .brand-match-hint {
   pointer-events: none;
 }
 
+.med-action-btn-remove {
+  background: #fce4ec;
+  border-color: #f8bbd0;
+}
+
+.med-action-btn-remove:hover {
+  background: #f8bbd0;
+  border-color: #f48fb1;
+}
+
+/* Hide Edit button for in-cart items unless hovering or keyboard highlighted */
+.med-item.in-cart .med-item-actions .med-action-btn-edit {
+  visibility: hidden;
+}
+
+.med-item.in-cart:hover .med-item-actions .med-action-btn-edit,
+.med-item.in-cart.is-active .med-item-actions .med-action-btn-edit {
+  visibility: visible;
+}
+
 /* --- Folder View Overlay Action Buttons --- */
 .med-item.has-overlay-actions {
   position: relative;
@@ -1469,13 +1458,23 @@ body.show-brands .brand-match-hint {
   height: 20px;
 }
 
-.med-item.has-overlay-actions:hover .med-item-overlay-actions {
+.med-item.has-overlay-actions:hover .med-item-overlay-actions,
+.med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
   visibility: visible;
 }
 
 /* Adjust gradient for in-cart items */
 .med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
   background: linear-gradient(to right, transparent 0%, #e3f2fd 30px);
+}
+
+/* Hide Edit button for in-cart items in folder view unless hovering */
+.med-item.has-overlay-actions.in-cart .med-item-overlay-actions .med-action-btn-edit {
+  visibility: hidden;
+}
+
+.med-item.has-overlay-actions.in-cart:hover .med-item-overlay-actions .med-action-btn-edit {
+  visibility: visible;
 }
 
 /* Smaller buttons for folder view overlay */
