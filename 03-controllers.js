@@ -101,10 +101,11 @@ class CartController {
 // ============================================================================
 
 class SearchController {
-  constructor(state, searchRenderer, cartController) {
+  constructor(state, searchRenderer, cartController, cartRenderer) {
     this.state = state;
     this.searchRenderer = searchRenderer;
     this.cartController = cartController;
+    this.cartRenderer = cartRenderer;
   }
 
   search(query) {
@@ -121,6 +122,12 @@ class SearchController {
       query,
       (med, element) => this.cartController.toggle(med, element)
     );
+
+    // Sync cart state to newly rendered search results
+    // This ensures in-cart items show the Remove button and in-cart styling
+    if (this.cartRenderer) {
+      this.cartRenderer.updateSelectedIndicators();
+    }
 
     const clearBtn = Utils.getElement("clearSearchBtn");
     if (clearBtn) {

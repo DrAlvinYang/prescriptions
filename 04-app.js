@@ -110,7 +110,8 @@ class Application {
     this.controllers.search = new SearchController(
       this.state,
       this.renderers.search,
-      this.controllers.cart
+      this.controllers.cart,
+      this.renderers.cart
     );
 
     this.controllers.location = new LocationController(
