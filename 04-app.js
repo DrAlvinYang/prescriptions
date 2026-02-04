@@ -787,6 +787,27 @@ class Application {
     const locationWrapper = document.querySelector(".location-wrapper");
     if (!overlay || !providerWrapper || !topbarRight || !locationWrapper) return;
 
+    // When location search is active, provider is hidden so normal gap check
+    // won't work. Simulate the normal layout: would it fit at this viewport?
+    if (locationWrapper.classList.contains("search-active")) {
+      const topbar = document.querySelector(".topbar");
+      const menuBtn = document.querySelector(".menu-btn");
+      const cs = getComputedStyle(topbar);
+      const padL = parseFloat(cs.paddingLeft);
+      const padR = parseFloat(cs.paddingRight);
+      const gap = parseFloat(cs.gap) || 12;
+      const menuW = menuBtn ? menuBtn.getBoundingClientRect().width : 0;
+      const rightW = topbarRight.getBoundingClientRect().width;
+      // Normal layout minimum: padding + menu + provider(130) + location-icon(35) + topbar-right + gaps
+      const minNeeded = padL + menuW + gap + 130 + gap + 35 + gap + rightW + padR;
+      if (window.innerWidth <= minNeeded) {
+        overlay.classList.add("active");
+      } else {
+        overlay.classList.remove("active");
+      }
+      return;
+    }
+
     // Check if provider is at its minimum and gap to location is being squeezed
     const provRect = providerWrapper.getBoundingClientRect();
     const locRect = locationWrapper.getBoundingClientRect();

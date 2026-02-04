@@ -356,7 +356,7 @@ body {
 .loc-icon {
   display: none;
   flex-shrink: 0;
-  color: #e06080;
+  color: #000000;
 }
 
 .loc-icon svg {
@@ -497,6 +497,14 @@ body {
 .location-wrapper.search-active {
   position: relative;
   z-index: 201;
+}
+
+/* Override icon-only button constraints when search is active */
+.location-wrapper.search-active .location-btn {
+  width: 100%;
+  min-width: 0;
+  padding: 0 10px;
+  justify-content: space-between;
 }
 
 /* Blue border on location search input when typing (not navigating) */
@@ -1280,6 +1288,35 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 .location-wrapper.icon-only .loc-icon {
   display: inline-flex;
+}
+
+/* On narrow screens, widen location search to match dropdown; provider hides to make room */
+@media (max-width: 900px) {
+  .location-wrapper.search-active,
+  .location-wrapper.icon-only.search-active {
+    width: 480px;
+    min-width: 375px;
+    flex-shrink: 1;
+  }
+
+  .location-wrapper.icon-only.search-active .location-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 0 10px;
+    justify-content: space-between;
+  }
+
+  /* Hide provider field to give the search bar room */
+  .topbar-left:has(.location-wrapper.search-active) .provider-wrapper {
+    display: none;
+  }
+
+  /* Dropdown tracks wrapper width: 480px down to 375px */
+  .location-wrapper.search-active .location-search-dropdown {
+    width: 100%;
+    max-width: 480px;
+    min-width: 375px;
+  }
 }
 
 /* Hard cutoff: overlay shown by JS when header can no longer maintain 12px gaps */
