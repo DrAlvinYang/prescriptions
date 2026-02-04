@@ -147,11 +147,7 @@ const Utils = {
 
   // DOM Helper Methods
   getElement(id) {
-    const element = document.getElementById(id);
-    if (!element) {
-      console.warn(`Element with id "${id}" not found`);
-    }
-    return element;
+    return document.getElementById(id);
   },
 
   getElementRequired(id) {
@@ -163,11 +159,7 @@ const Utils = {
   },
 
   queryElement(selector) {
-    const element = document.querySelector(selector);
-    if (!element) {
-      console.warn(`Element with selector "${selector}" not found`);
-    }
-    return element;
+    return document.querySelector(selector);
   },
 
   queryElements(selector) {
@@ -289,6 +281,15 @@ const Utils = {
   formatWeight(value) {
     const parsed = parseFloat(value);
     return !isNaN(parsed) && parsed > 0 ? parsed.toFixed(2) : "";
+  },
+
+  sanitizeWeightInput(value) {
+    let sanitized = value.replace(/[^0-9.]/g, '');
+    const parts = sanitized.split('.');
+    if (parts.length > 2) {
+      sanitized = parts[0] + '.' + parts.slice(1).join('');
+    }
+    return sanitized;
   }
 };
 
@@ -411,75 +412,59 @@ const MedicationUtils = {
 };
 
 // ============================================================================
+// SHARED ROUTE SYNONYM GROUPS - Single source of truth for route normalization
+// Used by both DuplicateChecker and SearchManager
+// ============================================================================
+
+const ROUTE_SYNONYM_GROUPS = [
+  { canonical: 'oral', searchKey: 'route_po', synonyms: ['po', 'oral', 'orally', 'by mouth', 'mouth'] },
+  { canonical: 'intramuscular', searchKey: 'route_im', synonyms: ['im', 'intramuscular', 'intramuscularly'] },
+  { canonical: 'intravenous', searchKey: 'route_iv', synonyms: ['iv', 'intravenous', 'intravenously'] },
+  { canonical: 'subcutaneous', searchKey: 'route_sc', synonyms: ['sc', 'sq', 'subcut', 'subcutaneous', 'subcutaneously'] },
+  { canonical: 'sublingual', searchKey: 'route_sl', synonyms: ['sl', 'sublingual', 'sublingually'] },
+  { canonical: 'rectal', searchKey: 'route_pr', synonyms: ['pr', 'rectal', 'rectally', 'per rectum'] },
+  { canonical: 'vaginal', searchKey: 'route_pv', synonyms: ['pv', 'vaginal', 'vaginally', 'per vaginal'] },
+  { canonical: 'topical', searchKey: 'route_topical', synonyms: ['top', 'topical', 'topically'] },
+  { canonical: 'inhalation', searchKey: 'route_inhalation', synonyms: ['inh', 'inhalation', 'inhaled', 'by inhalation'] },
+  { canonical: 'nebulized', searchKey: 'route_nebulized', synonyms: ['neb', 'nebulized', 'nebulizer'] },
+  { canonical: 'intranasal', searchKey: 'route_nasal', synonyms: ['nasal', 'in', 'intranasal', 'intranasally'] },
+  { canonical: 'transdermal', searchKey: 'route_td', synonyms: ['td', 'transdermal', 'transdermally', 'patch'] },
+  { canonical: 'ophthalmic', searchKey: 'route_ophthalmic', synonyms: ['ophth', 'ophthalmic', 'to affected eye', 'to affected eyes', 'to affected eye(s)', 'eye drops'] },
+  { canonical: 'right eye', searchKey: 'route_od', synonyms: ['od', 'right eye'] },
+  { canonical: 'left eye', searchKey: 'route_os', synonyms: ['os', 'left eye'] },
+  { canonical: 'both eyes', searchKey: 'route_ou', synonyms: ['ou', 'both eyes'] },
+  { canonical: 'otic', searchKey: 'route_otic', synonyms: ['otic', 'to affected ear', 'to affected ears', 'to affected ear(s)', 'ear drops'] },
+  { canonical: 'right ear', searchKey: 'route_ad', synonyms: ['ad', 'right ear'] },
+  { canonical: 'left ear', searchKey: 'route_as', synonyms: ['as', 'left ear'] },
+  { canonical: 'both ears', searchKey: 'route_au', synonyms: ['au', 'both ears'] },
+  { canonical: 'chewed', searchKey: 'route_chewed', synonyms: ['chewed'] },
+  { canonical: 'buccal', searchKey: 'route_buccal', synonyms: ['buccal'] },
+  { canonical: 'nasogastric', searchKey: 'route_ng', synonyms: ['ng', 'nasogastric', 'ng tube', 'nasogastric tube'] },
+  { canonical: 'gastrostomy', searchKey: 'route_gt', synonyms: ['gt', 'peg', 'g-tube', 'g tube', 'gastrostomy', 'gastrostomy tube', 'peg tube'] },
+  { canonical: 'jejunostomy', searchKey: 'route_jt', synonyms: ['j tube', 'j-tube', 'jtube', 'jejunostomy', 'jejunostomy tube'] },
+  { canonical: 'oral/sublingual', searchKey: 'route_po_sl', synonyms: ['po/sl', 'po sl'] },
+  { canonical: 'intradermal', searchKey: 'route_id', synonyms: ['id', 'intradermal'] },
+  { canonical: 'intraosseous', searchKey: 'route_io', synonyms: ['io', 'intraosseous'] },
+  { canonical: 'intrathecal', searchKey: 'route_it', synonyms: ['it', 'intrathecal'] },
+  { canonical: 'intraarticular', searchKey: 'route_ia', synonyms: ['ia', 'intraarticular'] }
+];
+
+function buildRouteMap(valueKey) {
+  const map = {};
+  for (const group of ROUTE_SYNONYM_GROUPS) {
+    for (const synonym of group.synonyms) {
+      map[synonym] = group[valueKey];
+    }
+  }
+  return map;
+}
+
+// ============================================================================
 // DUPLICATE CHECKER - For detecting duplicate prescriptions in cart
 // ============================================================================
 
 const DuplicateChecker = {
-  // Route normalization map - maps all variants to canonical lowercase form
-  // Aligned with SearchManager.routeMap for consistency
-  routeNormalization: {
-    // PO (by mouth) - oral administration
-    'po': 'oral', 'oral': 'oral', 'orally': 'oral', 'by mouth': 'oral', 'mouth': 'oral',
-    // IM (intramuscular)
-    'im': 'intramuscular', 'intramuscular': 'intramuscular', 'intramuscularly': 'intramuscular',
-    // IV (intravenous)
-    'iv': 'intravenous', 'intravenous': 'intravenous', 'intravenously': 'intravenous',
-    // SC/SQ/subcut (subcutaneous)
-    'sc': 'subcutaneous', 'sq': 'subcutaneous', 'subcut': 'subcutaneous',
-    'subcutaneous': 'subcutaneous', 'subcutaneously': 'subcutaneous',
-    // SL (sublingual)
-    'sl': 'sublingual', 'sublingual': 'sublingual', 'sublingually': 'sublingual',
-    // PR (per rectum)
-    'pr': 'rectal', 'rectal': 'rectal', 'rectally': 'rectal', 'per rectum': 'rectal',
-    // PV (per vaginal)
-    'pv': 'vaginal', 'vaginal': 'vaginal', 'vaginally': 'vaginal', 'per vaginal': 'vaginal',
-    // TOP (topical)
-    'top': 'topical', 'topical': 'topical', 'topically': 'topical',
-    // INH (inhalation)
-    'inh': 'inhalation', 'inhalation': 'inhalation', 'inhaled': 'inhalation', 'by inhalation': 'inhalation',
-    // NEB (nebulized)
-    'neb': 'nebulized', 'nebulized': 'nebulized', 'nebulizer': 'nebulized',
-    // IN/nasal (intranasal)
-    'nasal': 'intranasal', 'in': 'intranasal', 'intranasal': 'intranasal', 'intranasally': 'intranasal',
-    // TD (transdermal)
-    'td': 'transdermal', 'transdermal': 'transdermal', 'transdermally': 'transdermal', 'patch': 'transdermal',
-    // Ophthalmic (to affected eye(s))
-    'ophth': 'ophthalmic', 'ophthalmic': 'ophthalmic', 'to affected eye': 'ophthalmic',
-    'to affected eyes': 'ophthalmic', 'to affected eye(s)': 'ophthalmic', 'eye drops': 'ophthalmic',
-    // Specific eye routes
-    'od': 'right eye', 'right eye': 'right eye',
-    'os': 'left eye', 'left eye': 'left eye',
-    'ou': 'both eyes', 'both eyes': 'both eyes',
-    // Otic (to affected ear(s))
-    'otic': 'otic', 'to affected ear': 'otic', 'to affected ears': 'otic',
-    'to affected ear(s)': 'otic', 'ear drops': 'otic',
-    // Specific ear routes
-    'ad': 'right ear', 'right ear': 'right ear',
-    'as': 'left ear', 'left ear': 'left ear',
-    'au': 'both ears', 'both ears': 'both ears',
-    // Chewed
-    'chewed': 'chewed',
-    // Buccal
-    'buccal': 'buccal',
-    // NG (nasogastric tube)
-    'ng': 'nasogastric', 'nasogastric': 'nasogastric', 'ng tube': 'nasogastric', 'nasogastric tube': 'nasogastric',
-    // GT/PEG/G-tube (gastrostomy tube)
-    'gt': 'gastrostomy', 'peg': 'gastrostomy', 'g-tube': 'gastrostomy', 'g tube': 'gastrostomy',
-    'gastrostomy': 'gastrostomy', 'gastrostomy tube': 'gastrostomy', 'peg tube': 'gastrostomy',
-    // J-tube (jejunostomy tube)
-    'j tube': 'jejunostomy', 'j-tube': 'jejunostomy', 'jtube': 'jejunostomy',
-    'jejunostomy': 'jejunostomy', 'jejunostomy tube': 'jejunostomy',
-    // PO/SL (by mouth or sublingual)
-    'po/sl': 'oral/sublingual', 'po sl': 'oral/sublingual',
-    // ID (intradermal)
-    'id': 'intradermal', 'intradermal': 'intradermal',
-    // IO (intraosseous)
-    'io': 'intraosseous', 'intraosseous': 'intraosseous',
-    // IT (intrathecal)
-    'it': 'intrathecal', 'intrathecal': 'intrathecal',
-    // IA (intraarticular)
-    'ia': 'intraarticular', 'intraarticular': 'intraarticular'
-  },
+  routeNormalization: buildRouteMap('canonical'),
 
   // Frequency normalization map - maps all variants to canonical lowercase form
   frequencyNormalization: {
@@ -667,7 +652,6 @@ class LocationManager {
       if (Array.isArray(data.locations) && data.locations.length > 0) {
         BASE_LOCATIONS = data.locations;
         this.locationsLoaded = true;
-        console.log(`✓ Loaded ${BASE_LOCATIONS.length} locations from JSON`);
       } else {
         console.warn("Locations.json is empty or invalid, using fallback");
         BASE_LOCATIONS = [FALLBACK_LOCATION];
@@ -1124,78 +1108,8 @@ class SearchManager {
       'freq_prn': ['prn', 'as needed']
     };
 
-    // Route normalization map - maps all variants to internal keys
-    // Based on authoritative route list for clinical safety
-    this.routeMap = {
-      // PO (by mouth) - oral administration
-      'po': 'route_po', 'oral': 'route_po', 'orally': 'route_po',
-      'by mouth': 'route_po', 'mouth': 'route_po',
-      // TOP (topical)
-      'top': 'route_topical', 'topical': 'route_topical', 'topically': 'route_topical',
-      // Ophthalmic (to affected eye(s))
-      'ophth': 'route_ophthalmic', 'ophthalmic': 'route_ophthalmic',
-      'to affected eye': 'route_ophthalmic', 'to affected eyes': 'route_ophthalmic',
-      'to affected eye(s)': 'route_ophthalmic', 'eye drops': 'route_ophthalmic',
-      // Specific eye routes
-      'od': 'route_od', 'right eye': 'route_od',
-      'os': 'route_os', 'left eye': 'route_os',
-      'ou': 'route_ou', 'both eyes': 'route_ou',
-      // INH (inhalation)
-      'inh': 'route_inhalation', 'inhalation': 'route_inhalation',
-      'inhaled': 'route_inhalation', 'by inhalation': 'route_inhalation',
-      // NEB (nebulized)
-      'neb': 'route_nebulized', 'nebulized': 'route_nebulized', 'nebulizer': 'route_nebulized',
-      // IM (intramuscular)
-      'im': 'route_im', 'intramuscular': 'route_im', 'intramuscularly': 'route_im',
-      // IV (intravenous)
-      'iv': 'route_iv', 'intravenous': 'route_iv', 'intravenously': 'route_iv',
-      // PV (per vaginal)
-      'pv': 'route_pv', 'per vaginal': 'route_pv', 'vaginal': 'route_pv', 'vaginally': 'route_pv',
-      // IN / nasal (intranasal)
-      'in': 'route_nasal', 'nasal': 'route_nasal', 'intranasal': 'route_nasal',
-      'intranasally': 'route_nasal',
-      // PR (per rectum)
-      'pr': 'route_pr', 'per rectum': 'route_pr', 'rectal': 'route_pr', 'rectally': 'route_pr',
-      // SL (sublingual)
-      'sl': 'route_sl', 'sublingual': 'route_sl', 'sublingually': 'route_sl',
-      // PO/SL (by mouth or sublingual)
-      'po sl': 'route_po_sl', 'po/sl': 'route_po_sl',
-      // Otic (to affected ear(s))
-      'otic': 'route_otic', 'to affected ear': 'route_otic',
-      'to affected ears': 'route_otic', 'to affected ear(s)': 'route_otic',
-      'ear drops': 'route_otic',
-      // Specific ear routes
-      'ad': 'route_ad', 'right ear': 'route_ad',
-      'as': 'route_as', 'left ear': 'route_as',
-      'au': 'route_au', 'both ears': 'route_au',
-      // TD (transdermal)
-      'td': 'route_td', 'transdermal': 'route_td', 'transdermally': 'route_td',
-      'patch': 'route_td',
-      // Chewed
-      'chewed': 'route_chewed',
-      // SC / SQ / subcut (subcutaneous)
-      'sc': 'route_sc', 'sq': 'route_sc', 'subcut': 'route_sc',
-      'subcutaneous': 'route_sc', 'subcutaneously': 'route_sc',
-      // ID (intradermal)
-      'id': 'route_id', 'intradermal': 'route_id',
-      // IO (intraosseous)
-      'io': 'route_io', 'intraosseous': 'route_io',
-      // IT (intrathecal)
-      'it': 'route_it', 'intrathecal': 'route_it',
-      // IA (intraarticular)
-      'ia': 'route_ia', 'intraarticular': 'route_ia',
-      // NG (nasogastric tube)
-      'ng': 'route_ng', 'nasogastric': 'route_ng', 'nasogastric tube': 'route_ng',
-      'ng tube': 'route_ng',
-      // GT / PEG / G-tube (gastrostomy tube)
-      'gt': 'route_gt', 'peg': 'route_gt', 'g tube': 'route_gt', 'g-tube': 'route_gt',
-      'gastrostomy': 'route_gt', 'gastrostomy tube': 'route_gt', 'peg tube': 'route_gt',
-      // J-tube (jejunostomy tube)
-      'j tube': 'route_jt', 'j-tube': 'route_jt', 'jtube': 'route_jt',
-      'jejunostomy': 'route_jt', 'jejunostomy tube': 'route_jt',
-      // Buccal
-      'buccal': 'route_buccal'
-    };
+    // Route normalization map - derived from shared ROUTE_SYNONYM_GROUPS
+    this.routeMap = buildRouteMap('searchKey');
 
     // Tokens that are ambiguous between frequency and route (treated as OR)
     this.ambiguousTokens = new Set(['od']);
@@ -2594,9 +2508,41 @@ class FlyToCart {
 // EXPORT FOR USE IN UI
 // ============================================================================
 
+// ============================================================================
+// VALIDATION UTILITIES
+// ============================================================================
+
+const ValidationUtils = {
+  /**
+   * Validate that provider and location are set.
+   * Returns true if valid, shows alert and returns false if not.
+   */
+  validateProviderLocation(providerManager, locationManager) {
+    const provider = providerManager.getProvider();
+    const hasProvider = provider.name && provider.cpso;
+    const hasLocation = locationManager.state.currentLocationName &&
+                        locationManager.state.currentLocationName !== "Select Location";
+
+    if (!hasProvider && !hasLocation) {
+      alert("Please input provider info and practice location.");
+      return false;
+    }
+    if (!hasProvider) {
+      alert("Please input provider info.");
+      return false;
+    }
+    if (!hasLocation) {
+      alert("Please enter practice location.");
+      return false;
+    }
+    return true;
+  }
+};
+
 // Export utility classes and functions for global access
 // Note: Actual instances are created by the Application class in 04-app.js
 window.Utils = Utils;
 window.MedicationUtils = MedicationUtils;
+window.ValidationUtils = ValidationUtils;
 window.DuplicateChecker = DuplicateChecker;
 window.FlyToCart = FlyToCart;

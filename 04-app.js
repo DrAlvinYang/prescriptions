@@ -25,7 +25,6 @@ class Application {
       this.render();
       this.focus();
       
-      console.log("✓ Application initialized successfully");
     } catch (error) {
       console.error("Failed to initialize application:", error);
       
@@ -227,20 +226,6 @@ class Application {
 
     weightInput.value = "";
 
-    // Helper function to sanitize weight input - only allow valid numeric characters
-    const sanitizeWeightInput = (value) => {
-      // Remove all characters except digits and decimal point
-      let sanitized = value.replace(/[^0-9.]/g, '');
-
-      // Handle multiple decimal points - keep only the first one
-      const parts = sanitized.split('.');
-      if (parts.length > 2) {
-        sanitized = parts[0] + '.' + parts.slice(1).join('');
-      }
-
-      return sanitized;
-    };
-
     // Select all text when focusing the input
     weightInput.addEventListener("focus", (e) => {
       setTimeout(() => {
@@ -262,7 +247,7 @@ class Application {
 
     // Real-time update with sanitization
     weightInput.addEventListener("input", (e) => {
-      const sanitized = sanitizeWeightInput(e.target.value);
+      const sanitized = Utils.sanitizeWeightInput(e.target.value);
       if (sanitized !== e.target.value) {
         e.target.value = sanitized;
       }
@@ -281,20 +266,6 @@ class Application {
     const modalSkipBtn = Utils.getElement("modalSkipBtn");
     const modalWeightInput = Utils.getElement("modalWeightInput");
 
-    // Helper function to sanitize weight input - only allow valid numeric characters
-    const sanitizeWeightInput = (value) => {
-      // Remove all characters except digits and decimal point
-      let sanitized = value.replace(/[^0-9.]/g, '');
-
-      // Handle multiple decimal points - keep only the first one
-      const parts = sanitized.split('.');
-      if (parts.length > 2) {
-        sanitized = parts[0] + '.' + parts.slice(1).join('');
-      }
-
-      return sanitized;
-    };
-
     if (modalSaveBtn && modalSkipBtn && modalWeightInput) {
       // Select all text when clicking/focusing the modal weight input
       modalWeightInput.addEventListener("focus", (e) => {
@@ -307,7 +278,7 @@ class Application {
 
       // Sanitize input on every change to ensure only valid numeric values
       modalWeightInput.addEventListener("input", (e) => {
-        const sanitized = sanitizeWeightInput(e.target.value);
+        const sanitized = Utils.sanitizeWeightInput(e.target.value);
         if (sanitized !== e.target.value) {
           e.target.value = sanitized;
         }
@@ -686,8 +657,6 @@ class Application {
       throw new Error("Failed to load medication data. Please check that Prescriptions.json exists and is valid.");
     }
     
-    console.log(`✓ Loaded ${this.state.medications.length} medications`);
-
     // Create SearchManager now that medications are loaded
     this.managers.search = new SearchManager(this.state.medications);
     
@@ -695,41 +664,28 @@ class Application {
     this.renderers.search.setSearchManager(this.managers.search);
   }
 
-  render() {
-    // Check current layout mode
+  getColumnConfig() {
+    if (this.isOneColumn) {
+      return { col1: SPECIALTY_SINGLE_COLUMN, col2: [], col3: [] };
+    } else if (this.isTwoColumn) {
+      return { col1: SPECIALTY_2_COLUMNS.col1, col2: SPECIALTY_2_COLUMNS.col2, col3: [] };
+    }
+    return { col1: SPECIALTY_COLUMNS.col1, col2: SPECIALTY_COLUMNS.col2, col3: SPECIALTY_COLUMNS.col3 };
+  }
+
+  updateLayoutMode() {
     const width = window.innerWidth;
     this.isOneColumn = width <= this.ONE_COLUMN_BREAKPOINT;
     this.isTwoColumn = !this.isOneColumn && width <= this.TWO_COLUMN_BREAKPOINT;
+  }
 
-    // Render dashboard based on layout mode
-    if (this.isOneColumn) {
-      this.renderers.dashboard.render(
-        {
-          col1: SPECIALTY_SINGLE_COLUMN,
-          col2: [],
-          col3: []
-        },
-        (med, element) => this.controllers.cart.toggle(med, element)
-      );
-    } else if (this.isTwoColumn) {
-      this.renderers.dashboard.render(
-        {
-          col1: SPECIALTY_2_COLUMNS.col1,
-          col2: SPECIALTY_2_COLUMNS.col2,
-          col3: []
-        },
-        (med, element) => this.controllers.cart.toggle(med, element)
-      );
-    } else {
-      this.renderers.dashboard.render(
-        {
-          col1: SPECIALTY_COLUMNS.col1,
-          col2: SPECIALTY_COLUMNS.col2,
-          col3: SPECIALTY_COLUMNS.col3
-        },
-        (med, element) => this.controllers.cart.toggle(med, element)
-      );
-    }
+  render() {
+    this.updateLayoutMode();
+
+    this.renderers.dashboard.render(
+      this.getColumnConfig(),
+      (med, element) => this.controllers.cart.toggle(med, element)
+    );
 
     // Render initial cart
     this.controllers.cart.render();
@@ -846,9 +802,7 @@ class Application {
 
     const wasTwoColumn = this.isTwoColumn;
     const wasOneColumn = this.isOneColumn;
-    const width = window.innerWidth;
-    this.isOneColumn = width <= this.ONE_COLUMN_BREAKPOINT;
-    this.isTwoColumn = !this.isOneColumn && width <= this.TWO_COLUMN_BREAKPOINT;
+    this.updateLayoutMode();
 
     // Only re-render if layout mode changed
     if (wasTwoColumn !== this.isTwoColumn || wasOneColumn !== this.isOneColumn) {
@@ -862,34 +816,10 @@ class Application {
       });
 
       // Re-render dashboard
-      if (this.isOneColumn) {
-        this.renderers.dashboard.render(
-          {
-            col1: SPECIALTY_SINGLE_COLUMN,
-            col2: [],
-            col3: []
-          },
-          (med, element) => this.controllers.cart.toggle(med, element)
-        );
-      } else if (this.isTwoColumn) {
-        this.renderers.dashboard.render(
-          {
-            col1: SPECIALTY_2_COLUMNS.col1,
-            col2: SPECIALTY_2_COLUMNS.col2,
-            col3: []
-          },
-          (med, element) => this.controllers.cart.toggle(med, element)
-        );
-      } else {
-        this.renderers.dashboard.render(
-          {
-            col1: SPECIALTY_COLUMNS.col1,
-            col2: SPECIALTY_COLUMNS.col2,
-            col3: SPECIALTY_COLUMNS.col3
-          },
-          (med, element) => this.controllers.cart.toggle(med, element)
-        );
-      }
+      this.renderers.dashboard.render(
+        this.getColumnConfig(),
+        (med, element) => this.controllers.cart.toggle(med, element)
+      );
 
       // Restore open folder states
       document.querySelectorAll('details').forEach(details => {

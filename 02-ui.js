@@ -94,6 +94,54 @@ class MedicationRenderer {
     return `${indicationHtml}<div><span class="med-name-text">${medNameHtml}${popLabel}${brandHint}</span> <span class="med-details-text">${detailsHtml}</span></div>`;
   }
 
+  createActionButtons(med, medItemDiv, { containerClass, editLabel, addLabel, useHTML }) {
+    const container = DOMBuilder.createElement('div', containerClass);
+    const labelProp = useHTML ? 'innerHTML' : 'textContent';
+
+    const editBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-edit', {
+      [labelProp]: editLabel,
+      type: 'button'
+    });
+    editBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (window.searchEditController) {
+        window.searchEditController.openEdit(med);
+      }
+    };
+
+    const addRemoveBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
+      [labelProp]: addLabel,
+      type: 'button'
+    });
+    addRemoveBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (medItemDiv.classList.contains('in-cart')) {
+        if (window.cartController) {
+          const key = medItemDiv.dataset.key;
+          const item = window.cartController.state.cart.find(
+            c => !c.wasEdited && MedicationUtils.getCartKey(c) === key
+          );
+          if (item) {
+            window.cartController.remove(item.uid);
+          }
+        }
+      } else {
+        if (window.cartController) {
+          window.cartController.pendingFlySource = medItemDiv;
+          if (med.weight_based && window.cartController.state.currentWeight === null) {
+            window.modalManager.openWeight(med);
+          } else {
+            window.cartController.add(med);
+          }
+        }
+      }
+    };
+
+    container.appendChild(editBtn);
+    container.appendChild(addRemoveBtn);
+    return container;
+  }
+
   createMedItem(med, options = {}) {
     const { showPopulation = false, highlightTerms = [], onClick, showActions = false, overlayActions = false } = options;
 
@@ -113,106 +161,24 @@ class MedicationRenderer {
         innerHTML: this.renderHTML(med, { showPopulation, highlightTerms })
       });
       div.appendChild(contentDiv);
-
-      const actionsDiv = DOMBuilder.createElement('div', 'med-item-actions');
-
-      const editBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-edit', {
-        innerHTML: '<u class="shortcut-hint">E</u>dit',
-        type: 'button'
-      });
-      editBtn.onclick = (e) => {
-        e.stopPropagation();
-        // Open search edit modal via the search edit controller
-        if (window.searchEditController) {
-          window.searchEditController.openEdit(med);
-        }
-      };
-
-      const addRemoveBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
-        innerHTML: '<u class="shortcut-hint">A</u>dd',
-        type: 'button'
-      });
-      addRemoveBtn.onclick = (e) => {
-        e.stopPropagation();
-        if (div.classList.contains('in-cart')) {
-          // Remove from cart
-          if (window.cartController) {
-            const key = div.dataset.key;
-            const item = window.cartController.state.cart.find(
-              c => !c.wasEdited && MedicationUtils.getCartKey(c) === key
-            );
-            if (item) {
-              window.cartController.remove(item.uid);
-            }
-          }
-        } else {
-          // Add to cart (handle weight-based meds)
-          if (window.cartController) {
-            window.cartController.pendingFlySource = div;
-            if (med.weight_based && window.cartController.state.currentWeight === null) {
-              window.modalManager.openWeight(med);
-            } else {
-              window.cartController.add(med);
-            }
-          }
-        }
-      };
-
-      actionsDiv.appendChild(editBtn);
-      actionsDiv.appendChild(addRemoveBtn);
-      div.appendChild(actionsDiv);
+      div.appendChild(this.createActionButtons(med, div, {
+        containerClass: 'med-item-actions',
+        editLabel: '<u class="shortcut-hint">E</u>dit',
+        addLabel: '<u class="shortcut-hint">A</u>dd',
+        useHTML: true
+      }));
     } else {
       // Set innerHTML directly
       div.innerHTML = this.renderHTML(med, { showPopulation, highlightTerms });
 
       // Add overlay action buttons for folder view
       if (overlayActions) {
-        const overlayDiv = DOMBuilder.createElement('div', 'med-item-overlay-actions');
-
-        const editBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-edit', {
-          textContent: 'Edit',
-          type: 'button'
-        });
-        editBtn.onclick = (e) => {
-          e.stopPropagation();
-          if (window.searchEditController) {
-            window.searchEditController.openEdit(med);
-          }
-        };
-
-        const addRemoveBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-add', {
-          textContent: 'Add',
-          type: 'button'
-        });
-        addRemoveBtn.onclick = (e) => {
-          e.stopPropagation();
-          if (div.classList.contains('in-cart')) {
-            // Remove from cart
-            if (window.cartController) {
-              const key = div.dataset.key;
-              const item = window.cartController.state.cart.find(
-                c => !c.wasEdited && MedicationUtils.getCartKey(c) === key
-              );
-              if (item) {
-                window.cartController.remove(item.uid);
-              }
-            }
-          } else {
-            // Add to cart (handle weight-based meds)
-            if (window.cartController) {
-              window.cartController.pendingFlySource = div;
-              if (med.weight_based && window.cartController.state.currentWeight === null) {
-                window.modalManager.openWeight(med);
-              } else {
-                window.cartController.add(med);
-              }
-            }
-          }
-        };
-
-        overlayDiv.appendChild(editBtn);
-        overlayDiv.appendChild(addRemoveBtn);
-        div.appendChild(overlayDiv);
+        div.appendChild(this.createActionButtons(med, div, {
+          containerClass: 'med-item-overlay-actions',
+          editLabel: 'Edit',
+          addLabel: 'Add',
+          useHTML: false
+        }));
       }
     }
 
@@ -667,7 +633,7 @@ class LocationUIRenderer {
     const locationName = this.locationManager.state.currentLocationName;
     
     if (!this.isSearchMode) {
-      button.innerHTML = `<span class="loc-icon"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M192 0C86 0 0 86 0 192c0 142 192 320 192 320s192-178 192-320C384 86 298 0 192 0zm0 272c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z"/></svg></span><span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
+      button.innerHTML = `<span class="loc-icon"><svg viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 23C8 18 3 13 3 9A9 9 0 1 1 21 9C21 13 16 18 12 23Z"/><circle cx="12" cy="9" r="3"/><ellipse cx="12" cy="26" rx="5" ry="1.5"/></svg></span><span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
     }
   }
 

@@ -15,29 +15,8 @@ class CartController {
     this.pendingFlySource = null; // Source element for fly-to-cart animation
   }
 
-  /**
-   * Validate that provider and location are set
-   * Returns true if valid, shows alert and returns false if not
-   */
   validateProviderLocation() {
-    const provider = this.providerManager.getProvider();
-    const hasProvider = provider.name && provider.cpso;
-    const hasLocation = this.locationManager.state.currentLocationName &&
-                        this.locationManager.state.currentLocationName !== "Select Location";
-
-    if (!hasProvider && !hasLocation) {
-      alert("Please input provider info and practice location.");
-      return false;
-    }
-    if (!hasProvider) {
-      alert("Please input provider info.");
-      return false;
-    }
-    if (!hasLocation) {
-      alert("Please enter practice location.");
-      return false;
-    }
-    return true;
+    return ValidationUtils.validateProviderLocation(this.providerManager, this.locationManager);
   }
 
   toggle(medication, element = null) {
@@ -572,9 +551,6 @@ class KeyboardController {
 
     // Handle search navigation
     if (this.handleSearchKeys(event)) return;
-
-    // Handle location menu jump-to-letter
-    this.handleLocationJump(event);
   }
 
   isAnyModalOpen() {
@@ -613,82 +589,6 @@ class KeyboardController {
       !searchEditModal.classList.contains("hidden");
 
     return !anyRealModalOpen && window.cartController && window.cartController.isCartDropdownOpen;
-  }
-
-  reRenderAll() {
-    // Save the state of all open folders before re-rendering
-    const openFolders = new Set();
-    document.querySelectorAll('details[open]').forEach(details => {
-      // Create a unique identifier for this folder
-      const summary = details.querySelector('summary');
-      if (summary) {
-        openFolders.add(summary.textContent.trim());
-      }
-    });
-    
-    // Save active search index - critical to save BEFORE calling search()
-    const savedActiveSearchIndex = this.state.activeSearchIndex;
-    
-    // Re-render dashboard (respecting current layout mode)
-    const isSingleColumn = window.innerWidth <= 1200;
-    if (isSingleColumn) {
-      window.app.renderers.dashboard.render(
-        {
-          col1: SPECIALTY_SINGLE_COLUMN,
-          col2: [],
-          col3: []
-        },
-        (med, element) => window.cartController.toggle(med, element)
-      );
-    } else {
-      window.app.renderers.dashboard.render(
-        {
-          col1: SPECIALTY_COLUMNS.col1,
-          col2: SPECIALTY_COLUMNS.col2,
-          col3: SPECIALTY_COLUMNS.col3
-        },
-        (med, element) => window.cartController.toggle(med, element)
-      );
-    }
-    
-    // Restore open state for folders
-    document.querySelectorAll('details').forEach(details => {
-      const summary = details.querySelector('summary');
-      if (summary && openFolders.has(summary.textContent.trim())) {
-        details.open = true;
-      }
-    });
-    
-    // Re-render search results if search is active
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput && searchInput.value.trim()) {
-      // Call search() which will reset activeSearchIndex to -1
-      this.searchController.search(searchInput.value);
-      
-      // Immediately restore the saved index
-      this.state.activeSearchIndex = savedActiveSearchIndex;
-      
-      // Restore the active search item highlight if there was one
-      // Use requestAnimationFrame to ensure DOM is fully updated
-      if (savedActiveSearchIndex >= 0) {
-        requestAnimationFrame(() => {
-          const results = document.querySelectorAll("#searchResults .med-item");
-          if (results.length > 0 && savedActiveSearchIndex < results.length) {
-            results.forEach((element, index) => {
-              if (index === savedActiveSearchIndex) {
-                element.classList.add("is-active");
-                element.scrollIntoView({ block: "nearest", behavior: "instant" });
-              } else {
-                element.classList.remove("is-active");
-              }
-            });
-          }
-        });
-      }
-    }
-    
-    // Re-render cart
-    window.cartController.render();
   }
 
   handleModalKeys(event) {
@@ -916,11 +816,6 @@ class KeyboardController {
     return false;
   }
 
-  handleLocationJump(event) {
-    // Location dropdown now uses search mode - this handler is no longer needed
-    // The search dropdown handles its own keyboard navigation
-    return;
-  }
 }
 
 // ============================================================================
@@ -1538,11 +1433,6 @@ class PrintController {
     }
   }
 
-  buildPDFGeneratorHTML(data) {
-    // This method is no longer used but kept for reference
-    return '';
-  }
-
   getRouteExpansions() {
     return {
       "PO": "orally", "IM": "intramuscularly", "IV": "intravenously",
@@ -1601,29 +1491,8 @@ class SearchEditController {
     this.printController = printController;
   }
 
-  /**
-   * Validate that provider and location are set
-   * Returns true if valid, shows alert and returns false if not
-   */
   validateProviderLocation() {
-    const provider = this.providerManager.getProvider();
-    const hasProvider = provider.name && provider.cpso;
-    const hasLocation = this.locationManager.state.currentLocationName &&
-                        this.locationManager.state.currentLocationName !== "Select Location";
-
-    if (!hasProvider && !hasLocation) {
-      alert("Please input provider info and practice location.");
-      return false;
-    }
-    if (!hasProvider) {
-      alert("Please input provider info.");
-      return false;
-    }
-    if (!hasLocation) {
-      alert("Please enter practice location.");
-      return false;
-    }
-    return true;
+    return ValidationUtils.validateProviderLocation(this.providerManager, this.locationManager);
   }
 
   /**

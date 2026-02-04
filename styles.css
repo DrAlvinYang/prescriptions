@@ -6,9 +6,20 @@
   --muted: #666666;
   --btn: #f0f2f5;
   --btn-hover: #e4e6eb;
-  --accent: #0056b3; 
+  --accent: #0056b3;
   --header-bg: #eef3f8;
   --header-text: #2c3e50;
+  --hover-bg: #f9f9f9;
+  --hover-border: #ccc;
+  --active-bg: #f0f7ff;
+  --in-cart-bg: #e3f2fd;
+  --danger: #d32f2f;
+  --success: #228B22;
+  --separator: #f0f0f0;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 * { box-sizing: border-box; }
@@ -108,7 +119,7 @@ body {
   transition: background 0.1s, border-color 0.1s;
 }
 .menu-btn:hover {
-  background: #f9f9f9;
+  background: var(--hover-bg);
   border-color: var(--border);
 }
 .menu-btn svg {
@@ -153,8 +164,8 @@ body {
 }
 
 .provider-btn:hover {
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--hover-bg);
+  border-color: var(--hover-border);
 }
 
 .provider-label {
@@ -186,7 +197,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: var(--overlay-bg);
   z-index: 199;
 }
 .provider-edit-backdrop.hidden {
@@ -204,11 +215,11 @@ body {
   position: absolute;
   top: -13px; /* Align input with button (accounting for 12px top padding + 1px border) */
   left: -57px; /* Offset so input field aligns with button left edge (35px label + 10px gap + 12px padding) */
-  background: #fff;
+  background: var(--panel);
   border: none;
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  padding: 12px; /* Equal padding on all sides */
+  box-shadow: var(--shadow-md);
+  padding: 12px;
   z-index: 200;
   overflow: hidden;
 }
@@ -334,8 +345,8 @@ body {
 }
 
 .location-btn:hover {
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--hover-bg);
+  border-color: var(--hover-border);
 }
 
 .loc-label {
@@ -371,10 +382,10 @@ body {
   left: 0;
   right: auto;
   margin-top: 4px;
-  background: #fff;
-  border: 1px solid #ccc;
+  background: var(--panel);
+  border: 1px solid var(--hover-border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-md);
   min-width: 300px;
   z-index: 200;
   display: flex;
@@ -398,7 +409,7 @@ body {
   border-bottom: 1px solid #f9f9f9;
 }
 .loc-item:last-child { border-bottom: none; }
-.loc-item:hover { background: #f0f7ff; }
+.loc-item:hover { background: var(--active-bg); }
 .loc-item.selected { font-weight: 700; color: var(--accent); background: #eef3f8; }
 
 .loc-name {
@@ -486,7 +497,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: var(--overlay-bg);
   z-index: 199;
 }
 .location-search-backdrop.hidden {
@@ -520,10 +531,10 @@ body {
   left: 0;
   right: auto;
   margin-top: 4px;
-  background: #fff;
-  border: 1px solid #ccc;
+  background: var(--panel);
+  border: 1px solid var(--hover-border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-md);
   width: 480px;
   z-index: 200;
   display: flex;
@@ -552,7 +563,7 @@ body {
   min-height: 34px;
 }
 .loc-search-item:last-child { border-bottom: none; }
-.loc-search-item:hover { background: #f0f7ff; }
+.loc-search-item:hover { background: var(--active-bg); }
 .loc-search-item.selected { font-weight: 700; color: var(--accent); background: #eef3f8; }
 
 .loc-search-name {
@@ -738,7 +749,7 @@ details.specialty-card {
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 summary.specialty-header {
@@ -836,7 +847,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .med-item:last-child { border-bottom: none; }
 .med-item:hover { background: #f7f9fc; }
 .med-item.in-cart {
-  background: #e3f2fd; 
+  background: var(--in-cart-bg);
   border-left: 3px solid var(--accent);
 }
 
@@ -922,8 +933,8 @@ details[open] > .subfolder-summary .subfolder-arrow {
   justify-content: center;
 }
 .icon-btn.cart-btn:hover {
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--hover-bg);
+  border-color: var(--hover-border);
   color: #000;
 }
 .icon-btn.cart-btn svg {
@@ -936,7 +947,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #d32f2f;
+  background: var(--danger);
   color: white;
   font-size: 9px;
   font-weight: 700;
@@ -960,7 +971,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: var(--overlay-bg);
   z-index: 500;
 }
 .cart-overlay.hidden {
@@ -979,10 +990,10 @@ details[open] > .subfolder-summary .subfolder-arrow {
   top: 56px;
   width: clamp(220px, 22vw, 300px);
   bottom: 15px;
-  background: #fff;
-  border: 1px solid #ccc;
+  background: var(--panel);
+  border: 1px solid var(--hover-border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-md);
   z-index: 501;
   display: flex;
   flex-direction: column;
@@ -1051,7 +1062,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
   line-height: 1.4;
 }
 
-.calc-dose { color: #228B22; font-weight: 700; }
+.calc-dose { color: var(--success); font-weight: 700; }
 .calc-note { font-style: italic; color: #555; }
 
 .cart-empty { 
@@ -1123,8 +1134,8 @@ details[open] > .subfolder-summary .subfolder-arrow {
   justify-content: center;
 }
 .icon-btn.reset-btn:hover {
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--hover-bg);
+  border-color: var(--hover-border);
   color: #000;
 }
 .icon-btn.reset-btn svg {
@@ -1136,19 +1147,19 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: var(--overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 .modal-box {
-  background: #fff;
+  background: var(--panel);
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-lg);
 }
 .modal-box h3 { margin-top: 0; }
 .modal-input-group { margin: 15px 0; }
@@ -1324,7 +1335,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
   display: flex;
 }
 
-/* Highlight for search terms */
 /* Highlight for search terms */
 .highlight {
   background-color: #fff9c4; /* Faint light yellow */
@@ -1550,7 +1560,7 @@ body.show-brands .brand-match-hint {
   gap: 4px;
   align-items: center;
   padding-left: 30px;
-  background: linear-gradient(to right, transparent 0%, #f7f9fc 30px);
+  background: linear-gradient(to right, transparent 0%, var(--bg) 30px);
   height: 20px;
 }
 
@@ -1561,7 +1571,7 @@ body.show-brands .brand-match-hint {
 
 /* Adjust gradient for in-cart items */
 .med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
-  background: linear-gradient(to right, transparent 0%, #e3f2fd 30px);
+  background: linear-gradient(to right, transparent 0%, var(--in-cart-bg) 30px);
 }
 
 /* Hide Edit button for in-cart items in folder view unless hovering */
@@ -1697,7 +1707,7 @@ body:has(.help-overlay:not(.hidden)) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: var(--overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1712,7 +1722,7 @@ body:has(.help-overlay:not(.hidden)) {
 .help-popup-box {
   background: var(--panel);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-lg);
   width: 90%;
   max-width: 700px;
   max-height: 85vh;
