@@ -1795,3 +1795,38 @@ body:has(.help-overlay:not(.hidden)) {
     height: 20px;
   }
 }
+
+/* --- Fly-to-Cart Animation --- */
+.fly-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+.fly-ghost-outline {
+  border: 2px solid rgba(0, 86, 179, 0.35);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+.fly-ghost-modal {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+@keyframes cart-badge-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+.cart-badge-pulse {
+  animation: cart-badge-pulse 350ms ease-out;
+}

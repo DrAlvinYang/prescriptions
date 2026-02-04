@@ -148,6 +148,7 @@ class MedicationRenderer {
         } else {
           // Add to cart (handle weight-based meds)
           if (window.cartController) {
+            window.cartController.pendingFlySource = div;
             if (med.weight_based && window.cartController.state.currentWeight === null) {
               window.modalManager.openWeight(med);
             } else {
@@ -199,6 +200,7 @@ class MedicationRenderer {
           } else {
             // Add to cart (handle weight-based meds)
             if (window.cartController) {
+              window.cartController.pendingFlySource = div;
               if (med.weight_based && window.cartController.state.currentWeight === null) {
                 window.modalManager.openWeight(med);
               } else {

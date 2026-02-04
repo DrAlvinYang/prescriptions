@@ -363,8 +363,9 @@ class Application {
 
     if (saveAddBtn && cancelAddBtn) {
       saveAddBtn.addEventListener("click", () => {
+        const modalBox = document.querySelector("#addNewMedModal .modal-box");
         this.managers.modal.saveAddNewMed((med) => {
-          this.controllers.cart.add(med);
+          this.controllers.cart.add(med, modalBox);
         });
         this.controllers.cart.render();
       });

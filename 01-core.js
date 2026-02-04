@@ -2501,6 +2501,96 @@ class SearchManager {
 }
 
 // ============================================================================
+// FLY-TO-CART ANIMATION
+// ============================================================================
+
+class FlyToCart {
+  /**
+   * Animate a ghost element flying from source to the cart badge.
+   * Auto-detects modal sources (elements with .modal-box class).
+   * @param {HTMLElement} sourceEl - The source element (med-item or modal-box)
+   */
+  static animate(sourceEl) {
+    const cartBadge = document.getElementById("cartBadge");
+    const cartBtn = document.getElementById("cartBtn");
+    const target = cartBadge && !cartBadge.classList.contains("hidden") ? cartBadge : cartBtn;
+    if (!sourceEl || !target) return;
+
+    // Auto-detect modal source
+    const isModal = sourceEl.classList.contains("modal-box");
+
+    const sourceRect = sourceEl.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
+    // Create ghost element
+    const ghost = document.createElement("div");
+    ghost.className = isModal ? "fly-ghost fly-ghost-modal" : "fly-ghost fly-ghost-outline";
+    ghost.style.left = sourceRect.left + "px";
+    ghost.style.top = sourceRect.top + "px";
+    ghost.style.width = sourceRect.width + "px";
+    ghost.style.height = sourceRect.height + "px";
+
+    document.body.appendChild(ghost);
+
+    // Calculate translation to center of target
+    const dx = (targetRect.left + targetRect.width / 2) - (sourceRect.left + sourceRect.width / 2);
+    const dy = (targetRect.top + targetRect.height / 2) - (sourceRect.top + sourceRect.height / 2);
+
+    // Compute per-axis end scales so the ghost warps into a square
+    const w = sourceRect.width;
+    const h = sourceRect.height;
+    const endScale = 0.15;
+    const sqRatio = Math.min(w, h) / Math.max(w, h);
+    const endSx = w >= h ? endScale * sqRatio : endScale;
+    const endSy = h >= w ? endScale * sqRatio : endScale;
+    const cX = endSx / endScale;
+    const cY = endSy / endScale;
+
+    // Blend from uniform scale toward aspect-corrected square
+    // blend: 0 = uniform, 1 = fully square
+    const sq = (uniform, blend) => [
+      uniform * (1 + blend * (cX - 1)),
+      uniform * (1 + blend * (cY - 1))
+    ];
+
+    const [sx1, sy1] = sq(0.65, 0.5);
+    const [sx2, sy2] = sq(0.35, 0.85);
+
+    // Slight random tilt direction so repeated adds feel organic
+    const sign = Math.random() > 0.5 ? 1 : -1;
+
+    const anim = ghost.animate([
+      { transform: "perspective(800px) translate(0, 0) scaleX(1) scaleY(1) rotateY(0deg) rotateX(0deg)", opacity: 1, offset: 0 },
+      { transform: `perspective(800px) translate(${dx * 0.35}px, ${dy * 0.35}px) scaleX(${sx1}) scaleY(${sy1}) rotateY(${sign * 12}deg) rotateX(${-sign * 6}deg)`, opacity: 1, offset: 0.35 },
+      { transform: `perspective(800px) translate(${dx * 0.7}px, ${dy * 0.7}px) scaleX(${sx2}) scaleY(${sy2}) rotateY(${sign * -8}deg) rotateX(${sign * 10}deg)`, opacity: 0.85, offset: 0.7 },
+      { transform: `perspective(800px) translate(${dx}px, ${dy}px) scaleX(${endSx}) scaleY(${endSy}) rotateY(${sign * 4}deg) rotateX(0deg)`, opacity: 0, offset: 1 }
+    ], {
+      duration: 520,
+      easing: "cubic-bezier(0.4, 0, 0.6, 1)",
+      fill: "forwards"
+    });
+
+    anim.onfinish = () => {
+      ghost.remove();
+      FlyToCart.pulseBadge();
+    };
+  }
+
+  /** Pulse the cart badge after the fly animation lands. */
+  static pulseBadge() {
+    const badge = document.getElementById("cartBadge");
+    if (!badge || badge.classList.contains("hidden")) return;
+    badge.classList.remove("cart-badge-pulse");
+    // Force reflow so re-adding the class restarts the animation
+    void badge.offsetWidth;
+    badge.classList.add("cart-badge-pulse");
+    badge.addEventListener("animationend", () => {
+      badge.classList.remove("cart-badge-pulse");
+    }, { once: true });
+  }
+}
+
+// ============================================================================
 // EXPORT FOR USE IN UI
 // ============================================================================
 
@@ -2509,3 +2599,4 @@ class SearchManager {
 window.Utils = Utils;
 window.MedicationUtils = MedicationUtils;
 window.DuplicateChecker = DuplicateChecker;
+window.FlyToCart = FlyToCart;

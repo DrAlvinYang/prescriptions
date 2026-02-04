@@ -12,6 +12,7 @@ class CartController {
     this.providerManager = providerManager;
     this.locationManager = locationManager;
     this.isCartDropdownOpen = false;
+    this.pendingFlySource = null; // Source element for fly-to-cart animation
   }
 
   /**
@@ -62,6 +63,11 @@ class CartController {
       return;
     }
 
+    // Store source element for fly-to-cart animation
+    if (element) {
+      this.pendingFlySource = element;
+    }
+
     if (medication.weight_based && this.state.currentWeight === null) {
       this.modalManager.openWeight(medication);
     } else {
@@ -69,13 +75,24 @@ class CartController {
     }
   }
 
-  add(medication) {
+  add(medication, sourceEl = null) {
     // Validate provider and location before adding
     if (!this.validateProviderLocation()) {
+      this.pendingFlySource = null;
       return;
     }
+
+    // Resolve fly animation source: explicit param > stored pending source
+    const flySource = sourceEl || this.pendingFlySource;
+    this.pendingFlySource = null;
+
     this.state.addToCart(medication);
     this.render();
+
+    // Trigger fly-to-cart animation if we have a source element
+    if (flySource) {
+      FlyToCart.animate(flySource);
+    }
   }
 
   remove(uid) {
@@ -778,7 +795,8 @@ class KeyboardController {
     // Enter to save (except in comments)
     if (event.key === "Enter" && document.activeElement.id !== "addComments") {
       event.preventDefault();
-      window.modalManager.saveAddNewMed((med) => window.cartController.add(med));
+      const modalBox = document.querySelector("#addNewMedModal .modal-box");
+      window.modalManager.saveAddNewMed((med) => window.cartController.add(med, modalBox));
       window.cartController.render();
       return true;
     }
@@ -1686,11 +1704,19 @@ class SearchEditController {
       return false;
     }
 
+    // Capture modal box rect before closing (modal will be hidden)
+    const modalBox = document.querySelector("#searchEditModal .modal-box");
+
     // Add to cart
     this.state.addToCart(medValues);
 
     // Re-render cart
     this.cartController.render();
+
+    // Trigger fly animation from search edit modal
+    if (modalBox) {
+      FlyToCart.animate(modalBox);
+    }
 
     // Close modal
     this.modalManager.closeSearchEdit();
