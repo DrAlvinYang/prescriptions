@@ -9,7 +9,9 @@ class Application {
     this.renderers = {};
     this.managers = {};
     this.isTwoColumn = false;
-    this.TWO_COLUMN_BREAKPOINT = 1180;
+    this.isOneColumn = false;
+    this.TWO_COLUMN_BREAKPOINT = 1050;
+    this.ONE_COLUMN_BREAKPOINT = 700;
   }
 
   async initialize() {
@@ -186,13 +188,12 @@ class Application {
   }
 
   setupResizeListener() {
-    // Debounce resize handler for performance
-    let resizeTimeout;
+    let resizeRAF;
     window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
+      if (resizeRAF) cancelAnimationFrame(resizeRAF);
+      resizeRAF = requestAnimationFrame(() => {
         this.handleResize();
-      }, 100);
+      });
     });
   }
 
@@ -696,11 +697,21 @@ class Application {
 
   render() {
     // Check current layout mode
-    this.isTwoColumn = window.innerWidth <= this.TWO_COLUMN_BREAKPOINT;
+    const width = window.innerWidth;
+    this.isOneColumn = width <= this.ONE_COLUMN_BREAKPOINT;
+    this.isTwoColumn = !this.isOneColumn && width <= this.TWO_COLUMN_BREAKPOINT;
 
     // Render dashboard based on layout mode
-    if (this.isTwoColumn) {
-      // Two columns: consolidated layout for narrower screens
+    if (this.isOneColumn) {
+      this.renderers.dashboard.render(
+        {
+          col1: SPECIALTY_SINGLE_COLUMN,
+          col2: [],
+          col3: []
+        },
+        (med, element) => this.controllers.cart.toggle(med, element)
+      );
+    } else if (this.isTwoColumn) {
       this.renderers.dashboard.render(
         {
           col1: SPECIALTY_2_COLUMNS.col1,
@@ -710,7 +721,6 @@ class Application {
         (med, element) => this.controllers.cart.toggle(med, element)
       );
     } else {
-      // Three columns: original layout
       this.renderers.dashboard.render(
         {
           col1: SPECIALTY_COLUMNS.col1,
@@ -723,9 +733,85 @@ class Application {
 
     // Render initial cart
     this.controllers.cart.render();
+
+    // Check location collapse and overlay on initial render
+    this.checkLocationCollapse();
+    this.checkMinWidthOverlay();
+  }
+
+  checkLocationCollapse() {
+    const locationWrapper = document.getElementById("locationWrapper") ||
+      document.querySelector(".location-wrapper");
+    const providerWrapper = document.querySelector(".provider-wrapper");
+    const topbarRight = document.querySelector(".topbar-right");
+    if (!locationWrapper || !topbarRight) return;
+
+    const isCollapsed = locationWrapper.classList.contains("icon-only");
+
+    if (!isCollapsed) {
+      // Expanded: check gap between location and reset button
+      const locRect = locationWrapper.getBoundingClientRect();
+      const rightRect = topbarRight.getBoundingClientRect();
+      const gap = rightRect.left - locRect.right;
+
+      // Collapse when location is at its min-width (100px) and gap < 12px
+      if (gap < 12 && locRect.width <= 101) {
+        locationWrapper.classList.add("icon-only");
+        if (providerWrapper) providerWrapper.classList.add("can-shrink");
+        this._locationCollapseWidth = window.innerWidth;
+      }
+    } else if (window.innerWidth > (this._locationCollapseWidth || 0) + 30) {
+      // Collapsed: only try expanding if viewport grew past collapse point + buffer
+      locationWrapper.classList.remove("icon-only");
+      if (providerWrapper) providerWrapper.classList.remove("can-shrink");
+
+      const locRect = locationWrapper.getBoundingClientRect();
+      const rightRect = topbarRight.getBoundingClientRect();
+      const gap = rightRect.left - locRect.right;
+
+      if (gap < 12 && locRect.width <= 101) {
+        // Still too tight, re-collapse in same frame
+        locationWrapper.classList.add("icon-only");
+        if (providerWrapper) providerWrapper.classList.add("can-shrink");
+        this._locationCollapseWidth = window.innerWidth;
+      } else {
+        this._locationCollapseWidth = 0;
+      }
+    }
+  }
+
+  checkMinWidthOverlay() {
+    const overlay = document.getElementById("desktopOnlyOverlay");
+    const providerWrapper = document.querySelector(".provider-wrapper");
+    const topbarRight = document.querySelector(".topbar-right");
+    const locationWrapper = document.querySelector(".location-wrapper");
+    if (!overlay || !providerWrapper || !topbarRight || !locationWrapper) return;
+
+    // Check if provider is at its minimum and gap to location is being squeezed
+    const provRect = providerWrapper.getBoundingClientRect();
+    const locRect = locationWrapper.getBoundingClientRect();
+    const rightRect = topbarRight.getBoundingClientRect();
+    const gapProvToLoc = locRect.left - provRect.right;
+    const gapLocToRight = rightRect.left - locRect.right;
+
+    // Show overlay when any gap drops below 12px with everything at minimum
+    const providerAtMin = provRect.width <= 131;
+    const locationCollapsed = locationWrapper.classList.contains("icon-only");
+
+    if (locationCollapsed && providerAtMin && (gapProvToLoc < 12 || gapLocToRight < 12)) {
+      overlay.classList.add("active");
+    } else {
+      overlay.classList.remove("active");
+    }
   }
 
   handleResize() {
+    // Check if location field should collapse to icon
+    this.checkLocationCollapse();
+
+    // Check if overlay should show
+    this.checkMinWidthOverlay();
+
     // Reposition cart dropdown if open
     if (this.controllers.cart && this.controllers.cart.isCartDropdownOpen) {
       const dropdown = document.getElementById("cartDropdown");
@@ -738,10 +824,13 @@ class Application {
     }
 
     const wasTwoColumn = this.isTwoColumn;
-    this.isTwoColumn = window.innerWidth <= this.TWO_COLUMN_BREAKPOINT;
+    const wasOneColumn = this.isOneColumn;
+    const width = window.innerWidth;
+    this.isOneColumn = width <= this.ONE_COLUMN_BREAKPOINT;
+    this.isTwoColumn = !this.isOneColumn && width <= this.TWO_COLUMN_BREAKPOINT;
 
     // Only re-render if layout mode changed
-    if (wasTwoColumn !== this.isTwoColumn) {
+    if (wasTwoColumn !== this.isTwoColumn || wasOneColumn !== this.isOneColumn) {
       // Save open folder states
       const openFolders = new Set();
       document.querySelectorAll('details[open]').forEach(details => {
@@ -752,7 +841,16 @@ class Application {
       });
 
       // Re-render dashboard
-      if (this.isTwoColumn) {
+      if (this.isOneColumn) {
+        this.renderers.dashboard.render(
+          {
+            col1: SPECIALTY_SINGLE_COLUMN,
+            col2: [],
+            col3: []
+          },
+          (med, element) => this.controllers.cart.toggle(med, element)
+        );
+      } else if (this.isTwoColumn) {
         this.renderers.dashboard.render(
           {
             col1: SPECIALTY_2_COLUMNS.col1,

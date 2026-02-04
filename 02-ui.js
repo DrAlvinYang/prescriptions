@@ -667,7 +667,7 @@ class LocationUIRenderer {
     const locationName = this.locationManager.state.currentLocationName;
     
     if (!this.isSearchMode) {
-      button.innerHTML = `<span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
+      button.innerHTML = `<span class="loc-icon"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M192 0C86 0 0 86 0 192c0 142 192 320 192 320s192-178 192-320C384 86 298 0 192 0zm0 272c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z"/></svg></span><span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
     }
   }
 

@@ -28,7 +28,7 @@ const SPECIALTY_COLUMNS = {
   col3: ["Anti-infective", "Eye", "GI & GU", "Derm", "Non-Med"]
 };
 
-// 2-column layout for narrower screens (at 1180px breakpoint)
+// 2-column layout for narrower screens (at 1000px breakpoint)
 const SPECIALTY_2_COLUMNS = {
   col1: ["Add New Med", "Allergy, Analgesia, Antiemetic", "ENT", "Cardiac & Heme", "GI & GU", "Derm", "Psych", "Non-Med"],
   col2: ["Neuro & Endocrine", "Anti-infective", "Eye", "Respiratory", "OBGYN", "STI", "Substance Use"],

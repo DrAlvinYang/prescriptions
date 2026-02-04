@@ -14,7 +14,7 @@
 * { box-sizing: border-box; }
 
 html {
-  min-width: 850px;
+  min-width: 0;
 }
 
 body {
@@ -23,7 +23,7 @@ body {
   background: var(--bg);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 12px;
-  min-width: 850px;
+  min-width: 0;
 }
 
 .app-shell {
@@ -60,9 +60,9 @@ body {
 /* --- Topbar --- */
 .topbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 75px;
+  padding: 10px clamp(15px, 5vw, 75px);
+  gap: 12px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -74,6 +74,8 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Reset & Weight - Right side */
@@ -81,6 +83,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .brand {
@@ -90,9 +93,44 @@ body {
   white-space: nowrap;
 }
 
+/* Menu (Burger + Brand) Button */
+.menu-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px 8px;
+  height: 35px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+.menu-btn:hover {
+  background: #f9f9f9;
+  border-color: var(--border);
+}
+.menu-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #333;
+  position: relative;
+  top: 0.5px;
+}
+
 /* Provider Button */
 .provider-wrapper {
   position: relative;
+  width: 150px;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+/* Provider shrinks only after location collapses to icon */
+.provider-wrapper.can-shrink {
+  flex-shrink: 1;
 }
 
 .provider-btn {
@@ -101,7 +139,7 @@ body {
   border-radius: 6px;
   padding: 0 10px;
   height: 35px;
-  width: 130px;
+  width: 100%;
 
   display: flex;
   align-items: center;
@@ -270,6 +308,9 @@ body {
 /* Location Dropdown */
 .location-wrapper {
   position: relative;
+  width: 215px;
+  min-width: 100px;
+  flex-shrink: 1;
 }
 
 .location-btn {
@@ -278,9 +319,7 @@ body {
   border-radius: 6px;
   padding: 0 10px;
   height: 35px;
-  width: 215px;
-  min-width: 215px;
-  flex-shrink: 0;
+  width: 100%;
 
   display: flex;
   align-items: center;
@@ -311,6 +350,18 @@ body {
   flex-shrink: 0;
   font-size: 9px;
   color: #666;
+}
+
+/* Location pin icon (hidden by default, shown when collapsed) */
+.loc-icon {
+  display: none;
+  flex-shrink: 0;
+  color: #e06080;
+}
+
+.loc-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Dropdown Menu */
@@ -557,10 +608,11 @@ body {
 }
 
 /* --- Search Section (below header) --- */
+/* Side padding matches folder column edges: content-scroll 15px + dashboard margin clamp(15px, 4vw, 60px) */
 .search-section {
   display: flex;
   justify-content: center;
-  padding: 15px 75px 4px 75px;
+  padding: 15px clamp(30px, calc(15px + 4vw), 75px) 4px;
   background: var(--bg);
   flex-shrink: 0;
   position: relative;
@@ -582,8 +634,8 @@ body {
 /* --- Searchbar --- */
 .searchbar {
   position: relative;
-  width: 450px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 450px;
 }
 .searchbar input {
   width: 100%;
@@ -661,8 +713,8 @@ body {
   gap: 15px;
   align-items: flex-start;
   margin-top: 15px;
-  margin-left: 60px;
-  margin-right: 60px;
+  margin-left: clamp(15px, 4vw, 60px);
+  margin-right: clamp(15px, 4vw, 60px);
 }
 .dash-col {
   flex: 1;
@@ -1193,104 +1245,46 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 /* --- Responsive Breakpoints --- */
 
-/* Dashboard: 3 columns to 2 columns at 1180px (same as header pivot) */
-/* Header: Single-line to two-line pivot at 1180px */
-@media (max-width: 1180px) {
-  /* Dashboard: 2 columns with equal spacing */
-  .dashboard-container {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .dash-col {
-    flex: 1;
-  }
-
-  /* Hide the third column (it will be empty in 2-column mode) */
+/* 3 columns to 2 columns at 1050px (~300px per column) */
+@media (max-width: 1050px) {
   #col3 {
     display: none;
   }
-
-  .topbar {
-    flex-wrap: wrap;
-    height: auto;
-    min-height: 56px;
-    padding: 8px 75px;
-    row-gap: 8px;
-  }
-
-  .topbar-left {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .topbar-right {
-    gap: 8px;
-  }
-
-  .provider-btn {
-    width: 130px;
-  }
-
-  .location-btn {
-    width: 200px;
-    min-width: 200px;
-  }
-
-  /* Search section responsive adjustments */
-  .search-section {
-    padding: 12px 40px 12px 40px;
-  }
-
-  .searchbar {
-    width: 100%;
-    max-width: 500px;
-  }
-
 }
 
-/* Fallback for very narrow screens (700px) */
+/* Single column at 700px */
 @media (max-width: 700px) {
-  .app-shell {
-    display: block;
-    height: auto;
-    overflow: auto;
-  }
-
-  .main {
-    height: auto;
-    overflow: visible;
-  }
-
-  .content-scroll {
-    height: auto;
-    overflow: visible;
-    padding-bottom: 20px;
-  }
-
-  .topbar {
-    flex-wrap: wrap;
-  }
-
-  .location-btn {
-    width: 100%;
-  }
-
-  .search-section {
-    padding: 10px 20px 10px 20px;
-  }
-
-  .searchbar {
-    width: 100%;
+  #col2,
+  #col3 {
+    display: none;
   }
 }
 
-/* Hard cutoff: Show desktop-only overlay below 850px */
-/* Prevents 3-row header situation where location wraps */
-@media (max-width: 850px) {
-  .desktop-only-overlay {
-    display: flex;
-  }
+/* Location collapses to icon-only when gap drops below 12px (toggled by JS) */
+.location-wrapper.icon-only {
+  width: 35px;
+  min-width: 35px;
+}
+
+.location-wrapper.icon-only .location-btn {
+  width: 35px;
+  min-width: 35px;
+  padding: 0;
+  justify-content: center;
+}
+
+.location-wrapper.icon-only .loc-label,
+.location-wrapper.icon-only .arrow {
+  display: none;
+}
+
+.location-wrapper.icon-only .loc-icon {
+  display: inline-flex;
+}
+
+/* Hard cutoff: overlay shown by JS when header can no longer maintain 12px gaps */
+.desktop-only-overlay.active {
+  display: flex;
 }
 
 /* Highlight for search terms */

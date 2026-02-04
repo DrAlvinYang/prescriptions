@@ -11,7 +11,14 @@
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <div class="brand">ED Prescriptions</div>
+          <button id="menuBtn" class="menu-btn" type="button" title="Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <span class="brand">ED Prescriptions</span>
+          </button>
 
           <div class="provider-wrapper">
             <button id="providerBtn" class="provider-btn" type="button" title="Click to edit provider information">
@@ -45,6 +52,7 @@
 
           <div class="location-wrapper">
             <button id="locationBtn" class="location-btn" type="button">
+              <span class="loc-icon"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M192 0C86 0 0 86 0 192c0 142 192 320 192 320s192-178 192-320C384 86 298 0 192 0zm0 272c-44.2 0-80-35.8-80-80s35.8-80 80-80 80 35.8 80 80-35.8 80-80 80z"/></svg></span>
               <span class="loc-label">Loading...</span>
               <span class="arrow">▼</span>
             </button>
