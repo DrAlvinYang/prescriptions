@@ -21,7 +21,6 @@ class Application {
       await this.loadData(); // Load data BEFORE controllers/listeners to avoid race conditions
       this.initializeControllers();
       this.setupEventListeners();
-      this.setupGlobalActions();
       this.render();
       this.focus();
       
@@ -484,9 +483,6 @@ class Application {
         this.controllers.location.exitSearchMode();
       }
     });
-
-    // Remove the old location menu close handler since we're using a new approach
-    // The old locationMenu element is no longer used
   }
 
   setupProviderListeners() {
@@ -619,34 +615,6 @@ class Application {
     document.addEventListener("keydown", (e) => {
       this.controllers.keyboard.handleGlobalKeydown(e);
     });
-  }
-
-  setupGlobalActions() {
-    // These are called from onclick in HTML
-    window.removeFromCartById = (uid) => {
-      this.controllers.cart.remove(uid);
-    };
-
-    window.openEditModal = (uid) => {
-      this.managers.modal.openEdit(uid);
-    };
-
-    window.saveEdit = () => {
-      this.managers.modal.saveEdit();
-      this.controllers.cart.render();
-    };
-
-    window.closeEditModal = () => {
-      this.managers.modal.closeEdit();
-    };
-
-    window.printCart = () => {
-      this.controllers.print.print();
-    };
-
-    window.clearCart = () => {
-      this.controllers.cart.clear();
-    };
   }
 
   async loadData() {

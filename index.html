@@ -52,7 +52,7 @@
 
           <div id="locationWrapper" class="location-wrapper">
             <button id="locationBtn" class="location-btn" type="button">
-              <span class="loc-icon"><svg viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 23C8 18 3 13 3 9A9 9 0 1 1 21 9C21 13 16 18 12 23Z"/><circle cx="12" cy="9" r="3"/><ellipse cx="12" cy="26" rx="5" ry="1.5"/></svg></span>
+              <span class="loc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 23C8 17 4 14 4 10A8 8 0 1 1 20 10C20 14 16 17 12 23ZM12 7A3 3 0 1 0 12 13A3 3 0 1 0 12 7Z"/></svg></span>
               <span class="loc-label">Loading...</span>
               <span class="arrow">▼</span>
             </button>
@@ -137,7 +137,7 @@
 
   <div id="weightModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="weightModalTitle">
     <div class="modal-box">
-      <p id="weightModalTitle" style="margin-top:0; font-size:14px; line-height:1.5; color:#333;">
+      <p id="weightModalTitle" class="modal-description">
         Medication is weight-based.<br>Enter weight to calculate dose.
       </p>
       <div class="modal-input-group">
@@ -155,13 +155,13 @@
 
   <div id="locationModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="locationModalTitle">
     <div class="modal-box">
-      <h3 id="locationModalTitle" style="margin-top:0;">Add New Location</h3>
+      <h3 id="locationModalTitle">Add New Location</h3>
       <div class="modal-input-group">
-        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Location Name</label>
+        <label class="modal-label">Location Name</label>
         <input id="newLocName" type="text" placeholder="e.g. Clinic A" />
       </div>
       <div class="modal-input-group">
-        <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Address</label>
+        <label class="modal-label">Address</label>
         <input id="newLocAddress" type="text" placeholder="Full address..." />
       </div>
       <div class="modal-actions">
@@ -176,7 +176,7 @@
 
   <div id="editModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
     <div class="modal-box modal-wide">
-      <h3 id="editModalTitle" style="margin-top:0; font-size:16px;">Edit Prescription</h3>
+      <h3 id="editModalTitle" class="modal-title-sm">Edit Prescription</h3>
       <div id="editMedNameRow" class="edit-full-row hidden">
         <label>Medication Name</label>
         <input id="editMedName" type="text" />
@@ -207,7 +207,7 @@
 
   <div id="addNewMedModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="addNewMedModalTitle">
     <div class="modal-box modal-wide">
-      <h3 id="addNewMedModalTitle" style="margin-top:0; font-size:16px;">Add New Medication</h3>
+      <h3 id="addNewMedModalTitle" class="modal-title-sm">Add New Medication</h3>
       <div class="edit-full-row">
         <label>Medication Name</label>
         <input id="addMedName" type="text" />
@@ -238,7 +238,7 @@
 
   <div id="searchEditModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="searchEditModalTitle">
     <div class="modal-box modal-wide">
-      <h3 id="searchEditModalTitle" style="margin-top:0; font-size:16px;">Edit Prescription</h3>
+      <h3 id="searchEditModalTitle" class="modal-title-sm">Edit Prescription</h3>
       <div class="edit-full-row">
         <label>Medication Name</label>
         <input id="searchEditMedName" type="text" />
@@ -260,7 +260,7 @@
         <label>Note</label>
         <textarea id="searchEditComments" rows="3" maxlength="1000"></textarea>
       </div>
-      <div class="modal-actions modal-actions-three">
+      <div class="modal-actions">
         <button id="cancelSearchEditBtn" class="btn btn-secondary">Cancel</button>
         <button id="addToCartSearchEditBtn" class="btn">Add</button>
         <button id="printSearchEditBtn" class="btn">Print</button>

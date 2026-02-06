@@ -25,21 +25,6 @@ class DOMBuilder {
     return element;
   }
 
-  static createButton(text, className, onClick) {
-    return this.createElement('button', className, {
-      textContent: text,
-      type: 'button',
-      onclick: onClick
-    });
-  }
-
-  static createInput(type, className, attributes = {}) {
-    return this.createElement('input', className, {
-      type,
-      autocomplete: 'off',
-      ...attributes
-    });
-  }
 }
 
 // ============================================================================
@@ -409,7 +394,7 @@ class SearchResultsRenderer {
 
     if (totalResults === 0) {
       resultsContainer.innerHTML = `
-        <div style="padding:15px; color:#666; display:flex; align-items:center; justify-content:space-between;">
+        <div class="search-no-results">
           <span>No matches found.</span>
           <button id="addNewMedFromSearch" class="add-new-med-from-search-btn" type="button">
             Add new medication <span class="enter-symbol"></span>
@@ -488,7 +473,6 @@ class SearchResultsRenderer {
         showActions: true
       });
 
-      item.style.borderBottom = "1px solid #eee";
       container.appendChild(item);
     });
   }
@@ -633,7 +617,7 @@ class LocationUIRenderer {
     const locationName = this.locationManager.state.currentLocationName;
     
     if (!this.isSearchMode) {
-      button.innerHTML = `<span class="loc-icon"><svg viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 23C8 18 3 13 3 9A9 9 0 1 1 21 9C21 13 16 18 12 23Z"/><circle cx="12" cy="9" r="3"/><ellipse cx="12" cy="26" rx="5" ry="1.5"/></svg></span><span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
+      button.innerHTML = `<span class="loc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 23C8 17 4 14 4 10A8 8 0 1 1 20 10C20 14 16 17 12 23ZM12 7A3 3 0 1 0 12 13A3 3 0 1 0 12 7Z"/></svg></span><span class="loc-label">${Utils.escapeHtml(locationName)}</span> <span class="arrow">▼</span>`;
     }
   }
 
@@ -1068,6 +1052,13 @@ class ModalManager {
     this.focusTrapHandler = null; // Store handler for cleanup
   }
 
+  _clearFields(ids) {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+  }
+
   // Focus Trap Helper
   trapFocus(modalElement) {
     // Remove any existing trap handler
@@ -1301,9 +1292,8 @@ class ModalManager {
 
   // Location Modal
   openLocation() {
-    document.getElementById("newLocName").value = "";
-    document.getElementById("newLocAddress").value = "";
-    
+    this._clearFields(["newLocName", "newLocAddress"]);
+
     const modal = document.getElementById("locationModal");
     modal.classList.remove("hidden");
     document.getElementById("newLocName").focus();
@@ -1420,20 +1410,8 @@ class ModalManager {
   openAddNewMed() {
     this.state.tabbingUnlocked = true; // Unlock tabbing immediately since we auto-focus
     
-    // Clear all fields
-    document.getElementById("addMedName").value = "";
-    document.getElementById("addDose").value = "";
-    document.getElementById("addRoute").value = "";
-    document.getElementById("addFreq").value = "";
-    document.getElementById("addDur").value = "";
-    document.getElementById("addDispense").value = "";
-    document.getElementById("addRefill").value = "";
-    document.getElementById("addForm").value = "";
-    document.getElementById("addPrn").value = "";
-    document.getElementById("addComments").value = "";
-    
-    // Unlock tabbing on click (redundant but kept for consistency)
     const fields = ["addMedName", "addDose", "addRoute", "addFreq", "addDur", "addDispense", "addRefill", "addForm", "addPrn", "addComments"];
+    this._clearFields(fields);
     fields.forEach(id => {
       document.getElementById(id).onclick = () => {
         this.state.tabbingUnlocked = true;

@@ -85,7 +85,7 @@ class AppState {
 
   addToCart(medication) {
     const entry = {
-      ...JSON.parse(JSON.stringify(medication)),
+      ...structuredClone(medication),
       uid: crypto.randomUUID(),
       wasEdited: false,
       isCustomMed: medication.isCustomMed || false
@@ -560,57 +560,13 @@ const DuplicateChecker = {
    * Route, frequency, and duration use normalized forms
    */
   isDuplicate(newMed, cartItem) {
-    // Compare name (case-insensitive)
-    if (this.normalizeString(newMed.med) !== this.normalizeString(cartItem.med)) {
-      return false;
+    const stringFields = ['med', 'dose_text', 'dispense', 'refill', 'form', 'prn', 'comments'];
+    for (const f of stringFields) {
+      if (this.normalizeString(newMed[f]) !== this.normalizeString(cartItem[f])) return false;
     }
-
-    // Compare dose (case-insensitive)
-    if (this.normalizeString(newMed.dose_text) !== this.normalizeString(cartItem.dose_text)) {
-      return false;
-    }
-
-    // Compare route (normalized)
-    if (this.normalizeRoute(newMed.route) !== this.normalizeRoute(cartItem.route)) {
-      return false;
-    }
-
-    // Compare frequency (normalized)
-    if (this.normalizeFrequency(newMed.frequency) !== this.normalizeFrequency(cartItem.frequency)) {
-      return false;
-    }
-
-    // Compare duration (normalized - week = 7 days)
-    if (this.normalizeDuration(newMed.duration) !== this.normalizeDuration(cartItem.duration)) {
-      return false;
-    }
-
-    // Compare dispense (case-insensitive)
-    if (this.normalizeString(newMed.dispense) !== this.normalizeString(cartItem.dispense)) {
-      return false;
-    }
-
-    // Compare refill (case-insensitive)
-    if (this.normalizeString(newMed.refill) !== this.normalizeString(cartItem.refill)) {
-      return false;
-    }
-
-    // Compare form (case-insensitive)
-    if (this.normalizeString(newMed.form) !== this.normalizeString(cartItem.form)) {
-      return false;
-    }
-
-    // Compare PRN (case-insensitive)
-    if (this.normalizeString(newMed.prn) !== this.normalizeString(cartItem.prn)) {
-      return false;
-    }
-
-    // Compare note/comments (case-insensitive)
-    if (this.normalizeString(newMed.comments) !== this.normalizeString(cartItem.comments)) {
-      return false;
-    }
-
-    // All fields match - this is a duplicate
+    if (this.normalizeRoute(newMed.route) !== this.normalizeRoute(cartItem.route)) return false;
+    if (this.normalizeFrequency(newMed.frequency) !== this.normalizeFrequency(cartItem.frequency)) return false;
+    if (this.normalizeDuration(newMed.duration) !== this.normalizeDuration(cartItem.duration)) return false;
     return true;
   },
 
