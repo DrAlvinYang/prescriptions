@@ -307,10 +307,12 @@ const MedicationUtils = {
   },
 
   getSearchDedupeKey(med) {
-    const fields = [
-      'indication', 'population', 'med', 'dose_text', 'route', 'frequency',
-      'duration', 'dispense', 'refill', 'prn', 'form', 'comments'
-    ];
+    const isOwner = window.providerManager?.isOwner();
+    const fields = isOwner
+      ? ['indication', 'population', 'med', 'dose_text', 'route', 'frequency',
+         'duration', 'dispense', 'refill', 'prn', 'form', 'comments']
+      : ['population', 'med', 'dose_text', 'route', 'frequency',
+         'duration', 'dispense', 'refill', 'prn', 'form', 'comments'];
     return fields.map(field => Utils.normalize(med[field])).join("||");
   },
 
@@ -337,6 +339,12 @@ const MedicationUtils = {
     if (indA && !indB) return -1;
     if (!indA && indB) return 1;
 
+    return medA.localeCompare(medB, undefined, { numeric: true });
+  },
+
+  compareByName(a, b) {
+    const medA = Utils.normalize(a.med).toLowerCase();
+    const medB = Utils.normalize(b.med).toLowerCase();
     return medA.localeCompare(medB, undefined, { numeric: true });
   },
 
@@ -766,6 +774,21 @@ class ProviderManager {
   constructor() {
     this.currentProvider = { ...CONFIG.prescriber };
     this.sessionFlagKey = "rx_provider_session";
+    this.authorizedProviders = null; // null = not yet loaded, falls back to hardcoded
+  }
+
+  async loadAuthorizedProviders() {
+    try {
+      const response = await fetch("AuthorizedProviders.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        this.authorizedProviders = data;
+      }
+    } catch (error) {
+      console.warn("Failed to load AuthorizedProviders.json, using hardcoded fallback:", error);
+      this.authorizedProviders = null;
+    }
   }
 
   load() {
@@ -851,6 +874,18 @@ class ProviderManager {
 
   getProvider() {
     return { ...this.currentProvider };
+  }
+
+  isOwner() {
+    const name = this.currentProvider.name.toLowerCase();
+    const cpso = this.currentProvider.cpso;
+    if (!name || !cpso) return false;
+
+    // Use loaded list if available, otherwise hardcoded fallback
+    const list = this.authorizedProviders ?? [
+      { name: 'Alvin Yang', cpso: '118749' }
+    ];
+    return list.some(p => p.name.toLowerCase() === name && p.cpso === cpso);
   }
 
   updateProvider(name, cpso) {
@@ -1839,6 +1874,7 @@ class SearchManager {
    */
   scoreMedication(med, tokens) {
     const fields = this.buildSearchableFields(med);
+    const searchIndications = window.providerManager?.isOwner();
     let score = 0;
     const matchedTokens = new Set();
     let routeFilterFailed = false;
@@ -1924,7 +1960,7 @@ class SearchManager {
           if (!ambiguousMatched) {
             if (fields.medName.includes(token.normalized) ||
                 fields.brands.some(b => b.includes(token.normalized)) ||
-                fields.indication.includes(token.normalized)) {
+                (searchIndications && fields.indication.includes(token.normalized))) {
               score += this.weights.indication; // Lower weight for text match
               ambiguousMatched = true;
             }
@@ -2042,8 +2078,8 @@ class SearchManager {
             score += this.weights.brandName;
             tokenMatched = true;
           }
-          // Check indication
-          else if (fields.indication.includes(term) || fields.indication.startsWith(term)) {
+          // Check indication (owner only)
+          else if (searchIndications && (fields.indication.includes(term) || fields.indication.startsWith(term))) {
             score += this.weights.indication;
             tokenMatched = true;
           }
@@ -2061,7 +2097,7 @@ class SearchManager {
             score += this.weights.brandName * 0.7;
             tokenMatched = true;
           }
-          else if (this.fuzzyMatches(term, fields.indication)) {
+          else if (searchIndications && this.fuzzyMatches(term, fields.indication)) {
             score += this.weights.indication * 0.7;
             tokenMatched = true;
           }

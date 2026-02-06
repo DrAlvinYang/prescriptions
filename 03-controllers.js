@@ -355,10 +355,11 @@ class LocationController {
 // ============================================================================
 
 class ProviderController {
-  constructor(providerManager, providerUIRenderer, modalManager) {
+  constructor(providerManager, providerUIRenderer, modalManager, onProviderChange) {
     this.providerManager = providerManager;
     this.providerUIRenderer = providerUIRenderer;
     this.modalManager = modalManager;
+    this.onProviderChange = onProviderChange;
   }
 
   openEditModal() {
@@ -369,6 +370,7 @@ class ProviderController {
   saveProvider() {
     this.modalManager.saveProvider(this.providerManager, () => {
       this.providerUIRenderer.updateHeader();
+      if (this.onProviderChange) this.onProviderChange();
     });
   }
 }

@@ -66,8 +66,9 @@ class Application {
     // Load locations (now async to load from JSON)
     await this.managers.location.load();
     
-    // Load provider from localStorage
+    // Load provider from localStorage and authorized providers list
     this.managers.provider.load();
+    await this.managers.provider.loadAuthorizedProviders();
     
     // Expose for global access
     window.appState = this.state;
@@ -123,7 +124,8 @@ class Application {
     this.controllers.provider = new ProviderController(
       this.managers.provider,
       this.renderers.provider,
-      this.managers.modal
+      this.managers.modal,
+      () => this.handleProviderChange()
     );
 
     this.controllers.weight = new WeightController(
@@ -658,6 +660,9 @@ class Application {
     // Render initial cart
     this.controllers.cart.render();
 
+    // Set search placeholder based on provider
+    this.updateSearchPlaceholder();
+
     // Check location collapse and overlay on initial render
     this.checkLocationCollapse();
     this.checkMinWidthOverlay();
@@ -800,6 +805,33 @@ class Application {
       // Update cart indicators
       this.renderers.cart.updateSelectedIndicators();
     }
+  }
+
+  updateSearchPlaceholder() {
+    const searchInput = Utils.getElement("searchInput");
+    if (searchInput) {
+      searchInput.placeholder = this.managers.provider.isOwner()
+        ? "Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)"
+        : "Search med (e.g. keflex 5d)";
+    }
+  }
+
+  handleProviderChange() {
+    // Re-render dashboard (indications visibility + sort order)
+    this.renderers.dashboard.render(
+      this.getColumnConfig(),
+      (med, element) => this.controllers.cart.toggle(med, element)
+    );
+    this.renderers.cart.updateSelectedIndicators();
+
+    // Refresh search results if search is active
+    const searchInput = Utils.getElement("searchInput");
+    if (searchInput && searchInput.value.trim()) {
+      this.controllers.search.search(searchInput.value);
+    }
+
+    // Update search placeholder
+    this.updateSearchPlaceholder();
   }
 
   focus() {

@@ -44,9 +44,9 @@ class MedicationRenderer {
       ? Utils.highlightText(txt, highlightTerms)
       : Utils.escapeHtml(txt);
 
-    // Indication
+    // Indication (only shown for owner provider)
     let indicationHtml = "";
-    if (med.indication) {
+    if (med.indication && window.providerManager?.isOwner()) {
       indicationHtml = `<div class="med-indication">${format(med.indication)}</div>`;
     }
 
@@ -211,12 +211,26 @@ class DashboardRenderer {
     });
     const body = DOMBuilder.createElement('div', 'specialty-body');
 
-    const sortMeds = (list) => list.sort(MedicationUtils.compareByIndication);
+    const isOwner = window.providerManager?.isOwner();
+    const compareFn = isOwner
+      ? MedicationUtils.compareByIndication
+      : MedicationUtils.compareByName;
+    const sortMeds = (list) => list.sort(compareFn);
+    const dedupMeds = (list) => {
+      if (isOwner) return list;
+      const seen = new Set();
+      return list.filter(med => {
+        const key = MedicationUtils.getSearchDedupeKey(med);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    };
 
     if (NESTED_SPECIALTIES.includes(specialty)) {
-      this.renderNestedSpecialty(body, medications, sortMeds, onMedClick);
+      this.renderNestedSpecialty(body, medications, sortMeds, dedupMeds, onMedClick);
     } else {
-      this.renderFlatSpecialty(body, specialty, medications, sortMeds, onMedClick);
+      this.renderFlatSpecialty(body, specialty, medications, sortMeds, dedupMeds, onMedClick);
     }
 
     details.appendChild(summary);
@@ -225,7 +239,7 @@ class DashboardRenderer {
     return details;
   }
 
-  renderNestedSpecialty(body, medications, sortMeds, onMedClick) {
+  renderNestedSpecialty(body, medications, sortMeds, dedupMeds, onMedClick) {
     const byPopulation = this.groupByField(medications, 'population', 'Unspecified');
     
     const populations = [...byPopulation.keys()].sort(
@@ -242,7 +256,7 @@ class DashboardRenderer {
       );
 
       subcategories.forEach(subcategory => {
-        const meds = sortMeds(bySubcategory.get(subcategory));
+        const meds = dedupMeds(sortMeds(bySubcategory.get(subcategory)));
         const medNodes = meds.map(med =>
           this.medRenderer.createMedItem(med, { onClick: onMedClick, overlayActions: true })
         );
@@ -253,7 +267,7 @@ class DashboardRenderer {
     });
   }
 
-  renderFlatSpecialty(body, specialty, medications, sortMeds, onMedClick) {
+  renderFlatSpecialty(body, specialty, medications, sortMeds, dedupMeds, onMedClick) {
     const grouped = new Map();
 
     medications.forEach(med => {
@@ -284,8 +298,8 @@ class DashboardRenderer {
     );
 
     labels.forEach(label => {
-      const meds = sortMeds(grouped.get(label));
-      
+      const meds = dedupMeds(sortMeds(grouped.get(label)));
+
       if (isSingle) {
         meds.forEach(med => {
           body.appendChild(this.medRenderer.createMedItem(med, { onClick: onMedClick, overlayActions: true }));
