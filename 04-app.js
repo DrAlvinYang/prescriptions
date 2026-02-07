@@ -590,6 +590,7 @@ class Application {
 
     // Open help popup when clicking the help button
     helpBtn.addEventListener("click", () => {
+      this.updateHelpText();
       helpPopup.classList.remove("hidden");
     });
 
@@ -813,6 +814,15 @@ class Application {
       searchInput.placeholder = this.managers.provider.isOwner()
         ? "Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)"
         : "Search med (e.g. keflex 5d)";
+    }
+  }
+
+  updateHelpText() {
+    const el = document.getElementById("helpSearchText");
+    if (el) {
+      el.innerHTML = this.managers.provider.isOwner()
+        ? "<strong>Advanced Search:</strong> You can search by indications (e.g. ped otitis media), brand names (e.g. keflex), and dosings (e.g., 400mg, PO, q4h, 7 day)."
+        : "<strong>Advanced Search:</strong> You can search by generic/brand names (e.g. cephalexin/keflex), and dosings (e.g., 400mg, PO, q4h, 7 day).";
     }
   }
 
