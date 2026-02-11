@@ -34,7 +34,7 @@ class Application {
       // Show error state in UI instead of blank page
       document.body.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
-          <div style="background:white;padding:30px;border-radius:16px;max-width:500px;box-shadow:0 12px 40px rgba(0,0,0,0.12);">
+          <div style="background:white;padding:30px;border-radius:22px;max-width:500px;box-shadow:0 12px 40px rgba(0,0,0,0.12);">
             <h2 style="color:#FF3B30;margin-top:0;">Application Error</h2>
             <p style="color:#86868b;line-height:1.6;">${errorMsg}</p>
             <p style="color:#666;line-height:1.6;">Please try:</p>
@@ -44,7 +44,7 @@ class Application {
               <li>Checking your internet connection</li>
               <li>Ensuring Prescriptions.json is in the same directory</li>
             </ul>
-            <button onclick="location.reload()" style="background:#007AFF;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;">
+            <button onclick="location.reload()" style="background:#007AFF;color:white;border:none;padding:10px 20px;border-radius:12px;cursor:pointer;font-size:14px;">
               Refresh Page
             </button>
           </div>
