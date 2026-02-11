@@ -127,13 +127,16 @@ def parse_brands(raw_alias: Any) -> list[str]:
     return [b.strip() for b in str(raw_alias).split(",") if b.strip()]
 
 
-def build_search_text(components: list[str]) -> str:
-    """Join non-empty components with ' | ' and lowercase.
+def build_search_text(components: list[str | None]) -> str:
+    """Join non-empty string components with ' | ' and lowercase.
 
     Pipe characters within components are replaced with spaces to
-    avoid collisions with the delimiter.
+    avoid collisions with the delimiter. Empty strings and None are
+    filtered out.
     """
-    return " | ".join(c.replace("|", " ") for c in components if c).lower()
+    return " | ".join(
+        c.replace("|", " ") for c in components if isinstance(c, str) and c
+    ).lower()
 
 
 # ---------------------------------------------------------------------------
@@ -172,6 +175,26 @@ def validate_medication(med_obj: dict[str, Any]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
+def _resolve_weight_based(
+    med_name: str, dose_per_kg: float | None, raw_wb: Any,
+) -> bool:
+    """Determine if a medication is weight-based.
+
+    Uses the explicit WeightBased column when present; otherwise derives
+    from DosePerKg > 0. Logs a warning if the two disagree.
+    """
+    derived = dose_per_kg is not None and dose_per_kg > 0
+    if raw_wb is None or pd.isna(raw_wb):
+        return derived
+    explicit = bool(raw_wb)
+    if explicit != derived:
+        logger.warning(
+            "WeightBased mismatch for %s: column=%s, DosePerKg=%s",
+            med_name, raw_wb, dose_per_kg,
+        )
+    return explicit
+
+
 def process_row(row: dict[str, Any], sheet_name: str) -> dict[str, Any] | None:
     """Process a single Excel row into a medication dict, or None to skip."""
     if _is_empty(row.get("Med")):
@@ -186,17 +209,7 @@ def process_row(row: dict[str, Any], sheet_name: str) -> dict[str, Any] | None:
     refill = clean_refill(row.get("Refill"))
     dose_per_kg = parse_numeric(row.get("DosePerKg"), "DosePerKg", med_name)
     max_dose = parse_numeric(row.get("MaxDose"), "MaxDose", med_name)
-    derived_wb = dose_per_kg is not None and dose_per_kg > 0
-    raw_wb = row.get("WeightBased")
-    if raw_wb is not None and not pd.isna(raw_wb):
-        weight_based = bool(raw_wb)
-        if weight_based != derived_wb:
-            logger.warning(
-                "WeightBased mismatch for %s: column=%s, DosePerKg=%s",
-                med_name, raw_wb, dose_per_kg,
-            )
-    else:
-        weight_based = derived_wb
+    weight_based = _resolve_weight_based(med_name, dose_per_kg, row.get("WeightBased"))
 
     search_text = build_search_text([
         sheet_name, fields["population"], fields["subcategory"],
@@ -299,8 +312,8 @@ def write_json(output_path: Path, data: dict[str, Any]) -> bool:
         return False
 
 
-def print_summary(meds: list[dict[str, Any]]) -> None:
-    """Print specialty breakdown summary."""
+def _log_summary(meds: list[dict[str, Any]]) -> None:
+    """Log specialty breakdown summary."""
     counts = Counter(med["specialty"] for med in meds)
     logger.info("Specialty breakdown:")
     for spec, count in sorted(counts.items()):
@@ -351,7 +364,7 @@ def convert_excel_to_json(excel_path: Path, output_path: Path) -> bool:
     if not write_json(output_path, final_output):
         return False
 
-    print_summary(all_meds)
+    _log_summary(all_meds)
 
     logger.info("=" * 60)
     logger.info("CONVERSION COMPLETE!")
@@ -414,7 +427,7 @@ def main() -> int:
         return 0 if success else 1
 
     except Exception as e:
-        logger.exception("Unexpected error: %s", e)
+        logger.exception("Unexpected error")
         return 1
 
     finally:
