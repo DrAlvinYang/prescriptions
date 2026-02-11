@@ -54,7 +54,7 @@ class CartController {
     }
   }
 
-  add(medication, sourceEl = null) {
+  async add(medication, sourceEl = null) {
     // Validate provider and location before adding
     if (!this.validateProviderLocation()) {
       this.pendingFlySource = null;
@@ -65,6 +65,16 @@ class CartController {
     const flySource = sourceEl || this.pendingFlySource;
     this.pendingFlySource = null;
 
+    // Check for duplicate medication name - confirm before adding
+    const dupName = this._findDuplicateName(medication);
+    if (dupName) {
+      const confirmed = await ConfirmModal.show(`${dupName} is already in your cart. Add anyway?`);
+      if (!confirmed) return;
+    }
+
+    if (window.undoManager) {
+      window.undoManager.snapshot(`added ${medication.med || 'item'}`);
+    }
     this.state.addToCart(medication);
     this.render();
 
@@ -74,12 +84,28 @@ class CartController {
     }
   }
 
+  _findDuplicateName(medication) {
+    const newName = (medication.med || '').toLowerCase().trim();
+    if (!newName) return null;
+    const match = this.state.cart.find(item =>
+      (item.med || '').toLowerCase().trim() === newName
+    );
+    return match ? medication.med : null;
+  }
+
   remove(uid) {
+    if (window.undoManager) {
+      const item = this.state.findCartItem(uid);
+      window.undoManager.snapshot(`removed ${item?.med || 'item'}`);
+    }
     this.state.removeFromCart(uid);
     this.render();
   }
 
   clear() {
+    if (window.undoManager && this.state.cart.length > 0) {
+      window.undoManager.snapshot(`cleared ${this.state.cart.length} item(s)`);
+    }
     this.state.clearCart();
     this.render();
   }
@@ -541,6 +567,40 @@ class KeyboardController {
       return;
     }
 
+    // "/" key: Focus search (when not in an input field and no modal is open)
+    if (event.key === '/' && !event.ctrlKey && !event.metaKey) {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag !== 'input' && tag !== 'textarea' && !this.isAnyModalOpen()) {
+        event.preventDefault();
+        if (this.locationController) {
+          this.locationController.exitSearchMode();
+        }
+        const searchInput = document.getElementById("searchInput");
+        searchInput.focus();
+        searchInput.select();
+        return;
+      }
+    }
+
+    // Cmd/Ctrl + Z: Undo last cart action (only when not in a text field)
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') {
+        return; // Let native text undo work
+      }
+      event.preventDefault();
+      if (window.undoManager && window.undoManager.canUndo) {
+        const description = window.undoManager.undo();
+        if (window.cartController) {
+          window.cartController.render();
+        }
+        if (description) {
+          ToastManager.show(`Undid: ${description}`);
+        }
+      }
+      return;
+    }
+
     // Cmd/Ctrl + P: Print
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'p') {
       event.preventDefault();
@@ -562,6 +622,7 @@ class KeyboardController {
     const editModal = document.getElementById("editModal");
     const addNewMedModal = document.getElementById("addNewMedModal");
     const searchEditModal = document.getElementById("searchEditModal");
+    const confirmModal = document.getElementById("confirmModal");
 
     return (
       !weightModal.classList.contains("hidden") ||
@@ -570,6 +631,7 @@ class KeyboardController {
       !editModal.classList.contains("hidden") ||
       !addNewMedModal.classList.contains("hidden") ||
       !searchEditModal.classList.contains("hidden") ||
+      (confirmModal && !confirmModal.classList.contains("hidden")) ||
       (window.cartController && window.cartController.isCartDropdownOpen)
     );
   }
@@ -581,6 +643,7 @@ class KeyboardController {
     const editModal = document.getElementById("editModal");
     const addNewMedModal = document.getElementById("addNewMedModal");
     const searchEditModal = document.getElementById("searchEditModal");
+    const confirmModal = document.getElementById("confirmModal");
 
     const anyRealModalOpen =
       !weightModal.classList.contains("hidden") ||
@@ -588,7 +651,8 @@ class KeyboardController {
       !providerDropdown.classList.contains("hidden") ||
       !editModal.classList.contains("hidden") ||
       !addNewMedModal.classList.contains("hidden") ||
-      !searchEditModal.classList.contains("hidden");
+      !searchEditModal.classList.contains("hidden") ||
+      (confirmModal && !confirmModal.classList.contains("hidden"));
 
     return !anyRealModalOpen && window.cartController && window.cartController.isCartDropdownOpen;
   }
@@ -852,6 +916,11 @@ class ResetController {
     // Clear cart
     this.cartController.clear();
 
+    // Clear undo stack
+    if (window.undoManager) {
+      window.undoManager.clear();
+    }
+
     // Focus search
     document.getElementById("searchInput").focus();
   }
@@ -954,7 +1023,10 @@ class PrintController {
 
   // Handle print success - clear cart, reset weight, re-enable buttons, close dropdown
   handlePrintSuccess() {
-    // Clear cart
+    // Clear cart and undo stack (no undoing after print)
+    if (window.undoManager) {
+      window.undoManager.clear();
+    }
     this.state.clearCart();
 
     // Reset weight
@@ -1028,7 +1100,7 @@ class PrintController {
   /**
    * Helper: Add medication to cart (if not already present) and trigger print
    */
-  addToCartAndPrint(medication) {
+  async addToCartAndPrint(medication) {
     // Check if med is already in cart (based on cart key, excluding edited items)
     const templateKey = MedicationUtils.getCartKey(medication);
     const alreadyInCart = this.state.cart.some(
@@ -1037,6 +1109,24 @@ class PrintController {
 
     // Add to cart if not already present
     if (!alreadyInCart) {
+      // Check for duplicate medication name - confirm before adding
+      const newName = (medication.med || '').toLowerCase().trim();
+      const hasDupe = newName && this.state.cart.some(item =>
+        (item.med || '').toLowerCase().trim() === newName
+      );
+      if (hasDupe) {
+        const confirmed = await ConfirmModal.show(`${medication.med} is already in your cart. Add anyway?`);
+        if (!confirmed) {
+          this.handlePrintFailure();
+          this.state.isQuickPrintMode = false;
+          this.state.quickPrintCallback = null;
+          return;
+        }
+      }
+
+      if (window.undoManager) {
+        window.undoManager.snapshot(`added ${medication.med || 'item'}`);
+      }
       this.state.addToCart(medication);
       // Re-render cart to show the new item
       if (window.cartRenderer) {
@@ -1558,7 +1648,7 @@ class SearchEditController {
   /**
    * Handle Add to Cart button click from search edit modal
    */
-  addToCart() {
+  async addToCart() {
     // Validate form
     const validation = this.modalManager.validateSearchEdit();
     if (!validation.valid) {
@@ -1575,10 +1665,23 @@ class SearchEditController {
       return false;
     }
 
+    // Check for duplicate medication name - confirm before adding
+    const dupName = (medValues.med || '').trim();
+    const hasDupe = dupName && this.state.cart.some(item =>
+      (item.med || '').toLowerCase().trim() === dupName.toLowerCase()
+    );
+    if (hasDupe) {
+      const confirmed = await ConfirmModal.show(`${dupName} is already in your cart. Add anyway?`);
+      if (!confirmed) return false;
+    }
+
     // Capture modal box rect before closing (modal will be hidden)
     const modalBox = document.querySelector("#searchEditModal .modal-box");
 
     // Add to cart
+    if (window.undoManager) {
+      window.undoManager.snapshot(`added ${medValues.med || 'item'}`);
+    }
     this.state.addToCart(medValues);
 
     // Re-render cart
@@ -1599,7 +1702,7 @@ class SearchEditController {
    * Handle Print button click from search edit modal
    * Adds medication to cart, prints all cart items, then clears cart
    */
-  print() {
+  async print() {
     // Validate form
     const validation = this.modalManager.validateSearchEdit();
     if (!validation.valid) {
@@ -1616,10 +1719,23 @@ class SearchEditController {
       return false;
     }
 
+    // Check for duplicate medication name - confirm before adding
+    const dupName = (medValues.med || '').trim();
+    const hasDupe = dupName && this.state.cart.some(item =>
+      (item.med || '').toLowerCase().trim() === dupName.toLowerCase()
+    );
+    if (hasDupe) {
+      const confirmed = await ConfirmModal.show(`${dupName} is already in your cart. Add anyway?`);
+      if (!confirmed) return false;
+    }
+
     // Disable buttons during print
     this.modalManager.disableSearchEditButtons();
 
     // Add medication to cart
+    if (window.undoManager) {
+      window.undoManager.snapshot(`added ${medValues.med || 'item'}`);
+    }
     this.state.addToCart(medValues);
 
     // Re-render cart to show the new item

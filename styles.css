@@ -1000,6 +1000,14 @@ details[open] > .subfolder-summary .subfolder-arrow {
   box-shadow: var(--stuck-shadow);
 }
 
+.group-count {
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: 4px;
+  letter-spacing: 0;
+}
+
 /* --- Cart Button in Header --- */
 .cart-btn-wrapper {
   position: relative;
@@ -1969,6 +1977,51 @@ body:has(.help-overlay:not(.hidden)) {
 
 .cart-badge-pulse {
   animation: cart-badge-pulse 350ms ease-out;
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--bg);
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  z-index: 10001;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  max-width: 400px;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.toast-visible {
+  opacity: 1;
+}
+
+.toast-hidden {
+  opacity: 0;
+}
+
+/* Confirm Modal */
+.confirm-modal-box {
+  max-width: 340px;
+  text-align: center;
+}
+.confirm-message {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0 0 20px 0;
+}
+.confirm-modal-box .modal-actions {
+  justify-content: center;
 }
 
 /* Dark mode overrides for inline SVG data URIs */

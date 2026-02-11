@@ -29,10 +29,12 @@ class TestIsEmpty:
         ("  ", True),
         (None, True),
         (float("nan"), True),
+        (False, True),
         ("hello", False),
         (0, False),
         (0.0, False),
         ("0", False),
+        (True, False),
     ])
     def test_is_empty_cases(self, input_val: Any, expected: bool) -> None:
         """Test _is_empty handles various inputs correctly."""
@@ -141,6 +143,13 @@ class TestBuildSearchText:
         result = converter.build_search_text(components)
         assert result == "upper | mixed | lower"
 
+    def test_sanitizes_pipe(self) -> None:
+        """Test pipe characters in components don't collide with delimiter."""
+        components = ["category", "med|name", "dose"]
+        result = converter.build_search_text(components)
+        assert "med name" in result
+        assert result.count("|") == 2  # only the delimiters
+
 
 # ---------------------------------------------------------------------------
 # Unit Tests: Validation Functions
@@ -225,6 +234,18 @@ class TestValidateMedication:
         warnings = converter.validate_medication(med)
         assert len(warnings) == 1
         assert "missing max dose" in warnings[0]
+
+    def test_weight_based_zero_max_dose_ok(self) -> None:
+        """Test max_dose_mg=0.0 does not falsely trigger 'missing max dose'."""
+        med = {
+            "med": "TestMed",
+            "dose_text": "",
+            "weight_based": True,
+            "max_dose_mg": 0.0,
+            "specialty": "Test",
+        }
+        warnings = converter.validate_medication(med)
+        assert not any("missing max dose" in w for w in warnings)
 
 
 # ---------------------------------------------------------------------------
@@ -314,6 +335,38 @@ class TestProcessRow:
         assert result["dose_text"] == ""
         assert result["weight_based"] is False
 
+    def test_weight_based_from_excel_column(self) -> None:
+        """Test WeightBased column is used when present."""
+        row = {
+            "Med": "TestMed",
+            "WeightBased": True,
+            "DosePerKg": 10.0,
+            "MaxDose": 500.0,
+        }
+        result = converter.process_row(row, "Test")
+        assert result is not None
+        assert result["weight_based"] is True
+
+    def test_weight_based_mismatch_warns(self, caplog: pytest.LogCaptureFixture) -> None:
+        """Test warning when WeightBased column disagrees with DosePerKg."""
+        row = {
+            "Med": "TestMed",
+            "WeightBased": True,
+            "DosePerKg": None,
+            "MaxDose": None,
+        }
+        result = converter.process_row(row, "Test")
+        assert result is not None
+        assert result["weight_based"] is True
+        assert "mismatch" in caplog.text.lower()
+
+    def test_weight_based_fallback_without_column(self) -> None:
+        """Test derived weight_based when WeightBased column is absent."""
+        row = {"Med": "TestMed", "DosePerKg": 5.0, "MaxDose": 100.0}
+        result = converter.process_row(row, "Test")
+        assert result is not None
+        assert result["weight_based"] is True
+
 
 # ---------------------------------------------------------------------------
 # Integration Tests: Full Conversion
@@ -377,6 +430,16 @@ class TestFullConversion:
         assert ibuprofen["med"] == "Ibuprofen"
         assert ibuprofen["brands"] == ["Advil", "Motrin"]
         assert ibuprofen["specialty"] == "Analgesia"
+
+    def test_output_dir_created(self, sample_excel: Path, tmp_path: Path) -> None:
+        """Test output directory is created if it doesn't exist."""
+        output_path = tmp_path / "subdir" / "nested" / "output.json"
+        result = converter.convert_excel_to_json(
+            excel_path=sample_excel,
+            output_path=output_path,
+        )
+        assert result is True
+        assert output_path.exists()
 
     def test_missing_file(self, tmp_path: Path) -> None:
         """Test handling of missing input file."""

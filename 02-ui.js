@@ -474,7 +474,7 @@ class SearchResultsRenderer {
     if (items.length === 0) return;
 
     const header = DOMBuilder.createElement('div', 'search-group-header', {
-      innerHTML: title
+      innerHTML: `${title} <span class="group-count">(${items.length} result${items.length === 1 ? '' : 's'})</span>`
     });
 
     container.appendChild(header);
@@ -1294,6 +1294,10 @@ class ModalManager {
       updates.med = medName;
     }
     
+    if (window.undoManager) {
+      const editItem = this.state.findCartItem(this.state.editingId);
+      window.undoManager.snapshot(`edited ${editItem?.med || 'item'}`);
+    }
     this.state.updateCartItem(this.state.editingId, updates);
     this.closeEdit();
   }

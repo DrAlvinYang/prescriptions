@@ -71,7 +71,13 @@ def setup_logging(verbose: bool = False) -> None:
 
 
 def _is_empty(val: Any) -> bool:
-    """Check if a cell value is empty, NaN, or whitespace-only."""
+    """Check if a cell value is empty, NaN, or whitespace-only.
+
+    Boolean False is treated as empty (common in Excel for 'not set').
+    Must be checked before pd.isna since bool is a subclass of int.
+    """
+    if isinstance(val, bool):
+        return not val
     if pd.isna(val):
         return True
     return isinstance(val, str) and val.strip() == ""
@@ -122,8 +128,12 @@ def parse_brands(raw_alias: Any) -> list[str]:
 
 
 def build_search_text(components: list[str]) -> str:
-    """Join non-empty components with ' | ' and lowercase."""
-    return " | ".join(c for c in components if c).lower()
+    """Join non-empty components with ' | ' and lowercase.
+
+    Pipe characters within components are replaced with spaces to
+    avoid collisions with the delimiter.
+    """
+    return " | ".join(c.replace("|", " ") for c in components if c).lower()
 
 
 # ---------------------------------------------------------------------------
@@ -147,7 +157,7 @@ def validate_medication(med_obj: dict[str, Any]) -> list[str]:
     if not med_obj.get("dose_text") and not med_obj.get("weight_based"):
         warnings.append(f"No dose specified for non-weight-based medication: {med_name}")
 
-    if med_obj.get("weight_based") and not med_obj.get("max_dose_mg"):
+    if med_obj.get("weight_based") and med_obj.get("max_dose_mg") is None:
         warnings.append(f"Weight-based medication missing max dose: {med_name}")
 
     dose_per_kg = med_obj.get("dose_per_kg_mg")
@@ -176,7 +186,17 @@ def process_row(row: dict[str, Any], sheet_name: str) -> dict[str, Any] | None:
     refill = clean_refill(row.get("Refill"))
     dose_per_kg = parse_numeric(row.get("DosePerKg"), "DosePerKg", med_name)
     max_dose = parse_numeric(row.get("MaxDose"), "MaxDose", med_name)
-    weight_based = dose_per_kg is not None and dose_per_kg > 0
+    derived_wb = dose_per_kg is not None and dose_per_kg > 0
+    raw_wb = row.get("WeightBased")
+    if raw_wb is not None and not pd.isna(raw_wb):
+        weight_based = bool(raw_wb)
+        if weight_based != derived_wb:
+            logger.warning(
+                "WeightBased mismatch for %s: column=%s, DosePerKg=%s",
+                med_name, raw_wb, dose_per_kg,
+            )
+    else:
+        weight_based = derived_wb
 
     search_text = build_search_text([
         sheet_name, fields["population"], fields["subcategory"],
@@ -255,6 +275,7 @@ def write_json(output_path: Path, data: dict[str, Any]) -> bool:
     """
     tmp_path: Path | None = None
     try:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         fd, tmp_name = tempfile.mkstemp(
             suffix=".json", dir=output_path.parent,
         )

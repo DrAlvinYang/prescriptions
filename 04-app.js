@@ -56,7 +56,11 @@ class Application {
   async initializeCore() {
     // Create state
     this.state = new AppState();
-    
+
+    // Create undo manager
+    this.undoManager = new UndoManager(this.state);
+    window.undoManager = this.undoManager;
+
     // Create managers
     this.managers.location = new LocationManager(this.state);
     this.managers.provider = new ProviderManager();

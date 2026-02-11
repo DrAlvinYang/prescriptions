@@ -122,6 +122,164 @@ class AppState {
 }
 
 // ============================================================================
+// UNDO MANAGER
+// ============================================================================
+
+class UndoManager {
+  constructor(state) {
+    this.state = state;
+    this.stack = [];
+    this.maxSize = 20;
+  }
+
+  snapshot(description) {
+    this.stack.push({
+      cart: structuredClone(this.state.cart),
+      description
+    });
+    if (this.stack.length > this.maxSize) {
+      this.stack.shift();
+    }
+  }
+
+  undo() {
+    if (this.stack.length === 0) return null;
+    const entry = this.stack.pop();
+    this.state.cart = entry.cart;
+    return entry.description;
+  }
+
+  get canUndo() {
+    return this.stack.length > 0;
+  }
+
+  clear() {
+    this.stack = [];
+  }
+}
+
+// ============================================================================
+// TOAST NOTIFICATIONS
+// ============================================================================
+
+const ToastManager = {
+  _container: null,
+  _timeout: null,
+
+  _ensureContainer() {
+    if (!this._container) {
+      this._container = document.createElement('div');
+      this._container.className = 'toast-container toast-hidden';
+      document.body.appendChild(this._container);
+    }
+    return this._container;
+  },
+
+  show(message, duration = 2500) {
+    const container = this._ensureContainer();
+    if (this._timeout) {
+      clearTimeout(this._timeout);
+    }
+    container.textContent = message;
+    container.classList.remove('toast-hidden');
+    container.classList.add('toast-visible');
+
+    this._timeout = setTimeout(() => {
+      container.classList.remove('toast-visible');
+      container.classList.add('toast-hidden');
+    }, duration);
+  }
+};
+
+// ============================================================================
+// CONFIRM MODAL
+// ============================================================================
+
+const ConfirmModal = {
+  _overlay: null,
+  _resolve: null,
+  _previousFocus: null,
+
+  _ensureDOM() {
+    if (this._overlay) return;
+    this._overlay = document.createElement('div');
+    this._overlay.id = 'confirmModal';
+    this._overlay.className = 'modal-overlay hidden';
+    this._overlay.setAttribute('role', 'dialog');
+    this._overlay.setAttribute('aria-modal', 'true');
+    this._overlay.innerHTML = `
+      <div class="modal-box confirm-modal-box">
+        <p class="confirm-message"></p>
+        <div class="modal-actions">
+          <button class="btn confirm-cancel-btn">Cancel</button>
+          <button class="btn btn-secondary confirm-ok-btn">Add Anyway</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(this._overlay);
+
+    this._overlay.querySelector('.confirm-cancel-btn').addEventListener('click', () => this._close(false));
+    this._overlay.querySelector('.confirm-ok-btn').addEventListener('click', () => this._close(true));
+
+    // Capture all keydown events inside modal to prevent global handler interference
+    this._overlay.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        this._close(false);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        // Enter activates whichever button is focused
+        const isOnOk = document.activeElement === this._overlay.querySelector('.confirm-ok-btn');
+        this._close(isOnOk);
+      } else if (e.key === 'Tab') {
+        // Trap focus between the two buttons
+        e.preventDefault();
+        const cancel = this._overlay.querySelector('.confirm-cancel-btn');
+        const ok = this._overlay.querySelector('.confirm-ok-btn');
+        if (document.activeElement === cancel) {
+          ok.focus();
+        } else {
+          cancel.focus();
+        }
+      }
+    });
+  },
+
+  show(message) {
+    this._ensureDOM();
+    // If already showing, cancel previous
+    if (this._resolve) {
+      this._resolve(false);
+      this._resolve = null;
+    }
+    // Save currently focused element to restore later
+    this._previousFocus = document.activeElement;
+    this._overlay.querySelector('.confirm-message').textContent = message;
+    this._overlay.classList.remove('hidden');
+    this._overlay.querySelector('.confirm-cancel-btn').focus();
+
+    return new Promise(resolve => {
+      this._resolve = resolve;
+    });
+  },
+
+  _close(result) {
+    if (!this._overlay) return;
+    this._overlay.classList.add('hidden');
+    // Restore focus to the element that was focused before the modal opened
+    if (this._previousFocus && typeof this._previousFocus.focus === 'function') {
+      this._previousFocus.focus();
+      this._previousFocus = null;
+    }
+    if (this._resolve) {
+      this._resolve(result);
+      this._resolve = null;
+    }
+  }
+};
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
@@ -2538,3 +2696,6 @@ window.MedicationUtils = MedicationUtils;
 window.ValidationUtils = ValidationUtils;
 window.DuplicateChecker = DuplicateChecker;
 window.FlyToCart = FlyToCart;
+window.UndoManager = UndoManager;
+window.ToastManager = ToastManager;
+window.ConfirmModal = ConfirmModal;
