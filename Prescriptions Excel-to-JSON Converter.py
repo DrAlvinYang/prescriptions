@@ -17,8 +17,9 @@ import argparse
 import json
 import logging
 import sys
+from collections import Counter
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -26,29 +27,8 @@ import pandas as pd
 # Configuration
 # ---------------------------------------------------------------------------
 
-# Required columns that must exist in each sheet
 REQUIRED_COLUMNS: frozenset[str] = frozenset({"Med"})
 
-# Optional columns with their default values if missing
-OPTIONAL_COLUMNS: dict[str, Any] = {
-    "Alias": "",
-    "Indication": "",
-    "Dose": "",
-    "Route": "",
-    "Frequency": "",
-    "Duration": "",
-    "Dispense": "",
-    "Refill": "",
-    "PRN": "",
-    "Form": "",
-    "Comments": "",
-    "Population": "",
-    "Subcategory": "",
-    "DosePerKg": None,
-    "MaxDose": None,
-}
-
-# Default file paths (relative to script location)
 DEFAULT_EXCEL_FILENAME: str = "Prescriptions.xlsx"
 DEFAULT_OUTPUT_FILENAME: str = "Prescriptions.json"
 
@@ -74,105 +54,58 @@ def setup_logging(verbose: bool = False) -> None:
 # ---------------------------------------------------------------------------
 
 
+def _is_empty(val: Any) -> bool:
+    """Check if a cell value is empty, NaN, or blank string."""
+    return pd.isna(val) or val == ""
+
+
 def clean_text(val: Any) -> str:
+    """Convert a cell value to a cleaned, stripped string.
+
+    Returns empty string for null/NaN/empty values.
     """
-    Convert a cell value to a cleaned string.
-
-    Handles empty/NaN cells gracefully by returning empty string.
-    Strips leading/trailing whitespace from string values.
-
-    Args:
-        val: Any cell value from pandas DataFrame
-
-    Returns:
-        Cleaned string representation, or empty string if null/empty
-    """
-    if pd.isna(val) or val == "":
+    if _is_empty(val):
         return ""
     return str(val).strip()
 
 
 def clean_refill(val: Any) -> str:
+    """Normalize refill to a whole number string (e.g. 1.0 -> "1").
+
+    Non-numeric text (e.g. "PRN") is preserved as-is.
     """
-    Normalize refill amount to a whole number string.
-
-    Handles various input formats:
-        - 1.0 -> "1"
-        - 0.0 -> "0"
-        - "1" -> "1"
-        - "" -> ""
-        - "PRN" -> "PRN" (text preserved)
-
-    Args:
-        val: Refill value from Excel cell
-
-    Returns:
-        Normalized string representation
-    """
-    if pd.isna(val) or val == "":
+    if _is_empty(val):
         return ""
     try:
-        f_val = float(val)
-        return str(int(f_val))
+        return str(int(float(val)))
     except (ValueError, TypeError):
         return str(val).strip()
 
 
-def parse_numeric(val: Any, field_name: str, row_context: str) -> Optional[float]:
-    """
-    Parse a numeric value with logging for failed conversions.
-
-    Args:
-        val: Value to parse
-        field_name: Name of the field (for logging)
-        row_context: Context string for logging (e.g., medication name)
-
-    Returns:
-        Parsed float value, or None if empty/invalid
-    """
-    if pd.isna(val) or val == "":
+def parse_numeric(val: Any, field_name: str, row_context: str) -> float | None:
+    """Parse a numeric value, logging a warning on failure."""
+    if _is_empty(val):
         return None
     try:
         return float(val)
     except (ValueError, TypeError):
         logger.warning(
             "Could not parse %s value '%s' for %s - treating as None",
-            field_name,
-            val,
-            row_context,
+            field_name, val, row_context,
         )
         return None
 
 
 def parse_brands(raw_alias: Any) -> list[str]:
-    """
-    Parse comma-separated brand names into a list.
-
-    Args:
-        raw_alias: Raw alias string from Excel (e.g., "Advil, Motrin")
-
-    Returns:
-        List of cleaned brand name strings
-    """
-    if pd.isna(raw_alias) or str(raw_alias).strip() == "":
+    """Parse comma-separated brand names into a list."""
+    if _is_empty(raw_alias) or str(raw_alias).strip() == "":
         return []
     return [b.strip() for b in str(raw_alias).split(",") if b.strip()]
 
 
 def build_search_text(components: list[str]) -> str:
-    """
-    Build searchable text from components.
-
-    Joins non-empty components with pipe delimiter and lowercases.
-
-    Args:
-        components: List of text components to join
-
-    Returns:
-        Lowercase search string with components joined by ' | '
-    """
-    filtered = [c for c in components if c]
-    return " | ".join(filtered).lower()
+    """Join non-empty components with ' | ' and lowercase."""
+    return " | ".join(c for c in components if c).lower()
 
 
 # ---------------------------------------------------------------------------
@@ -181,31 +114,13 @@ def build_search_text(components: list[str]) -> str:
 
 
 def validate_columns(df: pd.DataFrame, sheet_name: str) -> tuple[bool, list[str]]:
-    """
-    Validate that required columns exist in the DataFrame.
-
-    Args:
-        df: DataFrame to validate
-        sheet_name: Name of the sheet (for error messages)
-
-    Returns:
-        Tuple of (is_valid, list of missing column names)
-    """
-    existing_columns = set(df.columns)
-    missing = REQUIRED_COLUMNS - existing_columns
+    """Check that required columns exist. Returns (is_valid, missing_columns)."""
+    missing = REQUIRED_COLUMNS - set(df.columns)
     return len(missing) == 0, list(missing)
 
 
 def validate_medication(med_obj: dict[str, Any]) -> list[str]:
-    """
-    Validate a medication object has critical fields.
-
-    Args:
-        med_obj: Medication dictionary to validate
-
-    Returns:
-        List of warning messages (empty if valid)
-    """
+    """Return a list of validation warnings for a medication object."""
     warnings: list[str] = []
     med_name = med_obj.get("med", "Unknown")
 
@@ -223,71 +138,52 @@ def validate_medication(med_obj: dict[str, Any]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def process_row(row: dict[str, Any], sheet_name: str) -> Optional[dict[str, Any]]:
-    """
-    Process a single row from the Excel sheet into a medication object.
-
-    Args:
-        row: Dictionary representing one row (from df.to_dict('records'))
-        sheet_name: Name of the sheet (used as specialty)
-
-    Returns:
-        Medication dictionary, or None if row should be skipped
-    """
-    # Skip rows where 'Med' is empty
+def process_row(row: dict[str, Any], sheet_name: str) -> dict[str, Any] | None:
+    """Process a single Excel row into a medication dict, or None to skip."""
     med_value = row.get("Med")
-    if pd.isna(med_value) or str(med_value).strip() == "":
+    if _is_empty(med_value) or str(med_value).strip() == "":
         return None
 
     med_name = clean_text(med_value)
-
-    # Parse brands
     brands = parse_brands(row.get("Alias", ""))
+    indication = clean_text(row.get("Indication", ""))
+    dose_text = clean_text(row.get("Dose", ""))
+    route = clean_text(row.get("Route", ""))
+    frequency = clean_text(row.get("Frequency", ""))
+    duration = clean_text(row.get("Duration", ""))
+    dispense = clean_text(row.get("Dispense", ""))
+    refill = clean_refill(row.get("Refill", ""))
+    prn = clean_text(row.get("PRN", ""))
+    form = clean_text(row.get("Form", ""))
+    comments = clean_text(row.get("Comments", ""))
+    population = clean_text(row.get("Population", ""))
+    subcategory = clean_text(row.get("Subcategory", ""))
 
-    # Parse numeric fields
-    dose_per_kg = parse_numeric(
-        row.get("DosePerKg"), "DosePerKg", med_name
-    )
-    max_dose = parse_numeric(
-        row.get("MaxDose"), "MaxDose", med_name
-    )
-
-    # Determine weight-based logic
+    dose_per_kg = parse_numeric(row.get("DosePerKg"), "DosePerKg", med_name)
+    max_dose = parse_numeric(row.get("MaxDose"), "MaxDose", med_name)
     weight_based = dose_per_kg is not None and dose_per_kg > 0
 
-    # Extract text fields
-    indication = clean_text(row.get("Indication", ""))
-
-    # Build search text
-    search_components = [
-        sheet_name,
-        clean_text(row.get("Population", "")),
-        clean_text(row.get("Subcategory", "")),
-        indication,
-        med_name,
-        " ".join(brands),
-        clean_text(row.get("Dose", "")),
-        clean_text(row.get("PRN", "")),
-        clean_text(row.get("Comments", "")),
-    ]
-    search_text = build_search_text(search_components)
+    search_text = build_search_text([
+        sheet_name, population, subcategory, indication,
+        med_name, " ".join(brands), dose_text, prn, comments,
+    ])
 
     return {
         "specialty": sheet_name,
         "med": med_name,
         "brands": brands,
         "indication": indication,
-        "dose_text": clean_text(row.get("Dose", "")),
-        "route": clean_text(row.get("Route", "")),
-        "frequency": clean_text(row.get("Frequency", "")),
-        "duration": clean_text(row.get("Duration", "")),
-        "dispense": clean_text(row.get("Dispense", "")),
-        "refill": clean_refill(row.get("Refill", "")),
-        "prn": clean_text(row.get("PRN", "")),
-        "form": clean_text(row.get("Form", "")),
-        "comments": clean_text(row.get("Comments", "")),
-        "population": clean_text(row.get("Population", "")),
-        "subcategory": clean_text(row.get("Subcategory", "")),
+        "dose_text": dose_text,
+        "route": route,
+        "frequency": frequency,
+        "duration": duration,
+        "dispense": dispense,
+        "refill": refill,
+        "prn": prn,
+        "form": form,
+        "comments": comments,
+        "population": population,
+        "subcategory": subcategory,
         "weight_based": weight_based,
         "dose_per_kg_mg": dose_per_kg,
         "max_dose_mg": max_dose,
@@ -296,46 +192,31 @@ def process_row(row: dict[str, Any], sheet_name: str) -> Optional[dict[str, Any]
 
 
 def process_sheet(
-    xls: pd.ExcelFile, sheet_name: str
+    xls: pd.ExcelFile, sheet_name: str,
 ) -> tuple[list[dict[str, Any]], int]:
-    """
-    Process a single Excel sheet into medication objects.
-
-    Args:
-        xls: Excel file object
-        sheet_name: Name of the sheet to process
-
-    Returns:
-        Tuple of (list of medication dicts, count of validation warnings)
-    """
+    """Process a single Excel sheet into medication objects."""
     logger.info("Processing sheet: %s", sheet_name)
 
     df = pd.read_excel(xls, sheet_name=sheet_name)
     df.columns = [str(c).strip() for c in df.columns]
 
-    # Validate columns
     is_valid, missing = validate_columns(df, sheet_name)
     if not is_valid:
         logger.error(
             "Sheet '%s' is missing required columns: %s - skipping",
-            sheet_name,
-            missing,
+            sheet_name, missing,
         )
         return [], 0
 
     meds: list[dict[str, Any]] = []
     warning_count = 0
 
-    # Use to_dict('records') for better performance than iterrows()
-    rows: list[dict[str, Any]] = df.to_dict("records")  # type: ignore[assignment]
-    for row in rows:
+    for row in df.to_dict("records"):
         med_obj = process_row(row, sheet_name)
         if med_obj is None:
             continue
 
-        # Validate medication
-        warnings = validate_medication(med_obj)
-        for warning in warnings:
+        for warning in validate_medication(med_obj):
             logger.warning(warning)
             warning_count += 1
 
@@ -345,18 +226,9 @@ def process_sheet(
     return meds, warning_count
 
 
-def load_excel(excel_path: Path) -> Optional[pd.ExcelFile]:
-    """
-    Load an Excel file with error handling.
-
-    Args:
-        excel_path: Path to the Excel file
-
-    Returns:
-        ExcelFile object, or None if loading failed
-    """
+def load_excel(excel_path: Path) -> pd.ExcelFile | None:
+    """Load an Excel file, returning None on failure."""
     logger.info("Reading %s...", excel_path)
-
     try:
         return pd.ExcelFile(excel_path)
     except FileNotFoundError:
@@ -369,21 +241,11 @@ def load_excel(excel_path: Path) -> Optional[pd.ExcelFile]:
 
 
 def write_json(output_path: Path, data: dict[str, Any]) -> bool:
-    """
-    Write data to JSON file with verification.
-
-    Args:
-        output_path: Path for output JSON file
-        data: Dictionary to serialize
-
-    Returns:
-        True if successful, False otherwise
-    """
+    """Write data to JSON and verify the output."""
     try:
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
-        # Verify the file
         with open(output_path, "r", encoding="utf-8") as f:
             verify = json.load(f)
             logger.info("JSON file is valid")
@@ -398,13 +260,9 @@ def write_json(output_path: Path, data: dict[str, Any]) -> bool:
 
 def print_summary(meds: list[dict[str, Any]]) -> None:
     """Print specialty breakdown summary."""
-    specialty_counts: dict[str, int] = {}
-    for med in meds:
-        spec = med["specialty"]
-        specialty_counts[spec] = specialty_counts.get(spec, 0) + 1
-
+    counts = Counter(med["specialty"] for med in meds)
     logger.info("Specialty breakdown:")
-    for spec, count in sorted(specialty_counts.items()):
+    for spec, count in sorted(counts.items()):
         logger.info("  %s: %d medications", spec, count)
 
 
@@ -413,38 +271,23 @@ def print_summary(meds: list[dict[str, Any]]) -> None:
 # ---------------------------------------------------------------------------
 
 
-def convert_excel_to_json(
-    excel_path: Path,
-    output_path: Path,
-    interactive: bool = True,
-) -> bool:
-    """
-    Convert Excel prescription data to JSON format.
+def convert_excel_to_json(excel_path: Path, output_path: Path) -> bool:
+    """Convert Excel prescription data to JSON format.
 
-    Args:
-        excel_path: Path to input Excel file
-        output_path: Path for output JSON file
-        interactive: If True, pause for user input on completion/error
-
-    Returns:
-        True if conversion succeeded, False otherwise
+    Returns True on success, False on failure.
     """
     logger.info("=" * 60)
     logger.info("PRESCRIPTION EXCEL TO JSON CONVERTER")
     logger.info("=" * 60)
 
-    # Load Excel
     xls = load_excel(excel_path)
     if xls is None:
-        if interactive:
-            input("\nPress Enter to close...")
         return False
 
     logger.info("Found %d sheets:", len(xls.sheet_names))
     for sheet in xls.sheet_names:
         logger.info("  - %s", sheet)
 
-    # Process all sheets
     all_meds: list[dict[str, Any]] = []
     total_warnings = 0
 
@@ -456,7 +299,6 @@ def convert_excel_to_json(
     if total_warnings > 0:
         logger.warning("Total validation warnings: %d", total_warnings)
 
-    # Build output structure
     final_output = {
         "source": {
             "file": excel_path.name,
@@ -465,13 +307,9 @@ def convert_excel_to_json(
         "meds": all_meds,
     }
 
-    # Write JSON
     if not write_json(output_path, final_output):
-        if interactive:
-            input("\nPress Enter to close...")
         return False
 
-    # Print summary
     print_summary(all_meds)
 
     logger.info("=" * 60)
@@ -521,12 +359,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
-    """
-    Main entry point for the converter.
-
-    Returns:
-        Exit code (0 for success, 1 for failure)
-    """
+    """Entry point. Returns 0 on success, 1 on failure."""
     args = parse_args()
     setup_logging(verbose=args.verbose)
 
@@ -536,7 +369,6 @@ def main() -> int:
         success = convert_excel_to_json(
             excel_path=args.input,
             output_path=args.output,
-            interactive=interactive,
         )
         return 0 if success else 1
 

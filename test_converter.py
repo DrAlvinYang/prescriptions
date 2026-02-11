@@ -8,11 +8,8 @@ Run with: pytest test_converter.py -v
 from __future__ import annotations
 
 import json
-import tempfile
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock
-
 import pandas as pd
 import pytest
 
@@ -341,7 +338,6 @@ class TestFullConversion:
         result = converter.convert_excel_to_json(
             excel_path=sample_excel,
             output_path=output_path,
-            interactive=False,
         )
 
         assert result is True
@@ -364,7 +360,6 @@ class TestFullConversion:
         result = converter.convert_excel_to_json(
             excel_path=tmp_path / "nonexistent.xlsx",
             output_path=tmp_path / "output.json",
-            interactive=False,
         )
         assert result is False
 
@@ -378,7 +373,6 @@ class TestFullConversion:
         result = converter.convert_excel_to_json(
             excel_path=excel_path,
             output_path=output_path,
-            interactive=False,
         )
 
         # Should succeed but with 0 medications
