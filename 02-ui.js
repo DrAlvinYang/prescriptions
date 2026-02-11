@@ -61,7 +61,7 @@ class MedicationRenderer {
 
     // Population label
     const popLabel = (showPopulation && med.population)
-      ? `<span style="font-weight:normal; color:#666; font-size:0.9em; margin-left:4px;">(${Utils.escapeHtml(med.population)})</span>`
+      ? `<span style="font-weight:normal; color:var(--calc-note); font-size:0.9em; margin-left:4px;">(${Utils.escapeHtml(med.population)})</span>`
       : "";
 
     // Brand matching hint (shown when brands are hidden and search matches a brand)

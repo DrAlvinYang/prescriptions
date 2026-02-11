@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light dark;
   --bg: #f5f5f7;
   --panel: #ffffff;
   --border: #d2d2d7;
@@ -34,6 +35,70 @@
   --brand-color: #1a56db;
   --brand-match: #1a7a2e;
   --brand-name-color: #248a3d;
+  --accent-ring: rgba(0, 122, 255, 0.15);
+  --accent-ring-strong: rgba(0, 122, 255, 0.25);
+  --accent-tint: rgba(0, 122, 255, 0.08);
+  --highlight-bg: rgba(0, 122, 255, 0.15);
+  --danger-tint: rgba(255, 59, 48, 0.08);
+  --danger-tint-border: rgba(255, 59, 48, 0.15);
+  --danger-tint-hover: rgba(255, 59, 48, 0.14);
+  --danger-tint-border-hover: rgba(255, 59, 48, 0.25);
+  --stuck-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --ghost-bg: rgba(255, 255, 255, 0.9);
+  --ghost-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --ghost-modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e;
+    --panel: #2c2c2e;
+    --border: #38383a;
+    --text: #f5f5f7;
+    --muted: #98989d;
+    --btn: #3a3a3c;
+    --btn-hover: #48484a;
+    --accent: #0A84FF;
+    --header-bg: #252528;
+    --header-text: #f5f5f7;
+    --hover-bg: #323235;
+    --hover-border: #48484a;
+    --active-bg: rgba(10, 132, 255, 0.15);
+    --in-cart-bg: rgba(10, 132, 255, 0.12);
+    --danger: #FF453A;
+    --success: #30D158;
+    --separator: #38383a;
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+    --accent-hover: #409CFF;
+    --header-hover: #3a3a3c;
+    --subfolder-bg: #323235;
+    --subfolder-text: #b0b0b5;
+    --subfolder-hover: #3a3a3c;
+    --subfolder-arrow: #98989d;
+    --nested-bg: #3a3a3c;
+    --nested-text: #a0a0a5;
+    --med-hover: #323235;
+    --calc-dose: #30D158;
+    --calc-note: #98989d;
+    --brand-color: #5E9EFF;
+    --brand-match: #30D158;
+    --brand-name-color: #32D74B;
+    --accent-ring: rgba(10, 132, 255, 0.2);
+    --accent-ring-strong: rgba(10, 132, 255, 0.3);
+    --accent-tint: rgba(10, 132, 255, 0.12);
+    --highlight-bg: rgba(10, 132, 255, 0.2);
+    --danger-tint: rgba(255, 69, 58, 0.12);
+    --danger-tint-border: rgba(255, 69, 58, 0.2);
+    --danger-tint-hover: rgba(255, 69, 58, 0.2);
+    --danger-tint-border-hover: rgba(255, 69, 58, 0.3);
+    --stuck-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    --ghost-bg: rgba(44, 44, 46, 0.9);
+    --ghost-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --ghost-modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
 }
 
 * { box-sizing: border-box; }
@@ -315,7 +380,7 @@ body {
 .provider-edit-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+  box-shadow: 0 0 0 3px var(--accent-ring);
   background: var(--panel);
 }
 
@@ -408,7 +473,7 @@ body {
   transition: background 0.15s ease;
 }
 .loc-item:hover { background: var(--active-bg); }
-.loc-item.selected { font-weight: 600; color: var(--accent); background: rgba(0, 122, 255, 0.08); }
+.loc-item.selected { font-weight: 600; color: var(--accent); background: var(--accent-tint); }
 
 .loc-name {
   font-size: 13px;
@@ -467,7 +532,7 @@ body {
 
 /* Highlighted location item via keyboard navigation */
 .loc-search-item.is-active {
-  background: rgba(0, 122, 255, 0.08);
+  background: var(--accent-tint);
   outline: 2px solid var(--accent);
   outline-offset: -2px;
   border-radius: 12px;
@@ -518,7 +583,7 @@ body {
 /* Blue border on location search input when typing (not navigating) */
 .location-wrapper.search-active.typing-mode .location-btn {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
+  box-shadow: 0 0 0 3px var(--accent-ring-strong);
 }
 
 /* Location Search Dropdown */
@@ -559,7 +624,7 @@ body {
   transition: background 0.15s ease;
 }
 .loc-search-item:hover { background: var(--active-bg); }
-.loc-search-item.selected { font-weight: 600; color: var(--accent); background: rgba(0, 122, 255, 0.08); }
+.loc-search-item.selected { font-weight: 600; color: var(--accent); background: var(--accent-tint); }
 
 .loc-search-name {
   font-size: 13px;
@@ -667,7 +732,7 @@ body {
 .searchbar input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 .searchbar input::placeholder {
   color: var(--muted);
@@ -932,7 +997,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 }
 
 .search-group-header.is-stuck {
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--stuck-shadow);
 }
 
 /* --- Cart Button in Header --- */
@@ -1198,7 +1263,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 .modal-input-group input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-ring);
   background: var(--panel);
 }
 .modal-input-group input::-webkit-outer-spin-button,
@@ -1240,7 +1305,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 .weight-input-wrapper:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+  box-shadow: 0 0 0 3px var(--accent-ring);
   background: var(--panel);
 }
 
@@ -1367,7 +1432,7 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 /* Highlight for search terms */
 .highlight {
-  background-color: rgba(0, 122, 255, 0.15);
+  background-color: var(--highlight-bg);
   color: inherit;
   font-weight: inherit;
   border-radius: 4px;
@@ -1443,7 +1508,7 @@ body.show-brands .brand-match-hint {
 .edit-field input:focus, .edit-full-row input:focus, .edit-full-row textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+  box-shadow: 0 0 0 3px var(--accent-ring);
   background: var(--panel);
 }
 
@@ -1489,7 +1554,7 @@ body.show-brands .brand-match-hint {
 
 .med-item.is-active {
   position: relative;
-  background-color: rgba(0, 122, 255, 0.08);
+  background-color: var(--accent-tint);
   outline: 2px solid var(--accent);
   outline-offset: -2px;
   border-radius: 12px;
@@ -1563,14 +1628,14 @@ body.show-brands .brand-match-hint {
 }
 
 .med-action-btn-remove {
-  background: rgba(255, 59, 48, 0.08);
-  border-color: rgba(255, 59, 48, 0.15);
+  background: var(--danger-tint);
+  border-color: var(--danger-tint-border);
   color: var(--danger);
 }
 
 .med-action-btn-remove:hover {
-  background: rgba(255, 59, 48, 0.14);
-  border-color: rgba(255, 59, 48, 0.25);
+  background: var(--danger-tint-hover);
+  border-color: var(--danger-tint-border-hover);
 }
 
 /* Hide Edit button for in-cart items unless hovering or keyboard highlighted */
@@ -1882,17 +1947,17 @@ body:has(.help-overlay:not(.hidden)) {
 }
 
 .fly-ghost-outline {
-  border: 2px solid rgba(0, 122, 255, 0.25);
+  border: 2px solid var(--accent-ring-strong);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: var(--ghost-bg);
+  box-shadow: var(--ghost-shadow);
 }
 
 .fly-ghost-modal {
   border: 1px solid var(--border);
   border-radius: 18px;
   background: var(--panel);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--ghost-modal-shadow);
   overflow: hidden;
 }
 
@@ -1904,4 +1969,17 @@ body:has(.help-overlay:not(.hidden)) {
 
 .cart-badge-pulse {
   animation: cart-badge-pulse 350ms ease-out;
+}
+
+/* Dark mode overrides for inline SVG data URIs */
+@media (prefers-color-scheme: dark) {
+  .loc-enter-hint {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A84FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
+  }
+  .search-enter-hint {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A84FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
+  }
+  .add-new-med-from-search-btn .enter-symbol {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
+  }
 }
