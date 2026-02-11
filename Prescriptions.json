@@ -4269,14 +4269,14 @@
       "dispense": "",
       "prn": "",
       "form": "suspension",
-      "comments": "90mg/kg/day. Maximum dose = 3g/day.",
+      "comments": "90mg/kg/day. Maximum dose = 4g/day.",
       "population": "Pediatric",
       "subcategory": "Ear",
       "refill": "0",
       "weight_based": true,
       "dose_per_kg_mg": 45.0,
-      "max_dose_mg": 1500.0,
-      "search_text": "ent | pediatric | ear | otitis media (age <2 years, tm perforation, or recurrent aom) | amoxicillin | amoxil trimox | 45mg/kg/dose | 90mg/kg/day. maximum dose = 3g/day."
+      "max_dose_mg": 2000.0,
+      "search_text": "ent | pediatric | ear | otitis media (age <2 years, tm perforation, or recurrent aom) | amoxicillin | amoxil trimox | 45mg/kg/dose | 90mg/kg/day. maximum dose = 4g/day."
     },
     {
       "specialty": "ENT",
@@ -4293,14 +4293,14 @@
       "dispense": "",
       "prn": "",
       "form": "suspension",
-      "comments": "90mg/kg/day. Maximum dose = 3g/day.",
+      "comments": "90mg/kg/day. Maximum dose = 4g/day.",
       "population": "Pediatric",
       "subcategory": "Ear",
       "refill": "0",
       "weight_based": true,
       "dose_per_kg_mg": 45.0,
-      "max_dose_mg": 1500.0,
-      "search_text": "ent | pediatric | ear | otitis media (age 2-18 years, no tm perforation, and no recurrent aom) | amoxicillin | amoxil trimox | 45mg/kg/dose | 90mg/kg/day. maximum dose = 3g/day."
+      "max_dose_mg": 2000.0,
+      "search_text": "ent | pediatric | ear | otitis media (age 2-18 years, no tm perforation, and no recurrent aom) | amoxicillin | amoxil trimox | 45mg/kg/dose | 90mg/kg/day. maximum dose = 4g/day."
     },
     {
       "specialty": "ENT",
@@ -5775,7 +5775,7 @@
     },
     {
       "specialty": "Respiratory",
-      "med": "Amox-Clav (200/8.5mg/5mL)",
+      "med": "Amox-Clav (600mg/42.9mg)",
       "brands": [
         "Clavulin",
         "Augmentin"
@@ -5795,7 +5795,7 @@
       "weight_based": true,
       "dose_per_kg_mg": 45.0,
       "max_dose_mg": 2000.0,
-      "search_text": "respiratory | pediatric | pneumonia | amox-clav (200/8.5mg/5ml) | clavulin augmentin | 45mg/kg/dose | 90mg amox/kg/day. maximum dose = 4g amox/day."
+      "search_text": "respiratory | pediatric | pneumonia | amox-clav (600mg/42.9mg) | clavulin augmentin | 45mg/kg/dose | 90mg amox/kg/day. maximum dose = 4g amox/day."
     },
     {
       "specialty": "Respiratory",
