@@ -6,9 +6,9 @@ Converts a multi-sheet Excel workbook of medical prescriptions into a structured
 JSON file for use by the ED Prescriptions web application.
 
 Usage:
-    python "Prescriptions Excel-to-JSON Converter.py"
-    python "Prescriptions Excel-to-JSON Converter.py" --non-interactive
-    python "Prescriptions Excel-to-JSON Converter.py" --input custom.xlsx --output custom.json
+    python prescription_converter.py
+    python prescription_converter.py --non-interactive
+    python prescription_converter.py --input custom.xlsx --output custom.json
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ import argparse
 import json
 import logging
 import sys
+import tempfile
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -31,6 +32,21 @@ REQUIRED_COLUMNS: frozenset[str] = frozenset({"Med"})
 
 DEFAULT_EXCEL_FILENAME: str = "Prescriptions.xlsx"
 DEFAULT_OUTPUT_FILENAME: str = "Prescriptions.json"
+
+# Maps Excel column names to output JSON keys for simple text fields.
+_TEXT_FIELD_MAP: dict[str, str] = {
+    "Indication": "indication",
+    "Dose": "dose_text",
+    "Route": "route",
+    "Frequency": "frequency",
+    "Duration": "duration",
+    "Dispense": "dispense",
+    "PRN": "prn",
+    "Form": "form",
+    "Comments": "comments",
+    "Population": "population",
+    "Subcategory": "subcategory",
+}
 
 # ---------------------------------------------------------------------------
 # Logging Setup
@@ -55,8 +71,10 @@ def setup_logging(verbose: bool = False) -> None:
 
 
 def _is_empty(val: Any) -> bool:
-    """Check if a cell value is empty, NaN, or blank string."""
-    return pd.isna(val) or val == ""
+    """Check if a cell value is empty, NaN, or whitespace-only."""
+    if pd.isna(val):
+        return True
+    return isinstance(val, str) and val.strip() == ""
 
 
 def clean_text(val: Any) -> str:
@@ -98,7 +116,7 @@ def parse_numeric(val: Any, field_name: str, row_context: str) -> float | None:
 
 def parse_brands(raw_alias: Any) -> list[str]:
     """Parse comma-separated brand names into a list."""
-    if _is_empty(raw_alias) or str(raw_alias).strip() == "":
+    if _is_empty(raw_alias):
         return []
     return [b.strip() for b in str(raw_alias).split(",") if b.strip()]
 
@@ -113,10 +131,9 @@ def build_search_text(components: list[str]) -> str:
 # ---------------------------------------------------------------------------
 
 
-def validate_columns(df: pd.DataFrame, sheet_name: str) -> tuple[bool, list[str]]:
-    """Check that required columns exist. Returns (is_valid, missing_columns)."""
-    missing = REQUIRED_COLUMNS - set(df.columns)
-    return len(missing) == 0, list(missing)
+def validate_columns(df: pd.DataFrame) -> list[str]:
+    """Return list of missing required columns (empty if all present)."""
+    return sorted(REQUIRED_COLUMNS - set(df.columns))
 
 
 def validate_medication(med_obj: dict[str, Any]) -> list[str]:
@@ -130,6 +147,13 @@ def validate_medication(med_obj: dict[str, Any]) -> list[str]:
     if not med_obj.get("dose_text") and not med_obj.get("weight_based"):
         warnings.append(f"No dose specified for non-weight-based medication: {med_name}")
 
+    if med_obj.get("weight_based") and not med_obj.get("max_dose_mg"):
+        warnings.append(f"Weight-based medication missing max dose: {med_name}")
+
+    dose_per_kg = med_obj.get("dose_per_kg_mg")
+    if dose_per_kg is not None and dose_per_kg < 0:
+        warnings.append(f"Negative dose_per_kg ({dose_per_kg}) for: {med_name}")
+
     return warnings
 
 
@@ -140,50 +164,32 @@ def validate_medication(med_obj: dict[str, Any]) -> list[str]:
 
 def process_row(row: dict[str, Any], sheet_name: str) -> dict[str, Any] | None:
     """Process a single Excel row into a medication dict, or None to skip."""
-    med_value = row.get("Med")
-    if _is_empty(med_value) or str(med_value).strip() == "":
+    if _is_empty(row.get("Med")):
         return None
 
-    med_name = clean_text(med_value)
-    brands = parse_brands(row.get("Alias", ""))
-    indication = clean_text(row.get("Indication", ""))
-    dose_text = clean_text(row.get("Dose", ""))
-    route = clean_text(row.get("Route", ""))
-    frequency = clean_text(row.get("Frequency", ""))
-    duration = clean_text(row.get("Duration", ""))
-    dispense = clean_text(row.get("Dispense", ""))
-    refill = clean_refill(row.get("Refill", ""))
-    prn = clean_text(row.get("PRN", ""))
-    form = clean_text(row.get("Form", ""))
-    comments = clean_text(row.get("Comments", ""))
-    population = clean_text(row.get("Population", ""))
-    subcategory = clean_text(row.get("Subcategory", ""))
+    med_name = clean_text(row["Med"])
+    brands = parse_brands(row.get("Alias"))
 
+    # Batch-clean all simple text fields via the column map.
+    fields = {key: clean_text(row.get(col)) for col, key in _TEXT_FIELD_MAP.items()}
+
+    refill = clean_refill(row.get("Refill"))
     dose_per_kg = parse_numeric(row.get("DosePerKg"), "DosePerKg", med_name)
     max_dose = parse_numeric(row.get("MaxDose"), "MaxDose", med_name)
     weight_based = dose_per_kg is not None and dose_per_kg > 0
 
     search_text = build_search_text([
-        sheet_name, population, subcategory, indication,
-        med_name, " ".join(brands), dose_text, prn, comments,
+        sheet_name, fields["population"], fields["subcategory"],
+        fields["indication"], med_name, " ".join(brands),
+        fields["dose_text"], fields["prn"], fields["comments"],
     ])
 
     return {
         "specialty": sheet_name,
         "med": med_name,
         "brands": brands,
-        "indication": indication,
-        "dose_text": dose_text,
-        "route": route,
-        "frequency": frequency,
-        "duration": duration,
-        "dispense": dispense,
+        **fields,
         "refill": refill,
-        "prn": prn,
-        "form": form,
-        "comments": comments,
-        "population": population,
-        "subcategory": subcategory,
         "weight_based": weight_based,
         "dose_per_kg_mg": dose_per_kg,
         "max_dose_mg": max_dose,
@@ -200,8 +206,8 @@ def process_sheet(
     df = pd.read_excel(xls, sheet_name=sheet_name)
     df.columns = [str(c).strip() for c in df.columns]
 
-    is_valid, missing = validate_columns(df, sheet_name)
-    if not is_valid:
+    missing = validate_columns(df)
+    if missing:
         logger.error(
             "Sheet '%s' is missing required columns: %s - skipping",
             sheet_name, missing,
@@ -241,20 +247,34 @@ def load_excel(excel_path: Path) -> pd.ExcelFile | None:
 
 
 def write_json(output_path: Path, data: dict[str, Any]) -> bool:
-    """Write data to JSON and verify the output."""
+    """Write data to JSON atomically and verify the output.
+
+    Writes to a temp file first, verifies it is valid JSON, then
+    atomically replaces the target. This prevents a partial write
+    (e.g. disk full) from corrupting an existing output file.
+    """
+    tmp_path: Path | None = None
     try:
-        with open(output_path, "w", encoding="utf-8") as f:
+        fd, tmp_name = tempfile.mkstemp(
+            suffix=".json", dir=output_path.parent,
+        )
+        tmp_path = Path(tmp_name)
+
+        with open(fd, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
-        with open(output_path, "r", encoding="utf-8") as f:
+        with open(tmp_path, "r", encoding="utf-8") as f:
             verify = json.load(f)
             logger.info("JSON file is valid")
             logger.info("Contains %d medications", verify["source"]["record_count"])
 
+        tmp_path.replace(output_path)
         return True
 
     except Exception as e:
         logger.error("Error writing or verifying JSON file: %s", e)
+        if tmp_path is not None and tmp_path.exists():
+            tmp_path.unlink()
         return False
 
 

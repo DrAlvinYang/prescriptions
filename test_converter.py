@@ -13,20 +13,31 @@ from typing import Any
 import pandas as pd
 import pytest
 
-# Import the module under test
-# Note: Using importlib to handle the space in filename
-import importlib.util
-spec = importlib.util.spec_from_file_location(
-    "converter",
-    Path(__file__).parent / "Prescriptions Excel-to-JSON Converter.py"
-)
-converter = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(converter)
+import prescription_converter as converter
 
 
 # ---------------------------------------------------------------------------
 # Unit Tests: Helper Functions
 # ---------------------------------------------------------------------------
+
+
+class TestIsEmpty:
+    """Tests for _is_empty function."""
+
+    @pytest.mark.parametrize("input_val,expected", [
+        ("", True),
+        ("  ", True),
+        (None, True),
+        (float("nan"), True),
+        ("hello", False),
+        (0, False),
+        (0.0, False),
+        ("0", False),
+    ])
+    def test_is_empty_cases(self, input_val: Any, expected: bool) -> None:
+        """Test _is_empty handles various inputs correctly."""
+        result = converter._is_empty(input_val)
+        assert result == expected
 
 
 class TestCleanText:
@@ -142,15 +153,13 @@ class TestValidateColumns:
     def test_valid_columns(self) -> None:
         """Test valid DataFrame passes validation."""
         df = pd.DataFrame({"Med": ["Test"], "Other": ["Value"]})
-        is_valid, missing = converter.validate_columns(df, "TestSheet")
-        assert is_valid is True
+        missing = converter.validate_columns(df)
         assert missing == []
 
     def test_missing_required(self) -> None:
         """Test missing required column fails validation."""
         df = pd.DataFrame({"Other": ["Value"]})
-        is_valid, missing = converter.validate_columns(df, "TestSheet")
-        assert is_valid is False
+        missing = converter.validate_columns(df)
         assert "Med" in missing
 
 
@@ -198,10 +207,24 @@ class TestValidateMedication:
             "med": "Amoxicillin",
             "dose_text": "",
             "weight_based": True,
+            "max_dose_mg": 500.0,
             "specialty": "Anti-infective",
         }
         warnings = converter.validate_medication(med)
         assert warnings == []
+
+    def test_weight_based_missing_max_dose(self) -> None:
+        """Test weight-based medication without max dose generates warning."""
+        med = {
+            "med": "Amoxicillin",
+            "dose_text": "",
+            "weight_based": True,
+            "max_dose_mg": None,
+            "specialty": "Anti-infective",
+        }
+        warnings = converter.validate_medication(med)
+        assert len(warnings) == 1
+        assert "missing max dose" in warnings[0]
 
 
 # ---------------------------------------------------------------------------
@@ -450,10 +473,23 @@ class TestEdgeCases:
         result = converter.parse_numeric(999999.999, "test", "context")
         assert result == 999999.999
 
-    def test_negative_dose(self) -> None:
-        """Test negative dose values are preserved (data issue, not converter issue)."""
+    def test_negative_dose_parsed(self) -> None:
+        """Test parse_numeric accepts negative values (validation catches them)."""
         result = converter.parse_numeric(-5.0, "DosePerKg", "TestMed")
         assert result == -5.0
+
+    def test_negative_dose_per_kg_flagged(self) -> None:
+        """Test negative dose_per_kg generates a validation warning."""
+        med = {
+            "med": "TestMed",
+            "dose_text": "",
+            "weight_based": False,
+            "dose_per_kg_mg": -5.0,
+            "max_dose_mg": None,
+            "specialty": "Test",
+        }
+        warnings = converter.validate_medication(med)
+        assert any("Negative dose_per_kg" in w for w in warnings)
 
 
 # ---------------------------------------------------------------------------
