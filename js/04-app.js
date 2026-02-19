@@ -1017,9 +1017,16 @@ class Application {
   updateSearchPlaceholder() {
     const searchInput = Utils.getElement("searchInput");
     if (searchInput) {
-      searchInput.placeholder = this.managers.provider.isOwner()
-        ? "Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)"
-        : "Search med (e.g. keflex 5d)";
+      const isOwner = this.managers.provider.isOwner();
+      if (Utils.isMobile()) {
+        searchInput.placeholder = isOwner
+          ? "Search indication or med"
+          : "Search med (e.g. keflex 5d)";
+      } else {
+        searchInput.placeholder = isOwner
+          ? "Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)"
+          : "Search med (e.g. keflex 5d)";
+      }
     }
   }
 

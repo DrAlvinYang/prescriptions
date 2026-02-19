@@ -920,8 +920,14 @@ class ResetController {
     // Clear inputs
     document.getElementById("weightInput").value = "";
 
-    // Clear search
-    this.searchController.clear();
+    // Clear search (without re-focusing on mobile)
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.value = "";
+      searchInput.blur();
+    }
+    this.searchController.search("");
+    Utils.safeRemoveClass("clearSearchBtn", "visible");
 
     // Close cart dropdown if open
     this.cartController.closeCartDropdown();
@@ -934,8 +940,14 @@ class ResetController {
       window.undoManager.clear();
     }
 
-    // Focus search
-    document.getElementById("searchInput").focus();
+    // On mobile: exit search mode and return to folder/dashboard view
+    // On desktop: focus search for keyboard-ready state
+    if (Utils.isMobile()) {
+      document.body.classList.remove("mobile-search-active", "has-search-query");
+      document.documentElement.classList.remove("mobile-search-active");
+    } else {
+      searchInput?.focus();
+    }
   }
 }
 

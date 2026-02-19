@@ -2211,6 +2211,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .icon-btn.reset-btn .reset-icon {
+    display: block;
     width: 22px;
     height: 22px;
   }
