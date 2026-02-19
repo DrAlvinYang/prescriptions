@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="color-scheme" content="light dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="manifest" href="manifest.json" />
   <title>ED Prescriptions</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
@@ -124,7 +127,7 @@
 
       <div class="search-section">
         <div class="searchbar">
-          <input id="searchInput" type="text" placeholder="Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)" autocomplete="off" />
+          <input id="searchInput" type="search" enterkeyhint="search" placeholder="Search med (e.g. keflex 5d)" autocomplete="off" />
           <button id="clearSearchBtn" class="search-clear-btn" type="button" aria-label="Clear search">&times;</button>
           <button id="mobileSearchCancel" class="mobile-search-cancel mobile-only" type="button" aria-label="Cancel">&times;</button>
         </div>

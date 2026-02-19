@@ -2258,7 +2258,7 @@ body:has(.help-overlay:not(.hidden)) {
     height: 36px;
     font-size: 16px; /* Prevents iOS zoom on focus */
     border-radius: 10px;
-    padding: 6px 14px;
+    padding: 6px 36px 6px 14px;
     border: none;
     background: var(--hover-bg);
   }
@@ -2266,6 +2266,12 @@ body:has(.help-overlay:not(.hidden)) {
   .searchbar input:focus {
     box-shadow: none;
     border-color: transparent;
+  }
+
+  /* Hide native webkit search clear button (we use our own) */
+  .searchbar input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    display: none;
   }
 
   /* Content area: add bottom padding for fixed search bar */
