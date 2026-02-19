@@ -1497,8 +1497,8 @@ class ModalManager {
     const wrapper = document.querySelector(".provider-wrapper");
 
     // Default placeholders
-    const defaultNamePlaceholder = "e.g. John Smith";
-    const defaultCpsoPlaceholder = "e.g. 123456";
+    const defaultNamePlaceholder = Utils.isMobile() ? "Name (e.g. John Smith)" : "e.g. John Smith";
+    const defaultCpsoPlaceholder = Utils.isMobile() ? "CPSO (e.g. 123456)" : "e.g. 123456";
 
     // Clear field values
     nameInput.value = "";
