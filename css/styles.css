@@ -2550,10 +2550,10 @@ body:has(.help-overlay:not(.hidden)) {
     position: absolute;
   }
 
-  /* Override desktop hover/active/in-cart rules that leak into mobile */
-  .med-item:hover .med-item-actions,
-  .med-item.is-active .med-item-actions,
-  .med-item.has-overlay-actions:hover .med-item-overlay-actions {
+  /* Override desktop hover/active rules that leak into mobile via iOS sticky hover */
+  .med-item:hover:not(.mobile-actions-open) .med-item-actions,
+  .med-item.is-active:not(.mobile-actions-open) .med-item-actions,
+  .med-item.has-overlay-actions:hover:not(.mobile-actions-open) .med-item-overlay-actions {
     visibility: hidden;
   }
 

@@ -192,13 +192,25 @@ class MedicationRenderer {
       if (Utils.isMobile()) {
         // Toggle action overlay
         const wasOpen = div.classList.contains("mobile-actions-open");
+        const otherWasOpen = document.querySelector(".med-item.mobile-actions-open:not([data-key='" + div.dataset.key + "'])")
+          || document.querySelector(".cart-item.mobile-actions-open");
         document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
           el.classList.remove("mobile-actions-open")
         );
         document.querySelectorAll(".cart-item.mobile-actions-open").forEach(el =>
           el.classList.remove("mobile-actions-open")
         );
-        if (!wasOpen) div.classList.add("mobile-actions-open");
+        // Open only if toggling this med (not if dismissing another)
+        if (!wasOpen && !otherWasOpen) {
+          div.classList.add("mobile-actions-open");
+          // Briefly disable button pointer-events to prevent the opening
+          // tap from activating a button underneath the finger
+          const actions = div.querySelector(".med-item-overlay-actions, .med-item-actions");
+          if (actions) {
+            actions.style.pointerEvents = "none";
+            setTimeout(() => { actions.style.pointerEvents = ""; }, 300);
+          }
+        }
       } else {
         // Desktop: quick-print
         if (window.printController) {
