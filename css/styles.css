@@ -2308,8 +2308,12 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   /* --- SEARCH FULL-SCREEN TAKEOVER --- */
+  html.mobile-search-active,
   body.mobile-search-active {
     overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
   }
 
   body.mobile-search-active .searchbar {
