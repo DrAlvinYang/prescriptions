@@ -1,0 +1,50 @@
+{
+  "tables": {
+    "table1": {
+      "title": "Virtual ED / Called into Department",
+      "scenarios": {
+        "weekday_daytime": {
+          "travel": { "code": null, "name": "Travel Premium", "fee": null },
+          "patient1": { "code": null, "name": "First Patient Premium", "fee": null },
+          "patient2plus": { "code": null, "name": "Subsequent Patient Premium", "fee": null }
+        },
+        "weekday_daytime_sacrifice": {
+          "travel": { "code": null, "name": "Travel Premium", "fee": null },
+          "patient1": { "code": null, "name": "First Patient Premium", "fee": null },
+          "patient2plus": { "code": null, "name": "Subsequent Patient Premium", "fee": null }
+        },
+        "weekend_holiday": {
+          "travel": { "code": null, "name": "Travel Premium", "fee": null },
+          "patient1": { "code": null, "name": "First Patient Premium", "fee": null },
+          "patient2plus": { "code": null, "name": "Subsequent Patient Premium", "fee": null }
+        },
+        "weekday_evening": {
+          "travel": { "code": null, "name": "Travel Premium", "fee": null },
+          "patient1": { "code": null, "name": "First Patient Premium", "fee": null },
+          "patient2plus": { "code": null, "name": "Subsequent Patient Premium", "fee": null }
+        },
+        "night": {
+          "travel": { "code": null, "name": "Travel Premium", "fee": null },
+          "patient1": { "code": null, "name": "First Patient Premium", "fee": null },
+          "patient2plus": { "code": null, "name": "Subsequent Patient Premium", "fee": null }
+        }
+      }
+    },
+    "table2": {
+      "title": "Out-patient Department",
+      "scenarios": {}
+    },
+    "table3": {
+      "title": "In-patient Department",
+      "scenarios": {}
+    },
+    "table5": {
+      "title": "Table 5",
+      "scenarios": {}
+    },
+    "table9": {
+      "title": "Parking Lot",
+      "scenarios": {}
+    }
+  }
+}

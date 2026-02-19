@@ -1,0 +1,4458 @@
+[
+  {
+    "code": "002",
+    "name": "Typhoid and paratyphoid fevers",
+    "subcategory": "Intestinal Infectious Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "003",
+    "name": "Other salmonella infections",
+    "subcategory": "Intestinal Infectious Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "005",
+    "name": "Food poisoning",
+    "subcategory": "Intestinal Infectious Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "006",
+    "name": "Amoebiasis, amoebic dysentery",
+    "subcategory": "Intestinal Infectious Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "009",
+    "name": "Diarrhea, gastro-enteritis, viral gastroenteritis",
+    "subcategory": "Intestinal Infectious Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "010",
+    "name": "Primary tuberculous infection, including recent positive TB skin test conversion",
+    "subcategory": "Tuberculosis",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "011",
+    "name": "Pulmonary tuberculosis",
+    "subcategory": "Tuberculosis",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "012",
+    "name": "Other respiratory tuberculosis, tuberculous pleurisy with or without effusion",
+    "subcategory": "Tuberculosis",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "015",
+    "name": "Tuberculosis of bones and joints",
+    "subcategory": "Tuberculosis",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "017",
+    "name": "Tuberculosis of other organs",
+    "subcategory": "Tuberculosis",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "023",
+    "name": "Brucellosis",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "030",
+    "name": "Leprosy (Hansen's Disease)",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "032",
+    "name": "Diphtheria",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "033",
+    "name": "Whooping cough, pertussis",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "034",
+    "name": "Streptococcal sore throat, scarlet fever",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "035",
+    "name": "Erysipelas",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "036",
+    "name": "Meningococcal infection or meningitis",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "037",
+    "name": "Tetanus",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "038",
+    "name": "Septicemia, blood poisoning",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "039",
+    "name": "Actinomycotic infections",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "040",
+    "name": "Other bacterial diseases",
+    "subcategory": "Other Bacterial Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "042",
+    "name": "AIDS",
+    "subcategory": "Human Immunodeficiency Virus (HIV) Infection",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "043",
+    "name": "AIDS-related complex (ARC)",
+    "subcategory": "Human Immunodeficiency Virus (HIV) Infection",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "044",
+    "name": "Other human immunodeficiency virus infection",
+    "subcategory": "Human Immunodeficiency Virus (HIV) Infection",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "045",
+    "name": "Acute poliomyelitis",
+    "subcategory": "Non-arthropod-borne Viral Diseases of Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "047",
+    "name": "Meningitis due to enterovirus",
+    "subcategory": "Non-arthropod-borne Viral Diseases of Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "049",
+    "name": "Other non-arthropod-borne viral diseases of central nervous system",
+    "subcategory": "Non-arthropod-borne Viral Diseases of Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "052",
+    "name": "Chickenpox",
+    "subcategory": "Viral Diseases Accompanied by Rash",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "053",
+    "name": "Herpes zoster, shingles",
+    "subcategory": "Viral Diseases Accompanied by Rash",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "054",
+    "name": "Herpes simplex, cold sore",
+    "subcategory": "Viral Diseases Accompanied by Rash",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "055",
+    "name": "Measles",
+    "subcategory": "Viral Diseases Accompanied by Rash",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "056",
+    "name": "German measles, rubella",
+    "subcategory": "Viral Diseases Accompanied by Rash",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "057",
+    "name": "Other viral disorders accompanied by rash (e.g., roseola)",
+    "subcategory": "Viral Diseases Accompanied by Rash",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "062",
+    "name": "Mosquito-borne viral encephalitis",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "066",
+    "name": "Other arthropod-borne viral diseases",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "070",
+    "name": "Viral hepatitis",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "072",
+    "name": "Mumps",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "074",
+    "name": "Diseases due to Coxsackie virus: pleurodynia, myocarditis",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "075",
+    "name": "Infectious mononucleosis, glandular fever",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "078",
+    "name": "Warts",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "079",
+    "name": "Other viral diseases",
+    "subcategory": "Other Viral Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "080",
+    "name": "Coronavirus",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "097",
+    "name": "Syphilis-all sites and stages",
+    "subcategory": "Venereal Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "098",
+    "name": "Gonococcal infections",
+    "subcategory": "Venereal Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "099",
+    "name": "Other venereal diseases (e.g., herpes genitalis)",
+    "subcategory": "Venereal Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "110",
+    "name": "Ringworm of scalp, beard, or foot",
+    "subcategory": "Mycoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "112",
+    "name": "Candidiasis, monilia infection-all sites, thrush",
+    "subcategory": "Mycoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "115",
+    "name": "Histoplasmosis",
+    "subcategory": "Mycoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "117",
+    "name": "Other mycoses",
+    "subcategory": "Mycoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "122",
+    "name": "Echinococcosis, hydadid cyst-all sites",
+    "subcategory": "Helminthiases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "123",
+    "name": "Taenia or tapeworm infestation-all types",
+    "subcategory": "Helminthiases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "127",
+    "name": "Pinworm infestation",
+    "subcategory": "Helminthiases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "128",
+    "name": "Other helminthiases",
+    "subcategory": "Helminthiases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "130",
+    "name": "Toxoplasmosis",
+    "subcategory": "Other Infectious and Parasitic Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "131",
+    "name": "Trichomonas infection",
+    "subcategory": "Other Infectious and Parasitic Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "132",
+    "name": "Head or body lice, pediculosis",
+    "subcategory": "Other Infectious and Parasitic Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "133",
+    "name": "Scabies, acariasis",
+    "subcategory": "Other Infectious and Parasitic Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "135",
+    "name": "Sarcoidosis",
+    "subcategory": "Other Infectious and Parasitic Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "136",
+    "name": "Other infectious or parasitic diseases",
+    "subcategory": "Other Infectious and Parasitic Diseases",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Infectious"
+  },
+  {
+    "code": "140",
+    "name": "Lip",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "141",
+    "name": "Tongue",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "142",
+    "name": "Major salivary glands",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "143",
+    "name": "Gum",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "144",
+    "name": "Floor of mouth",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "145",
+    "name": "Other and unspecified parts of mouth",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "146",
+    "name": "Oropharynx",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "147",
+    "name": "Nasopharynx",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "148",
+    "name": "Hypopharynx",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "149",
+    "name": "Other and ill-defined sites within the lip, oral cavity, and pharynx",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "150",
+    "name": "Esophagus",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "151",
+    "name": "Stomach",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "152",
+    "name": "Small intestine, including duodenum",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "153",
+    "name": "Large intestine-excluding rectum",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "154",
+    "name": "Rectum, rectosigmoid and anus",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "155",
+    "name": "Primary malignancy of liver (not secondary spread or metastatic disease)",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "156",
+    "name": "Gallbladder and extra hepatic bile ducts",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "157",
+    "name": "Pancreas",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "158",
+    "name": "Retroperitoneum and peritoneum",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "159",
+    "name": "Other and ill-defined sites within the digestive organs and peritoneum",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "160",
+    "name": "Nasal cavities, middle ear, and accessory sinuses",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "161",
+    "name": "Larynx, trachea",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "162",
+    "name": "Bronchus, lung",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "163",
+    "name": "Pleura",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "164",
+    "name": "Thymus, heart, and mediastinum",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "165",
+    "name": "Other sites within the respiratory system and intrathoracic organs",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "170",
+    "name": "Bone",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "171",
+    "name": "Connective and other soft tissue",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "172",
+    "name": "Melanoma of skin",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "173",
+    "name": "Other skin malignancies",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "174",
+    "name": "Female breast",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "175",
+    "name": "Male breast",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "179",
+    "name": "Uterus, part unspecified",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "180",
+    "name": "Cervix",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "181",
+    "name": "Placenta",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "182",
+    "name": "Body of uterus",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "183",
+    "name": "Ovary, fallopian tube, broad ligament",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "184",
+    "name": "Vagina, vulva, other female genital organs",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "185",
+    "name": "Prostate",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "186",
+    "name": "Testis",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "187",
+    "name": "Other male genital organs",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "188",
+    "name": "Bladder",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "189",
+    "name": "Kidney, other urinary organs",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "190",
+    "name": "Eye",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "191",
+    "name": "Brain",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "192",
+    "name": "Cranial nerves, spinal cord, other parts of nervous system",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "193",
+    "name": "Thyroid",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "194",
+    "name": "Other endocrine glands and related structures",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "195",
+    "name": "Other ill-defined sites",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "196",
+    "name": "Secondary neoplasm of lymph nodes",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "197",
+    "name": "Secondary neoplasm of respiratory and digestive systems",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "198",
+    "name": "Metastatic or secondary malignant neoplasm, carcinomatosis",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "199",
+    "name": "Other malignant neoplasms",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "200",
+    "name": "Lymphosarcoma, reticulosarcoma",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "201",
+    "name": "Hodgkin's disease",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "202",
+    "name": "Other malignant neoplasms of lymphoid and histiocytic tissue",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "203",
+    "name": "Multiple myeloma, plasma cell leukemia",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "204",
+    "name": "Lymphoid leukemia (including lymphatic and histiocytic leukemia)",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "205",
+    "name": "Myeloid leukemia (including granulocytic and myelogenous leukemia)",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "206",
+    "name": "Monocytic leukemia",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "207",
+    "name": "Other specified leukemia",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "208",
+    "name": "Other types of leukemia",
+    "subcategory": "Malignant Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "210",
+    "name": "Lip, oral cavity, pharynx",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "211",
+    "name": "Other parts of digestive system, peritoneum",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "212",
+    "name": "Respiratory and intra-thoracic organs",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "213",
+    "name": "Bone, cartilage",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "214",
+    "name": "Lipoma",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "215",
+    "name": "Connective and other soft tissue",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "216",
+    "name": "Skin (e.g., pigmented naevus, dermatofibroma)",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "217",
+    "name": "Breast",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "218",
+    "name": "Uterine fibroid, leiomyoma",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "219",
+    "name": "Other benign neoplasms of uterus (e.g., cervical polyp)",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "220",
+    "name": "Ovary (e.g., ovarian cyst)",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "221",
+    "name": "Other benign neoplasms of female genital organs",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "222",
+    "name": "Benign neoplasms of male genital organs",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "223",
+    "name": "Kidney, ureter, bladder",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "224",
+    "name": "Eye",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "225",
+    "name": "Brain, spinal cord, peripheral nerves",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "226",
+    "name": "Thyroid (e.g., adenoma or cystadenoma)",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "227",
+    "name": "Other endocrine glands and related structures",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "228",
+    "name": "Haemangioma and lymphangiomax",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "229",
+    "name": "Other benign neoplasms",
+    "subcategory": "Benign Neoplasms",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "230",
+    "name": "Digestive organs",
+    "subcategory": "Carcinoma in Situ",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "231",
+    "name": "Respiratory system",
+    "subcategory": "Carcinoma in Situ",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "232",
+    "name": "Skin",
+    "subcategory": "Carcinoma in Situ",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "233",
+    "name": "Breast and genito-urinary system",
+    "subcategory": "Carcinoma in Situ",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "234",
+    "name": "Other",
+    "subcategory": "Carcinoma in Situ",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Neoplasms"
+  },
+  {
+    "code": "240",
+    "name": "Simple thyroid goitre",
+    "subcategory": "Endocrine Glands",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "241",
+    "name": "Nontoxic nodular goitre",
+    "subcategory": "Endocrine Glands",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "242",
+    "name": "Hyperthyroidism, thyrotoxicosis, exophthalmic goitre",
+    "subcategory": "Endocrine Glands",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "243",
+    "name": "Hypothyroidism - congenital (i.e., cretinism)",
+    "subcategory": "Endocrine Glands",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "244",
+    "name": "Hypothyroidism - acquired (i.e., myxedema)",
+    "subcategory": "Endocrine Glands",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "245",
+    "name": "Thyroiditis",
+    "subcategory": "Endocrine Glands",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "248",
+    "name": "mellitus with ocular complications",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "249",
+    "name": "Pre-diabetes",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "250",
+    "name": "Diabetes mellitus, including complications",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "251",
+    "name": "Other disorders of pancreatic internal secretions (e.g., insulinoma neo-natal hypoglycemia, Zollinger -Ellison syndrome)",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "252",
+    "name": "Parathyroid gland disorders (e.g., hyperparathyroidism, hypoparathyroidism)",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "253",
+    "name": "Pituitary gland disorders (e.g., acromegaly, dwarfism, diabetes insipidus)",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "255",
+    "name": "Adrenal gland disorders (e.g., Cushing's syndrome, hyperaldosteronism, Conn's syndrome, adrenogenital syndrome, Addison's disease)",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "256",
+    "name": "Ovarian dysfunction (e.g., ovarian failure, polycystic ovaries, Stein-Leventhal syndrome)",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "257",
+    "name": "Testicular dysfunction",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "259",
+    "name": "Other endocrine disorders",
+    "subcategory": "Diabetes",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "263",
+    "name": "Unspecified malnutrition",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "269",
+    "name": "Vitamin and other nutritional deficiencies",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "270",
+    "name": "Disorders of amino-acid metabolism (e.g., cystinuria, Fanconi syndrome)",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "272",
+    "name": "Disorders of lipoid metabolism (e.g., hypercholesterolemia, lipoprotein disorders)",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "274",
+    "name": "Gout",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "277",
+    "name": "Other metabolic disorders",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "278",
+    "name": "Obesity",
+    "subcategory": "Nutritional and Metabolic Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "279",
+    "name": "Hypogammaglobulinemia, agammaglobulinemia, other immunity disorders",
+    "subcategory": "Immunity Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Endocrine"
+  },
+  {
+    "code": "280",
+    "name": "Iron deficiency anaemia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "281",
+    "name": "Pernicious anaemia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "282",
+    "name": "Hereditary hemolytic anaemia (e.g., thalassemia, sickle-cell anaemia)",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "283",
+    "name": "Acquired hemolytic anaemia, excluding hemolytic disease of newborn",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "284",
+    "name": "Aplastic anaemia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "285",
+    "name": "Other anaemias",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "286",
+    "name": "Coagulation defects (e.g., hemophilia, other factor deficiencies)",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "287",
+    "name": "Purpura, thrombocytopenia, other hemorrhagic conditions",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "288",
+    "name": "Neutropenia, acranulocytosis, eosinophilia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "289",
+    "name": "Other diseases of blood, marrow, spleen",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Blood"
+  },
+  {
+    "code": "290",
+    "name": "Senile dementia, presenile dementia",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "291",
+    "name": "Alcoholic psychosis, delirium tremens, Korsakov's psychosis",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "292",
+    "name": "Drug psychosis",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "295",
+    "name": "Schizophrenia",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "296",
+    "name": "Manic depressive psychosis, involutional melancholia",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "297",
+    "name": "Paranoid states",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "298",
+    "name": "Other psychoses",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "299",
+    "name": "Childhood psychoses (e.g., autism)",
+    "subcategory": "Psychoses",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "300",
+    "name": "Anxiety neurosis, hysteria, neurasthenia, obsessive compulsive neurosis, reactive depression",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "301",
+    "name": "Personality disorders (e.g., paranoid personality, schizoid personality, obsessive compulsive personality)",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "302",
+    "name": "Sexual deviations",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "303",
+    "name": "Alcoholism",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "304",
+    "name": "Drug dependence, drug addiction",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "305",
+    "name": "Tobacco abuse",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "306",
+    "name": "Psychosomatic disturbances",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "307",
+    "name": "Habit spasms, tics, stuttering, tension headaches, anorexia nervosa, sleep disorders, enuresis",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "309",
+    "name": "Adjustment reaction",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "311",
+    "name": "Depressive or other nonpsychotic disorders, not elsewhere classified",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "313",
+    "name": "Behaviour disorders of childhood and adolescence",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "314",
+    "name": "Hyperkinetic syndrome of childhood",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "315",
+    "name": "Specified delays in development (e.g., dyslexia, dyslalia, motor retardation)",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "319",
+    "name": "Mental retardation",
+    "subcategory": "Neuroses and Personality Disorders",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Mental"
+  },
+  {
+    "code": "320",
+    "name": "Bacterial meningitis",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "321",
+    "name": "Meningitis due to other organisms",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "323",
+    "name": "Encephalitis, encephalomyelitis",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "330",
+    "name": "Tay-Sachs disease",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "331",
+    "name": "Other cerebral degenerations",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "332",
+    "name": "Parkinson's disease",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "335",
+    "name": "Anterior Horn Cell Disease",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "340",
+    "name": "Multiple sclerosis",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "343",
+    "name": "Cerebral palsy",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "345",
+    "name": "Epilepsy",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "346",
+    "name": "Migraine",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "349",
+    "name": "Other diseases of central nervous system (e.g., brain abscess, narcolepsy, motor neuron disease, syringomyelia)",
+    "subcategory": "Central Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "350",
+    "name": "Trigeminal neuralgia, tic douloureux",
+    "subcategory": "Peripheral Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "351",
+    "name": "Bell's palsy, facial nerve disorders",
+    "subcategory": "Peripheral Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "352",
+    "name": "Disorders of other cranial nerves",
+    "subcategory": "Peripheral Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "356",
+    "name": "Idiopathic peripheral neuritis",
+    "subcategory": "Peripheral Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "358",
+    "name": "Myoneural disorders (e.g., myasthenia gravis)",
+    "subcategory": "Peripheral Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "359",
+    "name": "Muscular dystrophies",
+    "subcategory": "Peripheral Nervous System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "360",
+    "name": "Aphakia",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "361",
+    "name": "Retinal detachment",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "362",
+    "name": "Hypertensive retinopathy and other retinal diseases not specifically listed",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "363",
+    "name": "Chorioretinitis",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "364",
+    "name": "Iritis",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "365",
+    "name": "Glaucoma",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "366",
+    "name": "Cataract, excludes diabetic or congenital",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "367",
+    "name": "Myopia, astigmatism (except for the specific conditions defined by diagnostic code 371), presbyopia and other disorders of refraction and accommodation",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "368",
+    "name": "Amblyopia, visual field defects",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "369",
+    "name": "Blindness and low vision",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "370",
+    "name": "Keratitis, corneal ulcer",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "371",
+    "name": "High Myopia greater than 9 diopters; Irregular Astigmatism resulting from corneal grafting or corneal scarring from diseases",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "372",
+    "name": "Conjunctiva disorders (e.g., conjunctivitis, pterygium)",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "373",
+    "name": "Blepharitis, chalazion, stye",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "374",
+    "name": "Other eyelid disorders (e.g., entropion, ectropion, ptosis)",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "375",
+    "name": "Dacryocystitis, obstruction of lacrimal duct",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "376",
+    "name": "Keratoconus",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "377",
+    "name": "Optic neuritis",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "378",
+    "name": "Strabismus",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "379",
+    "name": "Other disorders of the eye",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "380",
+    "name": "Otitis externa",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "381",
+    "name": "Serous otitis media, eustachian tube disorders",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "382",
+    "name": "Suppurative otitis media",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "383",
+    "name": "Mastoiditis",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "384",
+    "name": "Perforation of tympanic membrane",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "386",
+    "name": "Meniere's disease, labyrinthitis",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "387",
+    "name": "Otosclerosis",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "388",
+    "name": "Wax or cerumen in ear, other disorders of ear and mastoid, tinnitus",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "389",
+    "name": "Deafness",
+    "subcategory": "Ear and Mastoid",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "390",
+    "name": "Rheumatic fever without endocarditis, myocarditis or pericarditis",
+    "subcategory": "Rheumatic Fever and Rheumatic Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "391",
+    "name": "Rheumatic fever with endocarditis, myocarditis, or pericarditis",
+    "subcategory": "Rheumatic Fever and Rheumatic Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "392",
+    "name": "Chorea",
+    "subcategory": "Rheumatic Fever and Rheumatic Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "394",
+    "name": "Mitral stenosis, mitral insufficiency",
+    "subcategory": "Rheumatic Fever and Rheumatic Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "398",
+    "name": "Other rheumatic heart disease",
+    "subcategory": "Rheumatic Fever and Rheumatic Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "401",
+    "name": "Essential, benign hypertension",
+    "subcategory": "Hypertensive Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "402",
+    "name": "Hypertensive heart disease",
+    "subcategory": "Hypertensive Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "403",
+    "name": "Hypertensive renal disease",
+    "subcategory": "Hypertensive Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "410",
+    "name": "Acute myocardial infarction",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "412",
+    "name": "Old myocardial infarction, chronic coronary artery disease of arteriosclerotic heart disease, without symptoms",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "413",
+    "name": "Acute coronary insufficiency, angina pectoris, acute ischaemic heart disease",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "415",
+    "name": "Pulmonary embolism, pulmonary infarction",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "426",
+    "name": "Heart blocks, other conduction disorders",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "427",
+    "name": "Paroxysmal tachycardia, atrial or ventricular flutter or fibrillation, cardiac arrest, other arrhythmias",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "428",
+    "name": "Congestive heart failure",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "429",
+    "name": "All other forms of heart disease",
+    "subcategory": "Ischaemic and Other Forms of Heart Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "432",
+    "name": "Intracranial Haemorrhage",
+    "subcategory": "Cerebrovascular Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "435",
+    "name": "Transient cerebral ischaemia",
+    "subcategory": "Cerebrovascular Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "436",
+    "name": "Acute cerebrovascular accident, C.V.A., stroke",
+    "subcategory": "Cerebrovascular Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "437",
+    "name": "Chronic arteriosclerotic cerebrovascular disease, hypertensive encephalopathy",
+    "subcategory": "Cerebrovascular Disease",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "440",
+    "name": "Generalized arteriosclerosis, atherosclerosis",
+    "subcategory": "Diseases of Arteries",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "441",
+    "name": "Aortic aneurysm (non-syphilitic)",
+    "subcategory": "Diseases of Arteries",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "443",
+    "name": "Raynaud's disease, Buerger's disease, peripheral vascular disease, intermittent claudication",
+    "subcategory": "Diseases of Arteries",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "446",
+    "name": "Polyarteritis nodosa, temporal arteritis",
+    "subcategory": "Diseases of Arteries",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "447",
+    "name": "Other disorders of arteries",
+    "subcategory": "Diseases of Arteries",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "451",
+    "name": "Phlebitis, thrombophlebitis",
+    "subcategory": "Diseases of Veins and Lymphatics",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "452",
+    "name": "Portal vein thrombosis",
+    "subcategory": "Diseases of Veins and Lymphatics",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "454",
+    "name": "Varicose veins of lower extremities with or without ulcer",
+    "subcategory": "Diseases of Veins and Lymphatics",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "455",
+    "name": "Haemorrhoids",
+    "subcategory": "Diseases of Veins and Lymphatics",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "457",
+    "name": "Lymphangitis, lymphedema",
+    "subcategory": "Diseases of Veins and Lymphatics",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "459",
+    "name": "Other disorders of circulatory system",
+    "subcategory": "Diseases of Veins and Lymphatics",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "460",
+    "name": "Acute nasopharyngitis, common cold",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "461",
+    "name": "Acute sinusitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "463",
+    "name": "Acute tonsillitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "464",
+    "name": "Acute laryngitis, tracheitis, croup, epiglottis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "466",
+    "name": "Acute bronchitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "470",
+    "name": "Deviated nasal septum",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "471",
+    "name": "Nasal polyp",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "473",
+    "name": "Chronic sinusitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "474",
+    "name": "Hypertrophy or chronic infection of tonsils and/or adenoids",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "477",
+    "name": "Allergic rhinitis, hay fever",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "486",
+    "name": "Pneumonia - all types",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "487",
+    "name": "Influenza",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "491",
+    "name": "Chronic bronchitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "492",
+    "name": "Emphysema",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "493",
+    "name": "Asthma, allergic bronchitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "494",
+    "name": "Bronchiectasis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "496",
+    "name": "Other chronic obstructive pulmonary disease",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "501",
+    "name": "Asbestosis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "502",
+    "name": "Silicosis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "511",
+    "name": "Pleurisy with or without effusion",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "512",
+    "name": "Spontaneous pneumothorax, tension pneumothorax",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "515",
+    "name": "Pulmonary fibrosis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "518",
+    "name": "Atelectasis, other diseases of lung",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "519",
+    "name": "Other diseases of respiratory system",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "521",
+    "name": "Dental caries, other diseases of hard tissues of teeth (system inserted for dentists' claims)",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "523",
+    "name": "Gingivitis, periodontal disease",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "524",
+    "name": "Prognathism, micrognathism, macrognathism, retrognathism, malocclusion, temporomandibular joint disorders",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "525",
+    "name": "Other conditions of teeth and supporting structure",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "527",
+    "name": "Disease of salivary glands",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "528",
+    "name": "Stomatitis, aphthous ulcers, canker sore, diseases of lips",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "529",
+    "name": "Glossitis, other conditions of the tongue",
+    "subcategory": "Diseases of Oral Cavity, Salivary Glands and Jaws",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "530",
+    "name": "Esophagitis, cardiospasm, ulcer of esophagus; stricture, stenosis, or obstruction of esophagus",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "531",
+    "name": "Gastric ulcer, with or without haemorrhage or perforation",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "532",
+    "name": "Duodenal ulcer, with or without haemorrhage or perforation",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "534",
+    "name": "Stomal ulcer, gastrojejunal ulcer",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "535",
+    "name": "Gastritis",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "536",
+    "name": "Hyperchlorhydria, hypochlorhydria, dyspepsia, indigestion",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "537",
+    "name": "Other disorders of stomach and duodenum",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "540",
+    "name": "Acute appendicitis, with or without abscess or peritonitis",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "545",
+    "name": "Colon Positive Fecal Occult Blood",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "546",
+    "name": "Colon Surveillance",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "547",
+    "name": "Colon Family history of colon cancer",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "548",
+    "name": "Colon Screening",
+    "subcategory": "Diseases of Esophagus, Stomach and Duodenum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "550",
+    "name": "Inguinal hernia, with or without obstruction",
+    "subcategory": "Hernia",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "552",
+    "name": "Femoral, umbilical, ventral, diaphragmatic or hiatus hernia with obstruction",
+    "subcategory": "Hernia",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "553",
+    "name": "Femoral, umbilical, ventral, diaphragmatic or hiatus hernia without obstruction",
+    "subcategory": "Hernia",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "555",
+    "name": "Regional enteritis, Crohn's disease",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "556",
+    "name": "Ulcerative colitis",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "557",
+    "name": "Mesenteric artery occlusion, other vascular conditions of intestine",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "560",
+    "name": "Intestinal obstruction, intussusception, paralytic ileus, volvulus, impaction of intestine",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "562",
+    "name": "Diverticulitis or diverticulosis of large or small intestine",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "564",
+    "name": "Spastic colon, irritable colon, mucous colitis, constipation",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "565",
+    "name": "Anal fissure, anal fistula",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "566",
+    "name": "Abscess of anal or rectal regions",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "567",
+    "name": "Peritonitis, with or without abscess",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "569",
+    "name": "Anal or rectal polyp, rectal prolapse, anal or rectal stricture, rectal bleeding, other disorders of intestine",
+    "subcategory": "Other Diseases of Intestine and Peritoneum",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "571",
+    "name": "Cirrhosis of the liver (e.g., alcoholic cirrhosis, biliary cirrhosis)",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "573",
+    "name": "Other diseases of the liver",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "574",
+    "name": "Cholelithiasis (gall stones) with or without cholecystitis",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "575",
+    "name": "Cholecystitis, without gall stones",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "576",
+    "name": "Other diseases of gallbladder and biliary ducts",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "577",
+    "name": "Diseases of pancreas",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "579",
+    "name": "Malabsorption syndrome, sprue, celiac disease",
+    "subcategory": "Other Diseases of Digestive System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "580",
+    "name": "Acute glomerulonephritis",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "581",
+    "name": "Nephrotic Syndrome",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "584",
+    "name": "Acute renal failure",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "585",
+    "name": "Chronic renal failure, uremia",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "590",
+    "name": "Acute or chronic pyelonephritis, pyelitis, abscess",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "591",
+    "name": "Hydronephrosis",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "592",
+    "name": "Stone in kidney or ureter",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "593",
+    "name": "Other disorders of kidney or ureter",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "595",
+    "name": "Cystitis",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "597",
+    "name": "Non-specific urethritis (not sexually transmitted)",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "598",
+    "name": "Urethral stricture",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "599",
+    "name": "Other disorders of urinary tract",
+    "subcategory": "Diseases of the Urinary System",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "600",
+    "name": "Benign prostatic hypertrophy",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "601",
+    "name": "Prostatitis",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "603",
+    "name": "Hydrocele",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "604",
+    "name": "Orchitis, epididymitis",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "605",
+    "name": "Phimosis, paraphimosis",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "606",
+    "name": "Male infertility, oligospermia, azoospermia",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "608",
+    "name": "Seminal vesiculitis, spermatocele, torsion of cord or testis, undescended testicle, other disorders of male genital organs",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "609",
+    "name": "Newborn circumcision",
+    "subcategory": "Diseases of Male Genital Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "610",
+    "name": "Cystic mastitis, chronic cystic disease, breast cyst, fibro-adenosis of breast",
+    "subcategory": "Diseases of Breast and Female Pelvic Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "611",
+    "name": "Breast abscess, gynecomastia, hypertrophy, other disorders of breast",
+    "subcategory": "Diseases of Breast and Female Pelvic Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "614",
+    "name": "Acute or chronic salpingitis or oophoritis or abscess, pelvic inflammatory disease",
+    "subcategory": "Diseases of Breast and Female Pelvic Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "615",
+    "name": "Acute or chronic endometritis",
+    "subcategory": "Diseases of Breast and Female Pelvic Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "616",
+    "name": "Cervicitis, vaginitis, cyst or abscess of Bartholin's gland, vulvitis",
+    "subcategory": "Diseases of Breast and Female Pelvic Organs",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "617",
+    "name": "Endometriosis",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "618",
+    "name": "Cystocele, rectocele, urethrocele, enterocele, uterine prolapse",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "621",
+    "name": "Retroversion of uterus, endometrial hyperplasia, other disorders of uterus",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "622",
+    "name": "Cervical erosion, cervical dysplasia",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "623",
+    "name": "Stricture or stenosis of vagina",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "625",
+    "name": "Dyspareunia, dysmenorrhea, premenstrual tension, stress incontinence",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "626",
+    "name": "Disorders of menstruation",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "627",
+    "name": "Menopause, postmenopausal bleeding",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "628",
+    "name": "Infertility",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "629",
+    "name": "Other disorders of female genital organs",
+    "subcategory": "Other Disorders of Female Genital Tract",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "632",
+    "name": "Missed abortion",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "633",
+    "name": "Ectopic pregnancy",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "634",
+    "name": "Incomplete abortion, complete abortion",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "635",
+    "name": "Therapeutic abortion",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "640",
+    "name": "Threatened abortion, haemorrhage in early pregnancy",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "641",
+    "name": "Abruptio placentae, placenta praevia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "642",
+    "name": "Pre-eclampsia, eclampsia, toxaemia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "643",
+    "name": "Vomiting, hyperemesis gravidarum",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "644",
+    "name": "False labour, threatened labour",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "645",
+    "name": "Prolonged pregnancy",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "646",
+    "name": "Other complications of pregnancy (e.g., vulvitis, vaginitis, cervicitis, pyelitis, cystitis)",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "650",
+    "name": "Normal delivery, uncomplicated pregnancy",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "651",
+    "name": "Multiple pregnancy",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "652",
+    "name": "Unusual position of fetus, malpresentation",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "653",
+    "name": "Cephalo-pelvic disproportion",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "656",
+    "name": "Foetal distress",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "658",
+    "name": "Premature rupture of membrane",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "660",
+    "name": "Obstructed labour",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "661",
+    "name": "Uterine inertia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "662",
+    "name": "Prolonged labour",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "664",
+    "name": "Perineal lacerations",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "666",
+    "name": "Post-Partum haemorrhage",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "667",
+    "name": "Retained placenta",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "669",
+    "name": "Delivery with other complications",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "671",
+    "name": "Post-Partum thrombophlebitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "675",
+    "name": "Post-Partum mastitis or nipple infection",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "677",
+    "name": "Post-Partum pulmonary",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Pregnancy"
+  },
+  {
+    "code": "680",
+    "name": "Boil, carbuncle, furunculosis",
+    "subcategory": "Infections",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "682",
+    "name": "Cellulitis, abscess",
+    "subcategory": "Infections",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "683",
+    "name": "Acute lymphadenitis",
+    "subcategory": "Infections",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "684",
+    "name": "Impetigo",
+    "subcategory": "Infections",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "685",
+    "name": "Pilonidal cyst or abscess",
+    "subcategory": "Infections",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "686",
+    "name": "Pyoderma, pyogenic granuloma, other local infections",
+    "subcategory": "Infections",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "690",
+    "name": "Seborrheic dermatitis",
+    "subcategory": "Other Inflammatory Conditions",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "691",
+    "name": "Eczema, atopic dermatitis, neurodermatitis",
+    "subcategory": "Other Inflammatory Conditions",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "692",
+    "name": "Contact dermatitis",
+    "subcategory": "Other Inflammatory Conditions",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "695",
+    "name": "Erythema multiforme, erythema nodosum, acne, rosacea, lupus erythematosus, intertrigo",
+    "subcategory": "Other Inflammatory Conditions",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "696",
+    "name": "Psoriasis",
+    "subcategory": "Other Inflammatory Conditions",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "698",
+    "name": "Pruritus ani, other itchy conditions",
+    "subcategory": "Other Inflammatory Conditions",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "700",
+    "name": "Corns, calluses",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "701",
+    "name": "Hyperkeratosis, scleroderma, keloid",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "703",
+    "name": "Ingrown nail, onychogryposis",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "704",
+    "name": "Alopecia",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "706",
+    "name": "Acne, acne vulgaris, sebaceous cyst",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "707",
+    "name": "Debcubitus ulcer, bed sore",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "708",
+    "name": "Allergic urticaria",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "709",
+    "name": "Other disorders of skin and subcutaneous tissue",
+    "subcategory": "Other Diseases of Skin and Subcutaneous Tissue",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Skin"
+  },
+  {
+    "code": "710",
+    "name": "Disseminated lupus erythematosus, generalized scleroderma, dermatomyositis, polymyositis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "711",
+    "name": "Pyogenic arthritis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "714",
+    "name": "Rheumatoid arthritis, Still's disease",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "715",
+    "name": "Osteoarthritis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "716",
+    "name": "Traumatic arthritis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "718",
+    "name": "Joint derangement, recurrent dislocation, ankylosis, meniscus or cartilage tear, loose body in joint",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "720",
+    "name": "Ankylosing spondylitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "721",
+    "name": "Seronegative Spondyloarthropathies",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "722",
+    "name": "Intervertebral disc disorders",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "724",
+    "name": "Lumbar strain, lumbago, coccydynia, sciatica",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "725",
+    "name": "Polymyalgia rheumatica",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "726",
+    "name": "Fibromyalgia",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "727",
+    "name": "Synovitis, tenosynovitis, bursitis, bunion, ganglion",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "728",
+    "name": "Dupuytren's contracture",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "729",
+    "name": "Fibrositis, myositis, muscular rheumatism",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "730",
+    "name": "Osteomyelitis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "731",
+    "name": "Osteitis deformans, Paget's disease of bone",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "732",
+    "name": "Osteochondritis, Legg-Perthes disease, Osgood-Schlatter disease, osteochondritis dissecans",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "733",
+    "name": "Osteoporosis, spontaneous fracture, other disorders of bone and cartilage",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "734",
+    "name": "Flat foot, pes planus",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "735",
+    "name": "Hallux valgus, hallux varus, hammer toe",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "737",
+    "name": "Scoliosis, kyphosis, lordosis",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "739",
+    "name": "Other diseases of musculoskeletal system and connective tissue",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "741",
+    "name": "Spina bifida, with or without hydrocephalus, meningocele, meningomyelocele",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "742",
+    "name": "Hydrocephalus",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "743",
+    "name": "Congenital anomalies of eye",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "744",
+    "name": "Congenital anomalies of ear, face, and neck",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "745",
+    "name": "Transposition of great vessels, tetralogy of Fallot, ventricular septal defect, atrial septal defect",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "746",
+    "name": "Other congenital anomalies of heart",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "747",
+    "name": "Patent ductus arteriosus, coarctation of aorta, pulmonary artery stenosis, other anomalies of circulatory system",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "748",
+    "name": "Congenital anomalies of nose and respiratory system",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "749",
+    "name": "Cleft palate, cleft lip",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "750",
+    "name": "Other congenital anomalies of mouth esophagus, stomach and pylorus",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "751",
+    "name": "Digestive system",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "752",
+    "name": "Genital organs",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "753",
+    "name": "Urinary system",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "754",
+    "name": "Club foot",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "755",
+    "name": "Other congenital anomalies of limbs",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "756",
+    "name": "Other musculoskeletal anomalies",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "758",
+    "name": "Chromosomal anomalies (e.g., Down's syndrome, other autosomal anomalies, Klinefelter's syndrome, Turner's syndrome, other anomalies of sex chromosomes)",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "759",
+    "name": "Other congenital anomalies",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Congenital"
+  },
+  {
+    "code": "762",
+    "name": "Compression of umbilical cord, prolapsed cord",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "763",
+    "name": "Due to complications of labour or delivery",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "765",
+    "name": "Prematurity, low-birth weight infant",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "766",
+    "name": "Postmaturity, high-birth weight infant",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "767",
+    "name": "Birth trauma",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "769",
+    "name": "Hyaline membrane disease, respiratory distress syndrome",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "773",
+    "name": "Hemolytic disease of newborn",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "777",
+    "name": "Perinatal disorders of digestive system",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "779",
+    "name": "Other conditions of fetus or newborn",
+    "subcategory": "",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Perinatal"
+  },
+  {
+    "code": "780",
+    "name": "Convulsions, ataxia, vertigo, headache, except tension headache and migraine",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "781",
+    "name": "Leg cramps, leg pain, muscle pain, joint pain, arthralgia, joint swelling, masses",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "MSK"
+  },
+  {
+    "code": "785",
+    "name": "Chest pain, tachycardia, syncope, shock, edema, masses",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Circulatory"
+  },
+  {
+    "code": "786",
+    "name": "Epistaxis, hemoptysis, cough, dyspnea, masses, shortness of breath, hyperventilation, sleep apnea",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Respiratory"
+  },
+  {
+    "code": "787",
+    "name": "Anorexia, nausea and vomiting, heartburn, dysphagia, hiccough, hematemesis, jaundice, ascites, abdominal pain, melena, masses",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Digestive"
+  },
+  {
+    "code": "788",
+    "name": "Renal colic, urinary retention, nocturia, masses",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Genitourinary"
+  },
+  {
+    "code": "790",
+    "name": "Non-specific findings on examination of blood",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "791",
+    "name": "Non-specific findings on examination of urine",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "795",
+    "name": "Chronic fatigue syndrome",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "796",
+    "name": "Other non-specific abnormal findings",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "797",
+    "name": "Senility, senescence",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "798",
+    "name": "Sudden death, cause unknown",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "799",
+    "name": "Other ill-defined conditions",
+    "subcategory": "Non-specific Abnormal Findings",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Symptoms"
+  },
+  {
+    "code": "802",
+    "name": "Facial bones",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "803",
+    "name": "Skull",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "805",
+    "name": "Vertebral column-without spinal cord damage",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "806",
+    "name": "Vertebral column-with spinal cord damage",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "807",
+    "name": "Ribs",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "808",
+    "name": "Pelvis",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "810",
+    "name": "Clavicle",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "812",
+    "name": "Humerus",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "813",
+    "name": "Radius and/or ulna",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "814",
+    "name": "Carpal bones",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "815",
+    "name": "Metacarpals",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "816",
+    "name": "Phalanges-foot or hand",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "821",
+    "name": "Femur",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "823",
+    "name": "Tibia and/or fibula",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "824",
+    "name": "Ankle",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "829",
+    "name": "Other fractures",
+    "subcategory": "Fractures and Fracture-dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "831",
+    "name": "Shoulder",
+    "subcategory": "Dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "832",
+    "name": "Elbow",
+    "subcategory": "Dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "834",
+    "name": "Finger",
+    "subcategory": "Dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "839",
+    "name": "Other dislocations",
+    "subcategory": "Dislocations",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "840",
+    "name": "Shoulder, upper arm",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "842",
+    "name": "Wrist, hand, fingers",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "844",
+    "name": "Knee, leg",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "845",
+    "name": "Ankle, foot, toes",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "847",
+    "name": "Neck, low back, coccyx",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "848",
+    "name": "Other sprains and strains",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "850",
+    "name": "Concussion",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "854",
+    "name": "Other head injuries",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "869",
+    "name": "Internal injuries to organ(s)",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "879",
+    "name": "Lacerations, open wounds except limbs",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "884",
+    "name": "Lacerations, open wounds, traumatic amputations-upper limb(s)",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "894",
+    "name": "Lacerations, open wounds, traumatic amputations-lower limb(s)",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "895",
+    "name": "Family planning, contraceptive advice, advice on sterilization or abortion",
+    "subcategory": "Family Planning",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "896",
+    "name": "Immunization-all types",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "897",
+    "name": "Economic problems",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "898",
+    "name": "Marital difficulties",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "899",
+    "name": "Parent-child problems (e.g., childabuse, battered child, child neglect)",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "900",
+    "name": "Problems with aged parents or inlaws",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "901",
+    "name": "Family disruption, divorce",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "902",
+    "name": "Educational problems",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "903",
+    "name": "Illegitimacy",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "904",
+    "name": "Social maladjustment",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "905",
+    "name": "Occupational problems, unemployment, difficulty at work",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "906",
+    "name": "Legal problems, litigation, imprisonment",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "909",
+    "name": "Other problems of social adjustment",
+    "subcategory": "Social, Marital and Family Problems",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "916",
+    "name": "Well baby care",
+    "subcategory": "Other",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "917",
+    "name": "Annual health examination adolescent/adult Well Vision Care",
+    "subcategory": "Other",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "918",
+    "name": "Automated Visual Field (AVF) test",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "919",
+    "name": "Abrasions, bruises, contusions and other superficial injury including non-venomous bites",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "930",
+    "name": "Foreign body in eye, or other tissues",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "949",
+    "name": "Burns-thermal or chemical",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "959",
+    "name": "Other injuries or trauma",
+    "subcategory": "Sprains, Strains and Other Trauma",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "960",
+    "name": "Pentavalent (DPT POLIO/ACT HIB)",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "961",
+    "name": "DPT Polio",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "962",
+    "name": "DT",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "963",
+    "name": "MMR (Measles, Mumps, Rubella)",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "964",
+    "name": "Hepatitis B",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "965",
+    "name": "TD Polio",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "966",
+    "name": "TD (Adults and aged 7 years and older)",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "967",
+    "name": "Influenza",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "968",
+    "name": "Pneumococcal",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "969",
+    "name": "Other Immunization-Not Defined",
+    "subcategory": "Immunization",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Supplementary"
+  },
+  {
+    "code": "972",
+    "name": "Recurrent Uveitis",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "976",
+    "name": "Poisoning by eye anti-infectives and other eye drugs",
+    "subcategory": "Eye",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Nervous System"
+  },
+  {
+    "code": "977",
+    "name": "Of drugs and medications-including allergy, overdose, reactions",
+    "subcategory": "Adverse Effects",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "989",
+    "name": "Of other chemicals (e.g., lead, pesticides, and venomous bites)",
+    "subcategory": "Adverse Effects",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "994",
+    "name": "Of physical factors (e.g., heat, cold, frostbite, pressure)",
+    "subcategory": "Adverse Effects",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "995",
+    "name": "Anaphylaxis",
+    "subcategory": "Adverse Effects",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  },
+  {
+    "code": "998",
+    "name": "Of surgical and medical care (e.g., wound infection, wound disruption, other iatrogenic disease)",
+    "subcategory": "Adverse Effects",
+    "search_terms": [],
+    "suggested_billing_codes": [],
+    "category": "Injury"
+  }
+]

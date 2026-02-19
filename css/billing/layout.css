@@ -1,0 +1,171 @@
+/* Billing Layout — Three-column dashboard (scoped to #page-billing) */
+
+/* Dashboard grid */
+.billing-dashboard {
+  display: grid;
+  grid-template-columns: 25% 0px 1fr 0px 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Columns */
+.billing-col {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.billing-col--billing,
+.billing-col--context {
+  border-left: 1px solid var(--color-border);
+}
+
+.billing-col__header {
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  background: var(--color-header-bg);
+}
+
+.billing-col__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Column resize handles (desktop only) */
+.billing-col-resizer {
+  width: 0;
+  position: relative;
+  cursor: col-resize;
+  z-index: 10;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.billing-col-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -3px;
+  width: 7px;
+  transition: background var(--transition-fast);
+}
+
+.billing-col-resizer:hover::before,
+.billing-col-resizer--active::before {
+  background: var(--color-accent);
+  opacity: 0.4;
+}
+
+/* Body-level cursor override during resize */
+body.is-col-resizing,
+body.is-col-resizing * {
+  cursor: col-resize !important;
+}
+body.is-col-resizing {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Tablet: two columns, context as drawer */
+@media (max-width: 1023px) {
+  .billing-col-resizer {
+    display: none;
+  }
+
+  .billing-dashboard {
+    grid-template-columns: 40% 60%;
+  }
+
+  .billing-col--context {
+    position: fixed;
+    right: 0;
+    top: var(--header-height);
+    width: 55%;
+    height: calc(100vh - var(--header-height));
+    height: calc(100dvh - var(--header-height));
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform var(--transition-normal);
+    z-index: 50;
+    border-left: 1px solid var(--color-border);
+  }
+
+  .billing-col--context.active {
+    transform: translateX(0);
+  }
+}
+
+/* Mobile: single billing column, no grid */
+@media (max-width: 767px) {
+  .billing-dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .billing-col-resizer {
+    display: none;
+  }
+
+  /* Hide diagnostic column on mobile (standalone page handles it) */
+  .billing-col--diagnostic {
+    display: none;
+  }
+
+  /* Billing column fills the page */
+  .billing-col--billing {
+    flex: 1;
+    width: 100%;
+    border-left: none;
+    min-height: 0;
+  }
+
+  /* Context column hidden on mobile (inline expand used instead) */
+  .billing-col--context {
+    display: none;
+    position: static;
+    transform: none;
+    width: 0;
+    box-shadow: none;
+  }
+
+  .billing-col__content {
+    overscroll-behavior: contain;
+  }
+
+  /* Folder-back drag panels */
+  .folder-dragging {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .folder-drag-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    will-change: transform;
+    background: var(--color-surface);
+  }
+
+  .folder-drag-panel.animate {
+    transition: transform 0.3s ease-out;
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "ED Prescriptions",
-  "short_name": "ED Rx",
+  "name": "EM Hub",
+  "short_name": "EM Hub",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f5f5f7",

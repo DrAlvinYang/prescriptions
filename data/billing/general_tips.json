@@ -1,0 +1,9 @@
+{
+  "tips": [
+    "If accidentally billed 2 conflicting codes (e.g., H-code for fracture assessment + C-code for anaesthesia while Ortho reduces fracture), OHIP will only pay for the lower-paying code. Therefore: always bill the higher-paying code.",
+    "Can bill for unsuccessful procedures.",
+    "After using up maximum patient numbers for premium codes, bill normal H assessment codes.",
+    "Private billing rate: 2.88× OHIP rate.",
+    "A-codes can only be billed in the ED if doctor called in on-call."
+  ]
+}

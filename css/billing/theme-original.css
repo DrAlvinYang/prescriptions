@@ -1,0 +1,107 @@
+/* Theme — CSS Custom Properties */
+:root {
+  color-scheme: light dark;
+
+  /* Colors — Light */
+  --color-bg: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-border: #d2d2d7;
+  --color-border-light: #e5e5ea;
+  --color-text: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-muted: #86868b;
+  --color-accent: #007AFF;
+  --color-accent-hover: #0066e6;
+  --color-accent-light: rgba(0, 122, 255, 0.08);
+  --color-accent-ring: rgba(0, 122, 255, 0.15);
+  --color-warning: #FF3B30;
+  --color-warning-bg: rgba(255, 59, 48, 0.06);
+  --color-warning-border: rgba(255, 59, 48, 0.2);
+  --color-success: #34C759;
+  --color-time-active: #34C759;
+  --color-fee: #007AFF;
+  --color-modifier-calc: #7c3aed;
+  --color-hidden-notes-bg: #fffbeb;
+  --color-hidden-notes-border: #f59e0b;
+  --color-selected: rgba(0, 122, 255, 0.08);
+  --color-hover: #f0f0f5;
+  --color-code-bg: #f0f0f5;
+  --color-header-bg: #f0f0f5;
+  --color-header-hover: #e5e5ea;
+  --color-overlay-bg: rgba(0, 0, 0, 0.4);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Typography */
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.8125rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+
+  /* Layout */
+  --header-height: 56px;
+  --col-diagnostic-width: 25%;
+  --col-billing-width: 35%;
+  --col-context-width: 40%;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Borders */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 22px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1c1e;
+    --color-surface: #2c2c2e;
+    --color-border: #38383a;
+    --color-border-light: #38383a;
+    --color-text: #f5f5f7;
+    --color-text-secondary: #e5e5ea;
+    --color-text-muted: #aeaeb2;
+    --color-accent: #0A84FF;
+    --color-accent-hover: #409CFF;
+    --color-accent-light: rgba(10, 132, 255, 0.12);
+    --color-accent-ring: rgba(10, 132, 255, 0.2);
+    --color-warning: #FF453A;
+    --color-warning-bg: rgba(255, 69, 58, 0.12);
+    --color-warning-border: rgba(255, 69, 58, 0.25);
+    --color-success: #30D158;
+    --color-time-active: #30D158;
+    --color-fee: #0A84FF;
+    --color-modifier-calc: #BF5AF2;
+    --color-hidden-notes-bg: rgba(255, 214, 10, 0.08);
+    --color-hidden-notes-border: #FFD60A;
+    --color-selected: rgba(10, 132, 255, 0.12);
+    --color-hover: #323235;
+    --color-code-bg: #3a3a3c;
+    --color-header-bg: #252528;
+    --color-header-hover: #3a3a3c;
+    --color-overlay-bg: rgba(0, 0, 0, 0.6);
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}

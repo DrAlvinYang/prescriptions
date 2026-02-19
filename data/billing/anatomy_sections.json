@@ -1,0 +1,82 @@
+{
+  "Thorax, Shoulder, Arm": [
+    { "divider": "Fractures" },
+    { "header": "Tuberosity", "codes": ["F047", "F048", "F049"] },
+    { "header": "Neck without Dislocation of Head", "codes": ["F053", "F054", "F055"] },
+    { "header": "Neck with Dislocation of Head", "codes": ["F050", "F051", "F052"] },
+    { "header": "Shaft", "codes": ["F042", "F043", "F044"] },
+    { "header": "Clavicle", "codes": ["UVC-CLAV", "F110", "F118"] },
+    { "header": "Scapula", "codes": ["F119", "F121"] },
+    { "header": "Sternum", "codes": ["F123"] },
+    { "divider": "Dislocations" },
+    { "header": "A-C / Sterno-Clavicular", "codes": ["D014", "D025", "D023", "R596"] },
+    { "header": "Glenohumeral Joint", "codes": ["D015", "D016", "D017", "R472", "R401"] }
+  ],
+  "Elbow, Forearm": [
+    { "divider": "Fractures" },
+    { "header": "Epicondyle", "codes": ["F029", "F037", "F038"] },
+    { "header": "Transcondylar/Condylar", "codes": ["F039", "F040", "F045", "F041"] },
+    { "header": "Olecranon", "codes": ["F034", "F035", "F036"] },
+    { "header": "Radius & Ulna Shaft", "codes": ["F024", "F025", "F026"] },
+    { "header": "Radius or Ulna", "codes": ["F031", "F032", "F033"] },
+    { "header": "Monteggia", "codes": ["F014", "F022", "F023"] },
+    { "header": "Distal Radius (Colles'/Smith's/Barton's)", "codes": ["F027", "F028", "F046", "F030"] },
+    { "header": "Osteochondral", "codes": ["F021"] },
+    { "divider": "Dislocations" },
+    { "header": "Elbow Joint", "codes": ["D009", "D010", "R400"] },
+    { "header": "Radial Head", "codes": ["D012", "D011", "R540", "R558"] }
+  ],
+  "Wrist, Hand": [
+    { "divider": "Fractures" },
+    { "header": "Distal Radius (Colles'/Smith's/Barton's)", "codes": ["F027", "F028", "F046", "F030"] },
+    { "header": "Carpus", "codes": ["F102", "F016", "F017"] },
+    { "header": "Scaphoid", "codes": ["F018", "F019", "F020"] },
+    { "header": "Metacarpus", "codes": ["F008", "F009", "E504", "F011", "E559"] },
+    { "header": "Bennett's", "codes": ["F012", "F013", "F015"] },
+    { "header": "Metacarpus Intra-articular", "codes": ["F006", "E503", "F010"] },
+    { "header": "Phalanx", "codes": ["F004", "F005", "E558", "F007"] },
+    { "divider": "Dislocations" },
+    { "header": "Carpus", "codes": ["D007", "D008"] },
+    { "header": "Metacarpal/Phalangeal", "codes": ["D004", "E577", "D006"] },
+    { "header": "Finger", "codes": ["D001", "E576", "D003"] }
+  ],
+  "Pelvis, Hip, Femur": [
+    { "divider": "Fractures" },
+    { "header": "Pelvic Ring", "codes": ["UVC-PEL", "F134", "F135"] },
+    { "header": "Sacrum", "codes": ["UVC-SAC"] },
+    { "header": "Coccyx", "codes": ["UVC-COC"] },
+    { "header": "Slipped Epiphysis", "codes": ["R607"] },
+    { "header": "Femur Neck / Trochanteric", "codes": ["UVC-FEM", "F098"] },
+    { "header": "Femur", "codes": ["UVC-FEM2", "F094", "F095", "F097", "F096"] },
+    { "divider": "Dislocations" },
+    { "header": "Hip", "codes": ["D042", "D043", "R628"] },
+    { "header": "Sacro-iliac", "codes": ["D059", "D060"] },
+    { "header": "Sacro-coccygeal", "codes": ["UVC-SAC2"] },
+    { "header": "Congenital Hip", "codes": ["R404", "R405", "Z291"] }
+  ],
+  "Knee, Tib, Fib": [
+    { "divider": "Fractures" },
+    { "header": "Patella", "codes": ["F085", "F087"] },
+    { "header": "Tibia ± Fibula", "codes": ["F078", "F079", "F080"] },
+    { "header": "Fibula", "codes": ["F082", "F083", "F084"] },
+    { "divider": "Dislocations" },
+    { "header": "Patella", "codes": ["D031", "D040", "D041"] },
+    { "header": "Knee", "codes": ["D038", "D039"] }
+  ],
+  "Ankle, Foot": [
+    { "divider": "Fractures" },
+    { "header": "Ankle", "codes": ["F074", "F075", "F076", "F077"] },
+    { "header": "Ankle with Tibial Plafond Burst", "codes": ["F104", "F108"] },
+    { "header": "Tarsus", "codes": ["F066", "F067", "F068"] },
+    { "header": "Os Calcis", "codes": ["F070", "F071", "F072"] },
+    { "header": "Metatarsus", "codes": ["F061", "F062", "F063", "F064", "F065"] },
+    { "header": "Phalanx", "codes": ["F056", "E560", "F058", "E561", "F060"] },
+    { "header": "IP Joint", "codes": ["F057", "F059"] },
+    { "divider": "Dislocations" },
+    { "header": "Ankle", "codes": ["D035", "D036"] },
+    { "header": "Tarsus", "codes": ["D033", "D034"] },
+    { "header": "Tarso-metatarsal", "codes": ["D026", "D028", "E508"] },
+    { "header": "Metatarsus", "codes": ["D030", "E579", "D032"] },
+    { "header": "Toe", "codes": ["D027", "E578", "D029"] }
+  ]
+}
