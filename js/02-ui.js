@@ -1463,16 +1463,44 @@ class ModalManager {
     this._clearFields(["newLocName", "newLocAddress"]);
 
     const modal = document.getElementById("locationModal");
+
+    // Mobile top-sheet mode
+    if (Utils.isMobile()) {
+      document.body.classList.add("mobile-addlocation-active");
+      document.documentElement.classList.add("mobile-addlocation-active");
+
+      // Inject close button into first input group
+      const firstGroup = modal.querySelector(".modal-input-group");
+      if (firstGroup && !firstGroup.querySelector(".mobile-addloc-close")) {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "mobile-addloc-close";
+        closeBtn.type = "button";
+        closeBtn.innerHTML = "&times;";
+        closeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.closeLocation();
+        });
+        firstGroup.appendChild(closeBtn);
+      }
+    }
+
     modal.classList.remove("hidden");
     document.getElementById("newLocName").focus();
-    
+
     // Trap focus in modal
     this.trapFocus(modal);
   }
 
   closeLocation() {
     this.removeFocusTrap();
-    document.getElementById("locationModal").classList.add("hidden");
+    const modal = document.getElementById("locationModal");
+    modal.classList.add("hidden");
+
+    // Clean up mobile top-sheet
+    document.body.classList.remove("mobile-addlocation-active");
+    document.documentElement.classList.remove("mobile-addlocation-active");
+    const closeBtn = modal.querySelector(".mobile-addloc-close");
+    if (closeBtn) closeBtn.remove();
   }
 
   saveLocation(locationManager, onSuccess) {
@@ -1559,6 +1587,16 @@ class ModalManager {
     backdrop.classList.add("hidden");
     dropdown.classList.add("hidden");
     if (wrapper) wrapper.classList.remove("edit-active");
+
+    // Clean up mobile provider mode
+    document.body.classList.remove("mobile-provider-active");
+    document.documentElement.classList.remove("mobile-provider-active");
+
+    // Remove mobile close button
+    if (dropdown) {
+      const closeBtn = dropdown.querySelector(".mobile-provider-close");
+      if (closeBtn) closeBtn.remove();
+    }
 
     // On mobile, move dropdown back to its original parent if it was moved to body
     if (dropdown && dropdown.parentElement === document.body && wrapper) {

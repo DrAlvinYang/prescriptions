@@ -679,7 +679,9 @@ class Application {
     const mobileProviderBtn = document.getElementById("mobileProviderBtn");
     if (mobileProviderBtn) {
       mobileProviderBtn.addEventListener("click", () => {
-        this.openMobileProvider();
+        const isOpen = document.body.classList.contains("mobile-provider-active");
+        this._closeActiveMobileModal();
+        if (!isOpen) this.openMobileProvider();
       });
     }
 
@@ -687,7 +689,9 @@ class Application {
     const mobileLocationBtn = document.getElementById("mobileLocationBtn");
     if (mobileLocationBtn) {
       mobileLocationBtn.addEventListener("click", () => {
-        this.openMobileLocation();
+        const isOpen = document.body.classList.contains("mobile-location-active");
+        this._closeActiveMobileModal();
+        if (!isOpen) this.openMobileLocation();
       });
     }
 
@@ -695,11 +699,9 @@ class Application {
     const mobileWeightBtn = document.getElementById("mobileWeightBtn");
     if (mobileWeightBtn) {
       mobileWeightBtn.addEventListener("click", () => {
-        if (this.state._mobileWeightMode) {
-          this.closeMobileWeightModal();
-        } else {
-          this.openMobileWeightModal();
-        }
+        const isOpen = this.state._mobileWeightMode;
+        this._closeActiveMobileModal();
+        if (!isOpen) this.openMobileWeightModal();
       });
     }
 
@@ -762,6 +764,21 @@ class Application {
     });
   }
 
+  _closeActiveMobileModal() {
+    if (document.body.classList.contains("mobile-provider-active")) {
+      this.managers.modal.closeProvider();
+    }
+    if (document.body.classList.contains("mobile-location-active")) {
+      this.controllers.location.exitSearchMode();
+    }
+    if (document.body.classList.contains("mobile-addlocation-active")) {
+      this.managers.modal.closeLocation();
+    }
+    if (this.state._mobileWeightMode) {
+      this.closeMobileWeightModal();
+    }
+  }
+
   openMobileProvider() {
     // Move provider dropdown to body so it's visible (it's inside a hidden wrapper on mobile)
     const dropdown = document.getElementById("providerEditDropdown");
@@ -769,15 +786,33 @@ class Application {
       this._providerDropdownParent = dropdown.parentElement;
       document.body.appendChild(dropdown);
     }
-    this.controllers.provider.openEditModal();
-  }
 
-  closeMobileProvider() {
-    // Move provider dropdown back to its original parent
-    const dropdown = document.getElementById("providerEditDropdown");
-    if (dropdown && this._providerDropdownParent) {
-      this._providerDropdownParent.appendChild(dropdown);
-      this._providerDropdownParent = null;
+    // Add body class for weight-modal style takeover
+    document.body.classList.add("mobile-provider-active");
+    document.documentElement.classList.add("mobile-provider-active");
+
+    // Inject close button into the name row if not already present
+    if (dropdown && !dropdown.querySelector(".mobile-provider-close")) {
+      const nameRow = dropdown.querySelector(".provider-edit-row");
+      if (nameRow) {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "mobile-provider-close";
+        closeBtn.type = "button";
+        closeBtn.innerHTML = "&times;";
+        closeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.managers.modal.closeProvider();
+        });
+        nameRow.appendChild(closeBtn);
+      }
+    }
+
+    this.controllers.provider.openEditModal();
+
+    // Override placeholder for mobile (match weight modal style)
+    const nameInput = document.getElementById("newProviderName");
+    if (nameInput && nameInput.placeholder.startsWith("e.g.")) {
+      nameInput.placeholder = "Name";
     }
   }
 

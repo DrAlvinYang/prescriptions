@@ -144,6 +144,34 @@ class TestParseBrands:
         assert result == expected
 
 
+class TestParseBool:
+    """Tests for _parse_bool function."""
+
+    @pytest.mark.parametrize("input_val,expected", [
+        (True, True),
+        (False, False),
+        (1, True),
+        (0, False),
+        (1.0, True),
+        (0.0, False),
+        ("TRUE", True),
+        ("FALSE", False),
+        ("true", True),
+        ("false", False),
+        ("Yes", True),
+        ("No", False),
+        ("N", False),
+        ("Y", True),
+        ("1", True),
+        ("0", False),
+        ("  FALSE  ", False),
+    ])
+    def test_parse_bool_cases(self, input_val: Any, expected: bool) -> None:
+        """Test _parse_bool handles various Excel boolean representations."""
+        result = converter._parse_bool(input_val)
+        assert result == expected
+
+
 class TestBuildSearchText:
     """Tests for build_search_text function."""
 
@@ -361,6 +389,20 @@ class TestProcessRow:
         result = converter.process_row(row, "Test")
         assert result is not None
         assert result["weight_based"] is True
+
+    def test_weight_based_string_false(self) -> None:
+        """Test string 'FALSE' in WeightBased column is treated as False."""
+        row = _make_row(WeightBased="FALSE", DosePerKg=None)
+        result = converter.process_row(row, "Test")
+        assert result is not None
+        assert result["weight_based"] is False
+
+    def test_weight_based_string_no(self) -> None:
+        """Test string 'No' in WeightBased column is treated as False."""
+        row = _make_row(WeightBased="No", DosePerKg=None)
+        result = converter.process_row(row, "Test")
+        assert result is not None
+        assert result["weight_based"] is False
 
 
 # ---------------------------------------------------------------------------

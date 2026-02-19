@@ -30,6 +30,8 @@ import pandas as pd
 
 REQUIRED_COLUMNS: frozenset[str] = frozenset({"Med"})
 
+_FALSY_STRINGS: frozenset[str] = frozenset({"false", "no", "n", "0", "off", ""})
+
 DEFAULT_EXCEL_FILENAME: str = "Prescriptions.xlsx"
 DEFAULT_OUTPUT_FILENAME: str = "Prescriptions.json"
 
@@ -127,6 +129,21 @@ def parse_brands(raw_alias: Any) -> list[str]:
     return [b.strip() for b in str(raw_alias).split(",") if b.strip()]
 
 
+def _parse_bool(val: Any) -> bool:
+    """Parse a value as boolean, handling Excel string representations.
+
+    Handles Python bools, numbers, and common string representations
+    like "TRUE"/"FALSE", "Yes"/"No", "1"/"0".
+    """
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, (int, float)):
+        return bool(val)
+    if isinstance(val, str):
+        return val.strip().lower() not in _FALSY_STRINGS
+    return bool(val)
+
+
 def build_search_text(components: list[str | None]) -> str:
     """Join non-empty string components with ' | ' and lowercase.
 
@@ -184,9 +201,11 @@ def _resolve_weight_based(
     from DosePerKg > 0. Logs a warning if the two disagree.
     """
     derived = dose_per_kg is not None and dose_per_kg > 0
+    # Intentionally NOT using _is_empty here: _is_empty(False) == True,
+    # but an explicit False in WeightBased is a meaningful value.
     if raw_wb is None or pd.isna(raw_wb):
         return derived
-    explicit = bool(raw_wb)
+    explicit = _parse_bool(raw_wb)
     if explicit != derived:
         logger.warning(
             "WeightBased mismatch for %s: column=%s, DosePerKg=%s",
@@ -334,17 +353,18 @@ def convert_excel(excel_path: Path) -> dict[str, Any] | None:
     if xls is None:
         return None
 
-    logger.info("Found %d sheets", len(xls.sheet_names))
-    for sheet in xls.sheet_names:
-        logger.debug("  %s", sheet)
+    with xls:
+        logger.info("Found %d sheets", len(xls.sheet_names))
+        for sheet in xls.sheet_names:
+            logger.debug("  %s", sheet)
 
-    all_meds: list[dict[str, Any]] = []
-    total_warnings = 0
+        all_meds: list[dict[str, Any]] = []
+        total_warnings = 0
 
-    for sheet_name in xls.sheet_names:
-        meds, warnings = process_sheet(xls, str(sheet_name))
-        all_meds.extend(meds)
-        total_warnings += warnings
+        for sheet_name in xls.sheet_names:
+            meds, warnings = process_sheet(xls, str(sheet_name))
+            all_meds.extend(meds)
+            total_warnings += warnings
 
     if total_warnings > 0:
         logger.warning("Total validation warnings: %d", total_warnings)
