@@ -623,13 +623,11 @@ class CartRenderer {
     }
 
     const isMobile = Utils.isMobile();
-    const printBtn = isMobile ? `<button class="med-action-btn med-action-btn-print" type="button" onclick="event.stopPropagation(); cartActions.dismissOverlay(this); cartActions.print('${med.uid}')">Print</button>` : "";
 
     return `
       <div class="cart-item" data-uid="${med.uid}"${isMobile ? ` onclick="cartActions.toggleOverlay(this, event)"` : ""}>
         <div class="cart-item-overlay-actions">
           <button class="med-action-btn med-action-btn-edit" type="button" onclick="event.stopPropagation(); cartActions.dismissOverlay(this); cartActions.edit('${med.uid}')">Edit</button>
-          ${printBtn}
           <button class="med-action-btn med-action-btn-remove" type="button" onclick="event.stopPropagation(); cartActions.dismissOverlay(this); cartActions.remove('${med.uid}')">Remove</button>
         </div>
         <div class="cart-med-name">${medNameDisplay}</div>
