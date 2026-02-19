@@ -700,25 +700,16 @@ class Application {
 
   enterMobileSearch() {
     if (this._exitingMobileSearch) return;
-    // Reset scroll before locking to prevent iOS offset
     window.scrollTo(0, 0);
     document.body.classList.add("mobile-search-active");
     document.documentElement.classList.add("mobile-search-active");
-    // Start listening to visualViewport for keyboard-aware positioning
-    this._startViewportListener();
   }
 
   exitMobileSearch() {
     this._exitingMobileSearch = true;
-    this._stopViewportListener();
     document.body.classList.remove("mobile-search-active");
     document.body.classList.remove("has-search-query");
     document.documentElement.classList.remove("mobile-search-active");
-    // Reset any inline positioning from viewport listener
-    const searchSection = document.querySelector(".search-section");
-    const contentScroll = document.querySelector(".content-scroll");
-    if (searchSection) searchSection.style.bottom = "";
-    if (contentScroll) contentScroll.style.bottom = "";
     // Clear search without re-focusing (clear() calls safeFocus which would re-trigger)
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
@@ -731,37 +722,6 @@ class Application {
     requestAnimationFrame(() => {
       this._exitingMobileSearch = false;
     });
-  }
-
-  _startViewportListener() {
-    if (!window.visualViewport) return;
-    this._viewportHandler = () => {
-      const vv = window.visualViewport;
-      // Keyboard height = layout viewport height - visual viewport height - visual viewport offset
-      const keyboardHeight = window.innerHeight - vv.height - vv.offsetTop;
-      const searchSection = document.querySelector(".search-section");
-      const contentScroll = document.querySelector(".content-scroll");
-      if (keyboardHeight > 50) {
-        // Keyboard is open - position search bar above it
-        if (searchSection) searchSection.style.bottom = keyboardHeight + "px";
-        if (contentScroll) contentScroll.style.bottom = (keyboardHeight + 58) + "px";
-      } else {
-        // Keyboard closed
-        if (searchSection) searchSection.style.bottom = "";
-        if (contentScroll) contentScroll.style.bottom = "";
-      }
-      // Prevent iOS from scrolling the fixed layout
-      window.scrollTo(0, 0);
-    };
-    window.visualViewport.addEventListener("resize", this._viewportHandler);
-    window.visualViewport.addEventListener("scroll", this._viewportHandler);
-  }
-
-  _stopViewportListener() {
-    if (!window.visualViewport || !this._viewportHandler) return;
-    window.visualViewport.removeEventListener("resize", this._viewportHandler);
-    window.visualViewport.removeEventListener("scroll", this._viewportHandler);
-    this._viewportHandler = null;
   }
 
   openMobileProvider() {

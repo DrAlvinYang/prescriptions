@@ -2316,6 +2316,15 @@ body:has(.help-overlay:not(.hidden)) {
     height: 100%;
   }
 
+  /* Move search bar to top (below header) when active - avoids iOS keyboard issues */
+  body.mobile-search-active .search-section {
+    top: 48px;
+    bottom: auto;
+    padding-bottom: 8px;
+    border-top: none;
+    border-bottom: 1px solid var(--border);
+  }
+
   body.mobile-search-active .searchbar {
     display: flex;
     align-items: center;
@@ -2336,16 +2345,19 @@ body:has(.help-overlay:not(.hidden)) {
     display: none !important;
   }
 
+  /* Content area: below header (48px) + search bar (~52px), above bottom */
   body.mobile-search-active .content-scroll {
     position: fixed;
-    top: 48px;
+    top: 100px;
     left: 0;
     right: 0;
-    bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+    bottom: 0;
     padding: 0;
     padding-bottom: 0;
     z-index: 101;
     background: var(--bg);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   body.mobile-search-active #dashboardView {
