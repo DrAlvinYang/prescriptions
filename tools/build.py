@@ -74,7 +74,7 @@ def write_js_file(output_path: Path, var_name: str, data: Any) -> bool:
             f"const {var_name}=JSON.parse(atob(\"{encoded}\"));\n"
         )
         converter.write_file_atomically(output_path, content, suffix=".js")
-        logger.info("  Wrote %s (%d bytes encoded)", output_path.name, len(encoded))
+        logger.info("  Wrote %s (%d bytes encoded)", output_path, len(encoded))
         return True
     except Exception as e:
         logger.error("  Error writing %s: %s", output_path.name, e)

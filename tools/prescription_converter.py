@@ -330,17 +330,13 @@ def convert_excel(excel_path: Path) -> dict[str, Any] | None:
 
     Returns the data dict on success, None on failure.
     """
-    logger.info("=" * 60)
-    logger.info("PRESCRIPTION EXCEL TO JSON CONVERTER")
-    logger.info("=" * 60)
-
     xls = load_excel(excel_path)
     if xls is None:
         return None
 
-    logger.info("Found %d sheets:", len(xls.sheet_names))
+    logger.info("Found %d sheets", len(xls.sheet_names))
     for sheet in xls.sheet_names:
-        logger.info("  - %s", sheet)
+        logger.debug("  %s", sheet)
 
     all_meds: list[dict[str, Any]] = []
     total_warnings = 0
@@ -372,21 +368,17 @@ def convert_excel_to_json(excel_path: Path, output_path: Path) -> bool:
 
     Returns True on success, False on failure.
     """
-    final_output = convert_excel(excel_path)
-    if final_output is None:
+    data = convert_excel(excel_path)
+    if data is None:
         return False
 
-    if not write_json(output_path, final_output):
+    if not write_json(output_path, data):
         return False
 
-    record_count = final_output["source"]["record_count"]
-    logger.info("JSON file is valid")
-    logger.info("Contains %d medications", record_count)
-    logger.info("=" * 60)
-    logger.info("CONVERSION COMPLETE!")
-    logger.info("=" * 60)
-    logger.info("Wrote %d prescriptions to: %s", record_count, output_path)
-
+    logger.info(
+        "Wrote %d prescriptions to %s",
+        data["source"]["record_count"], output_path,
+    )
     return True
 
 
@@ -436,13 +428,17 @@ def main() -> int:
     interactive = not args.non_interactive
 
     try:
+        logger.info("=" * 60)
+        logger.info("PRESCRIPTION EXCEL TO JSON CONVERTER")
+        logger.info("=" * 60)
+
         success = convert_excel_to_json(
             excel_path=args.input,
             output_path=args.output,
         )
         return 0 if success else 1
 
-    except Exception as e:
+    except Exception:
         logger.exception("Unexpected error")
         return 1
 

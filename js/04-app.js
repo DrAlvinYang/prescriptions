@@ -678,24 +678,52 @@ class Application {
       document.querySelector(".location-wrapper");
     const providerWrapper = document.querySelector(".provider-wrapper");
     const topbarRight = document.querySelector(".topbar-right");
+    const resetBtn = document.getElementById("resetViewBtn");
     if (!locationWrapper || !topbarRight) return;
 
-    const isCollapsed = locationWrapper.classList.contains("icon-only");
+    const isLocationCollapsed = locationWrapper.classList.contains("icon-only");
+    const isResetCollapsed = resetBtn?.classList.contains("icon-only");
 
-    if (!isCollapsed) {
-      // Expanded: check gap between location and reset button
+    // Step 1: Collapse/expand reset button first (text -> icon)
+    if (resetBtn) {
       const locRect = locationWrapper.getBoundingClientRect();
       const rightRect = topbarRight.getBoundingClientRect();
       const gap = rightRect.left - locRect.right;
 
-      // Collapse when location is at its min-width (100px) and gap < 12px
+      if (!isResetCollapsed && gap < 20) {
+        resetBtn.classList.add("icon-only");
+        this._resetCollapseWidth = window.innerWidth;
+      } else if (isResetCollapsed && !isLocationCollapsed &&
+                 window.innerWidth > (this._resetCollapseWidth || 0) + 30) {
+        // Try expanding reset button back
+        resetBtn.classList.remove("icon-only");
+
+        const newLocRect = locationWrapper.getBoundingClientRect();
+        const newRightRect = topbarRight.getBoundingClientRect();
+        const newGap = newRightRect.left - newLocRect.right;
+
+        if (newGap < 20) {
+          // Still too tight, re-collapse
+          resetBtn.classList.add("icon-only");
+          this._resetCollapseWidth = window.innerWidth;
+        } else {
+          this._resetCollapseWidth = 0;
+        }
+      }
+    }
+
+    // Step 2: Collapse/expand location (existing logic)
+    if (!isLocationCollapsed) {
+      const locRect = locationWrapper.getBoundingClientRect();
+      const rightRect = topbarRight.getBoundingClientRect();
+      const gap = rightRect.left - locRect.right;
+
       if (gap < 12 && locRect.width <= 101) {
         locationWrapper.classList.add("icon-only");
         if (providerWrapper) providerWrapper.classList.add("can-shrink");
         this._locationCollapseWidth = window.innerWidth;
       }
     } else if (window.innerWidth > (this._locationCollapseWidth || 0) + 30) {
-      // Collapsed: only try expanding if viewport grew past collapse point + buffer
       locationWrapper.classList.remove("icon-only");
       if (providerWrapper) providerWrapper.classList.remove("can-shrink");
 
@@ -704,7 +732,6 @@ class Application {
       const gap = rightRect.left - locRect.right;
 
       if (gap < 12 && locRect.width <= 101) {
-        // Still too tight, re-collapse in same frame
         locationWrapper.classList.add("icon-only");
         if (providerWrapper) providerWrapper.classList.add("can-shrink");
         this._locationCollapseWidth = window.innerWidth;

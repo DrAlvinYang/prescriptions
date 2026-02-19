@@ -25,20 +25,20 @@ let BASE_LOCATIONS = [FALLBACK_LOCATION];
 const SPECIALTY_COLUMNS = {
   col1: ["Add New Med", "Neuro & Endocrine", "Cardiac & Heme", "STI", "Substance Use"],
   col2: ["Allergy, Analgesia, Antiemetic", "ENT", "Respiratory", "OBGYN", "Psych"],
-  col3: ["Anti-infective", "Eye", "GI & GU", "Derm", "Non-Med"]
+  col3: ["Anti-Infective", "Eye", "GI & GU", "Derm", "Non-Med"]
 };
 
 // 2-column layout for narrower screens (at 1000px breakpoint)
 const SPECIALTY_2_COLUMNS = {
   col1: ["Add New Med", "Allergy, Analgesia, Antiemetic", "ENT", "Cardiac & Heme", "GI & GU", "Derm", "Psych", "Non-Med"],
-  col2: ["Neuro & Endocrine", "Anti-infective", "Eye", "Respiratory", "OBGYN", "STI", "Substance Use"],
+  col2: ["Neuro & Endocrine", "Anti-Infective", "Eye", "Respiratory", "OBGYN", "STI", "Substance Use"],
   col3: []
 };
 
 // All specialties sorted alphabetically for single-column view
 const SPECIALTY_SINGLE_COLUMN = [
   "Add New Med",
-  ...["Allergy, Analgesia, Antiemetic", "Anti-infective", "Cardiac & Heme", "Derm",
+  ...["Allergy, Analgesia, Antiemetic", "Anti-Infective", "Cardiac & Heme", "Derm",
       "ENT", "Eye", "GI & GU", "Neuro & Endocrine", "Non-Med", "OBGYN",
       "Psych", "Respiratory", "STI", "Substance Use"]
 ];

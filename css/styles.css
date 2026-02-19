@@ -14,6 +14,7 @@
   --hover-border: #c7c7cc;
   --active-bg: rgba(0, 122, 255, 0.1);
   --in-cart-bg: rgba(0, 122, 255, 0.08);
+  --in-cart-bg-opaque: #ebf4ff;
   --danger: #FF3B30;
   --success: #34C759;
   --separator: #e5e5ea;
@@ -65,6 +66,7 @@
     --hover-border: #48484a;
     --active-bg: rgba(10, 132, 255, 0.15);
     --in-cart-bg: rgba(10, 132, 255, 0.12);
+    --in-cart-bg-opaque: #283747;
     --danger: #FF453A;
     --success: #30D158;
     --separator: #38383a;
@@ -1211,27 +1213,46 @@ details[open] > .subfolder-summary .subfolder-arrow {
 }
 .icon-btn:hover { color: var(--danger); }
 
-/* Override for reset button - match clear cart button styling */
+/* Override for reset button */
 .icon-btn.reset-btn {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 6px;
+  padding: 6px 12px;
   color: var(--text);
-  width: 36px;
   height: 36px;
+  width: auto;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
 }
 .icon-btn.reset-btn:hover {
   background: var(--hover-bg);
   color: var(--text);
 }
-.icon-btn.reset-btn svg {
+.icon-btn.reset-btn .reset-icon {
   width: 18px;
   height: 18px;
+  display: none;
+}
+.reset-label {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Collapsed: switch to icon-only (toggled by JS) */
+.icon-btn.reset-btn.icon-only {
+  padding: 6px;
+  width: 36px;
+}
+.icon-btn.reset-btn.icon-only .reset-icon {
+  display: block;
+}
+.icon-btn.reset-btn.icon-only .reset-label {
+  display: none;
 }
 
 /* --- Modal --- */
@@ -1547,9 +1568,6 @@ body.show-brands .brand-match-hint {
   visibility: hidden;
   gap: 4px;
   align-items: center;
-  padding-left: 30px;
-  background: linear-gradient(to right, transparent 0%, var(--panel) 30px);
-  height: 20px;
 }
 
 .cart-item:hover .cart-item-overlay-actions {
@@ -1673,19 +1691,11 @@ body.show-brands .brand-match-hint {
   visibility: hidden;
   gap: 4px;
   align-items: center;
-  padding-left: 30px;
-  background: linear-gradient(to right, transparent 0%, var(--bg) 30px);
-  height: 20px;
 }
 
 .med-item.has-overlay-actions:hover .med-item-overlay-actions,
 .med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
   visibility: visible;
-}
-
-/* Adjust gradient for in-cart items */
-.med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
-  background: linear-gradient(to right, transparent 0%, var(--in-cart-bg) 30px);
 }
 
 /* Hide Edit button for in-cart items in folder view unless hovering */
@@ -1702,6 +1712,26 @@ body.show-brands .brand-match-hint {
 .cart-item-overlay-actions .med-action-btn {
   padding: 3px 8px;
   font-size: 11px;
+  box-shadow: 0 0 12px 8px var(--panel);
+}
+
+.med-item.has-overlay-actions:hover:not(.in-cart) .med-item-overlay-actions .med-action-btn {
+  box-shadow: 0 0 12px 8px var(--med-hover);
+}
+
+.med-item.has-overlay-actions.in-cart .med-item-overlay-actions .med-action-btn {
+  box-shadow: 0 0 12px 8px var(--in-cart-bg-opaque);
+}
+
+/* Make remove button opaque in overlay contexts so text doesn't show through */
+.med-item-overlay-actions .med-action-btn-remove,
+.cart-item-overlay-actions .med-action-btn-remove {
+  background: linear-gradient(var(--danger-tint), var(--danger-tint)), var(--panel);
+}
+
+.med-item-overlay-actions .med-action-btn-remove:hover,
+.cart-item-overlay-actions .med-action-btn-remove:hover {
+  background: linear-gradient(var(--danger-tint-hover), var(--danger-tint-hover)), var(--panel);
 }
 
 /* Create a 'lane' for the hint on the right of the search results */
