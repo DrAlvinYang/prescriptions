@@ -897,8 +897,11 @@ class Application {
   }
 
   checkMinWidthOverlay() {
-    if (Utils.isMobile()) return;
     const overlay = document.getElementById("desktopOnlyOverlay");
+    if (Utils.isMobile()) {
+      if (overlay) overlay.classList.remove("active");
+      return;
+    }
     const providerWrapper = document.querySelector(".provider-wrapper");
     const topbarRight = document.querySelector(".topbar-right");
     const locationWrapper = document.querySelector(".location-wrapper");
