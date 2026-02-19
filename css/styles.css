@@ -2908,8 +2908,9 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   body.mobile-weight-active .weight-input-wrapper:focus-within {
-    border-color: transparent;
+    border: none;
     box-shadow: inset 0 0 0 2px var(--accent);
+    background: var(--hover-bg);
   }
 
   .mobile-weight-close {
