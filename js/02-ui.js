@@ -190,15 +190,17 @@ class MedicationRenderer {
     div.onclick = (e) => {
       e.stopPropagation();
       if (Utils.isMobile()) {
-        // In-cart meds: do nothing (Remove is always visible)
-        if (div.classList.contains("in-cart")) return;
         // Toggle action overlay
         const wasOpen = div.classList.contains("mobile-actions-open");
-        const otherWasOpen = document.querySelector(".med-item.mobile-actions-open:not([data-key='" + div.dataset.key + "'])");
+        const otherWasOpen = document.querySelector(".med-item.mobile-actions-open:not([data-key='" + div.dataset.key + "'])")
+          || document.querySelector(".cart-item.mobile-actions-open");
         document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
           el.classList.remove("mobile-actions-open")
         );
-        // Only open if this med was toggled (not if we just dismissed another med's overlay)
+        document.querySelectorAll(".cart-item.mobile-actions-open").forEach(el =>
+          el.classList.remove("mobile-actions-open")
+        );
+        // Only open if this med was toggled (not if we just dismissed another)
         if (!wasOpen && !otherWasOpen) div.classList.add("mobile-actions-open");
       } else {
         // Desktop: quick-print
@@ -620,11 +622,15 @@ class CartRenderer {
       medNameDisplay += ` <span class="brand-name">${Utils.escapeHtml(brandText)}</span>`;
     }
 
+    const isMobile = Utils.isMobile();
+    const printBtn = isMobile ? `<button class="med-action-btn med-action-btn-print" type="button" onclick="event.stopPropagation(); cartActions.dismissOverlay(this); cartActions.print('${med.uid}')">Print</button>` : "";
+
     return `
-      <div class="cart-item">
+      <div class="cart-item" data-uid="${med.uid}"${isMobile ? ` onclick="cartActions.toggleOverlay(this, event)"` : ""}>
         <div class="cart-item-overlay-actions">
-          <button class="med-action-btn med-action-btn-edit" type="button" onclick="event.stopPropagation(); cartActions.edit('${med.uid}')">Edit</button>
-          <button class="med-action-btn med-action-btn-remove" type="button" onclick="event.stopPropagation(); cartActions.remove('${med.uid}')">Remove</button>
+          <button class="med-action-btn med-action-btn-edit" type="button" onclick="event.stopPropagation(); cartActions.dismissOverlay(this); cartActions.edit('${med.uid}')">Edit</button>
+          ${printBtn}
+          <button class="med-action-btn med-action-btn-remove" type="button" onclick="event.stopPropagation(); cartActions.dismissOverlay(this); cartActions.remove('${med.uid}')">Remove</button>
         </div>
         <div class="cart-med-name">${medNameDisplay}</div>
         <div class="cart-med-details">${safeDetails}</div>

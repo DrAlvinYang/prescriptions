@@ -2480,10 +2480,29 @@ body:has(.help-overlay:not(.hidden)) {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Always show cart item actions (no hover on mobile) */
+  /* Hide cart item actions by default on mobile (revealed on tap) */
   .cart-item-overlay-actions {
-    visibility: visible;
+    visibility: hidden;
     opacity: 1;
+  }
+
+  /* Frosted overlay for cart items when tapped */
+  .cart-item.mobile-actions-open .cart-item-overlay-actions {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    z-index: 1;
+    border-radius: 14px;
   }
 
   .cart-item {
@@ -2533,22 +2552,15 @@ body:has(.help-overlay:not(.hidden)) {
     position: absolute;
   }
 
-  /* In-cart meds: always show Remove button */
+  /* In-cart meds: also hidden by default, revealed on tap */
   .med-item.in-cart .med-item-overlay-actions,
   .med-item.in-cart .med-item-actions {
-    visibility: visible;
+    visibility: hidden;
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    padding-right: 10px;
   }
 
-  /* In-cart: hide Edit and Print, only show Remove */
-  .med-item.in-cart .med-action-btn-edit,
-  .med-item.in-cart .med-action-btn-print {
+  /* In-cart: show Remove + Print (hide Edit) */
+  .med-item.in-cart .med-action-btn-edit {
     display: none;
   }
 
@@ -2572,15 +2584,15 @@ body:has(.help-overlay:not(.hidden)) {
     border-radius: 0;
   }
 
-  /* Large tap-friendly buttons in the overlay */
-  .med-item.mobile-actions-open .med-action-btn {
-    padding: 10px 20px;
-    font-size: 15px;
+  /* Tap-friendly buttons in the overlay */
+  .med-item.mobile-actions-open .med-action-btn,
+  .cart-item.mobile-actions-open .med-action-btn {
+    padding: 7px 14px;
+    font-size: 13px;
     font-weight: 600;
-    border-radius: 12px;
-    min-height: 44px;
-    flex: 1;
-    max-width: 120px;
+    border-radius: 10px;
+    min-height: 36px;
+    flex: 0 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;

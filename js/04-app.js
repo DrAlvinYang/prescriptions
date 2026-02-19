@@ -175,7 +175,25 @@ class Application {
     window.searchEditController = this.controllers.searchEdit;
     window.cartActions = {
       remove: (uid) => this.controllers.cart.remove(uid),
-      edit: (uid) => this.managers.modal.openEdit(uid)
+      edit: (uid) => this.managers.modal.openEdit(uid),
+      print: (uid) => {
+        const med = this.state.cart.find(m => m.uid === uid);
+        if (med && window.printController) window.printController.quickPrint(med);
+      },
+      toggleOverlay: (el, e) => {
+        e.stopPropagation();
+        const item = el.closest(".cart-item");
+        if (!item) return;
+        const wasOpen = item.classList.contains("mobile-actions-open");
+        const otherWasOpen = document.querySelector(".cart-item.mobile-actions-open:not([data-uid='" + item.dataset.uid + "'])");
+        document.querySelectorAll(".cart-item.mobile-actions-open").forEach(c => c.classList.remove("mobile-actions-open"));
+        document.querySelectorAll(".med-item.mobile-actions-open").forEach(c => c.classList.remove("mobile-actions-open"));
+        if (!wasOpen && !otherWasOpen) item.classList.add("mobile-actions-open");
+      },
+      dismissOverlay: (btn) => {
+        const item = btn.closest(".cart-item");
+        if (item) item.classList.remove("mobile-actions-open");
+      }
     };
   }
 
@@ -638,9 +656,12 @@ class Application {
     window.scrollTo(0, 0);
 
     // Mobile help button
-    // Dismiss med action overlays when tapping outside any med item
+    // Dismiss med/cart action overlays when tapping outside
     document.addEventListener("click", () => {
       document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
+        el.classList.remove("mobile-actions-open")
+      );
+      document.querySelectorAll(".cart-item.mobile-actions-open").forEach(el =>
         el.classList.remove("mobile-actions-open")
       );
     });
