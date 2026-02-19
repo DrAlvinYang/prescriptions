@@ -689,6 +689,12 @@ class Application {
           this.enterMobileSearch();
         }
       });
+      // Toggle empty state vs results based on input content
+      searchInput.addEventListener("input", () => {
+        if (Utils.isMobile()) {
+          document.body.classList.toggle("has-search-query", searchInput.value.trim().length > 0);
+        }
+      });
     }
   }
 
@@ -700,6 +706,7 @@ class Application {
   exitMobileSearch() {
     this._exitingMobileSearch = true;
     document.body.classList.remove("mobile-search-active");
+    document.body.classList.remove("has-search-query");
     // Clear search without re-focusing (clear() calls safeFocus which would re-trigger)
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {

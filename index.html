@@ -126,12 +126,19 @@
         <div class="searchbar">
           <input id="searchInput" type="text" placeholder="Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)" autocomplete="off" />
           <button id="clearSearchBtn" class="search-clear-btn" type="button" aria-label="Clear search">&times;</button>
-          <button id="mobileSearchCancel" class="mobile-search-cancel mobile-only" type="button">Cancel</button>
+          <button id="mobileSearchCancel" class="mobile-search-cancel mobile-only" type="button" aria-label="Cancel">&times;</button>
         </div>
       </div>
 
       <div class="content-scroll">
         <div id="mobileSearchHeader" class="mobile-search-header mobile-only">Results</div>
+        <div class="mobile-search-empty mobile-only">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Search med (e.g. keflex 5d)</span>
+        </div>
         <div id="dashboardView" class="dashboard-container">
           <div id="col1" class="dash-col"></div>
           <div id="col2" class="dash-col"></div>
