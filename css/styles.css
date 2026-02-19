@@ -2559,7 +2559,8 @@ body:has(.help-overlay:not(.hidden)) {
 
   /* In-cart meds: also hidden by default, revealed on tap */
   .med-item.in-cart .med-item-overlay-actions,
-  .med-item.in-cart .med-item-actions {
+  .med-item.in-cart .med-item-actions,
+  .med-item.has-overlay-actions.in-cart:not(.mobile-actions-open) .med-item-overlay-actions {
     visibility: hidden;
     position: absolute;
   }
@@ -2580,8 +2581,8 @@ body:has(.help-overlay:not(.hidden)) {
     bottom: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-evenly;
+    padding: 0 12px;
     background: color-mix(in srgb, var(--panel) 85%, transparent);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
@@ -2592,7 +2593,7 @@ body:has(.help-overlay:not(.hidden)) {
   /* Tap-friendly buttons in the overlay */
   .med-item.mobile-actions-open .med-action-btn,
   .cart-item.mobile-actions-open .med-action-btn {
-    padding: 7px 14px;
+    padding: 7px 20px;
     font-size: 13px;
     font-weight: 600;
     border-radius: 10px;
@@ -2601,6 +2602,13 @@ body:has(.help-overlay:not(.hidden)) {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* Show Edit button in overlay for in-cart items (override desktop hiding rules) */
+  .med-item.mobile-actions-open .med-item-actions .med-action-btn-edit,
+  .med-item.has-overlay-actions.mobile-actions-open .med-item-overlay-actions .med-action-btn-edit {
+    display: flex;
+    visibility: visible;
   }
 
   /* Hide shortcut-hint underlines on mobile */

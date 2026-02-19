@@ -101,8 +101,9 @@ class MedicationRenderer {
     });
     addRemoveBtn.onclick = (e) => {
       e.stopPropagation();
-      medItemDiv.classList.remove("mobile-actions-open");
       if (medItemDiv.classList.contains('in-cart')) {
+        // Removing from cart: dismiss overlay
+        medItemDiv.classList.remove("mobile-actions-open");
         if (window.cartController) {
           const key = medItemDiv.dataset.key;
           const item = window.cartController.state.cart.find(
@@ -113,9 +114,12 @@ class MedicationRenderer {
           }
         }
       } else {
+        // Adding to cart: keep overlay open on mobile to show Remove button
+        if (!Utils.isMobile()) medItemDiv.classList.remove("mobile-actions-open");
         if (window.cartController) {
           window.cartController.pendingFlySource = medItemDiv;
           if (med.weight_based && window.cartController.state.currentWeight === null) {
+            medItemDiv.classList.remove("mobile-actions-open");
             window.modalManager.openWeight(med);
           } else {
             window.cartController.add(med);
