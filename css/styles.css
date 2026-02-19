@@ -2089,11 +2089,16 @@ body:has(.help-overlay:not(.hidden)) {
     display: none !important;
   }
 
-  /* --- MOBILE HEADER --- */
+  /* --- MOBILE HEADER (fixed at top) --- */
   .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 48px;
     padding: 6px 12px;
     gap: 4px;
+    z-index: 102;
   }
 
   .topbar-left {
@@ -2274,9 +2279,10 @@ body:has(.help-overlay:not(.hidden)) {
     display: none;
   }
 
-  /* Content area: add bottom padding for fixed search bar */
+  /* Content area: offset for fixed header + fixed search bar */
   .content-scroll {
     padding: 8px 0;
+    padding-top: 56px; /* 48px header + 8px spacing */
     padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
   }
 
