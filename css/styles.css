@@ -2526,18 +2526,18 @@ body:has(.help-overlay:not(.hidden)) {
     padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* --- PROVIDER DROPDOWN (mobile bottom-sheet) --- */
+  /* --- PROVIDER DROPDOWN (mobile top-sheet, above keyboard) --- */
   .provider-edit-dropdown {
     position: fixed !important;
-    top: auto !important;
-    bottom: 0 !important;
+    top: 48px !important;
+    bottom: auto !important;
     left: 0 !important;
     right: 0 !important;
-    border-radius: 22px 22px 0 0;
+    border-radius: 0 0 22px 22px;
     padding: 20px 16px;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 20px;
     z-index: 200;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     width: auto !important;
   }
 
