@@ -2740,6 +2740,88 @@ body:has(.help-overlay:not(.hidden)) {
     padding: 12px 14px;
   }
 
+  /* --- WEIGHT TAKEOVER (replaces search bar on mobile) --- */
+  html.mobile-weight-active,
+  body.mobile-weight-active {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  body.mobile-weight-active .search-section {
+    display: none;
+  }
+
+  body.mobile-weight-active #weightModal {
+    align-items: flex-start;
+    background: none;
+    z-index: 101;
+  }
+
+  body.mobile-weight-active #weightModal .modal-box {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    background: var(--bg);
+  }
+
+  body.mobile-weight-active #weightModal .modal-input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    margin: 0;
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  body.mobile-weight-active .weight-input-wrapper {
+    flex: 1;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: var(--hover-bg);
+    padding: 0 10px;
+  }
+
+  body.mobile-weight-active .weight-input-wrapper input {
+    height: 100%;
+    font-size: 16px;
+    background: transparent;
+  }
+
+  body.mobile-weight-active .weight-input-wrapper:focus-within {
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .mobile-weight-close {
+    background: var(--hover-bg);
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  body.mobile-weight-active .modal-actions {
+    padding: 12px;
+  }
+
   /* --- HELP BUTTON: hide floating version on mobile, use header icon --- */
   .help-btn {
     display: none !important;

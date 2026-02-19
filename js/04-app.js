@@ -771,10 +771,30 @@ class Application {
     // Set mobile weight mode flag
     this.state._mobileWeightMode = true;
 
-    // Change modal text for direct weight entry
-    title.innerHTML = "Enter patient weight.";
+    // Add body class for takeover styling
+    document.body.classList.add("mobile-weight-active");
+    document.documentElement.classList.add("mobile-weight-active");
+
+    // Hide title, update button text
+    title.style.display = "none";
     saveBtn.textContent = "Set Weight";
     skipBtn.textContent = "Clear";
+
+    // Inject close button if not already present
+    const modalBox = modal.querySelector(".modal-box");
+    if (modalBox && !modal.querySelector(".mobile-weight-close")) {
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "mobile-weight-close";
+      closeBtn.type = "button";
+      closeBtn.innerHTML = "&times;";
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.controllers.weight.skipWeight(() => {});
+      });
+      // Insert close button into the input row area
+      const inputGroup = modal.querySelector(".modal-input-group");
+      if (inputGroup) inputGroup.appendChild(closeBtn);
+    }
 
     // Pre-fill current weight if set
     input.value = this.state.currentWeight ? this.state.currentWeight.toString() : "";

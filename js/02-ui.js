@@ -1227,12 +1227,24 @@ class ModalManager {
 
   _resetMobileWeightModal() {
     this.state._mobileWeightMode = false;
+
+    // Remove body/html takeover classes
+    document.body.classList.remove("mobile-weight-active");
+    document.documentElement.classList.remove("mobile-weight-active");
+
     const title = document.getElementById("weightModalTitle");
     const saveBtn = document.getElementById("modalSaveBtn");
     const skipBtn = document.getElementById("modalSkipBtn");
-    if (title) title.innerHTML = "Medication is weight-based.<br>Enter weight to calculate dose.";
+    if (title) {
+      title.innerHTML = "Medication is weight-based.<br>Enter weight to calculate dose.";
+      title.style.display = "";
+    }
     if (saveBtn) saveBtn.textContent = "Calculate & Add";
     if (skipBtn) skipBtn.textContent = "Skip";
+
+    // Remove injected close button
+    const closeBtn = document.querySelector(".mobile-weight-close");
+    if (closeBtn) closeBtn.remove();
   }
 
   skipWeight(onSkip) {
