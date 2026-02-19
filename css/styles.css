@@ -2688,13 +2688,13 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .provider-edit-row {
-    flex-direction: column;
-    gap: 0;
-    align-items: stretch;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
   }
 
   .provider-edit-label {
-    display: none;
+    min-width: auto;
   }
 
   .provider-edit-row + .provider-edit-row {
