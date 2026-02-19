@@ -2078,6 +2078,11 @@ body:has(.help-overlay:not(.hidden)) {
    ============================================================================ */
 @media (max-width: 768px) {
 
+  /* --- PREVENT PULL-TO-REFRESH & OVERSCROLL --- */
+  html, body {
+    overscroll-behavior-y: none;
+  }
+
   /* --- SHOW MOBILE-ONLY ELEMENTS --- */
   .mobile-only {
     display: flex !important;
@@ -2229,20 +2234,20 @@ body:has(.help-overlay:not(.hidden)) {
     right: 0;
   }
 
-  /* --- MOBILE SEARCH BAR (fixed bottom, iOS Safari-style) --- */
+  /* --- MOBILE SEARCH BAR (fixed top, below header) --- */
   .search-section {
     position: fixed;
-    bottom: 0;
+    top: 48px;
     left: 0;
     right: 0;
-    top: auto;
+    bottom: auto;
     padding: 8px 12px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     z-index: 100;
     background: color-mix(in srgb, var(--panel) 85%, transparent);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
     border-top: none;
+    border-bottom: 1px solid var(--border);
     box-shadow: none;
   }
 
@@ -2279,11 +2284,12 @@ body:has(.help-overlay:not(.hidden)) {
     display: none;
   }
 
-  /* Content area: offset for fixed header + fixed search bar */
+  /* Content area: offset for fixed header (48px) + fixed search bar (~52px) */
   .content-scroll {
     padding: 8px 0;
-    padding-top: 56px; /* 48px header + 8px spacing */
-    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    padding-top: 108px; /* 48px header + 52px search bar + 8px spacing */
+    padding-bottom: 8px;
+    overscroll-behavior-y: contain;
   }
 
   /* --- MOBILE SEARCH CANCEL BUTTON (circle X, Safari-style) --- */
@@ -2316,14 +2322,7 @@ body:has(.help-overlay:not(.hidden)) {
     height: 100%;
   }
 
-  /* Move search bar to top (below header) when active - avoids iOS keyboard issues */
-  body.mobile-search-active .search-section {
-    top: 48px;
-    bottom: auto;
-    padding-bottom: 8px;
-    border-top: none;
-    border-bottom: 1px solid var(--border);
-  }
+  /* Search bar stays at top during active search (already positioned there by default) */
 
   body.mobile-search-active .searchbar {
     display: flex;
@@ -2358,6 +2357,7 @@ body:has(.help-overlay:not(.hidden)) {
     background: var(--bg);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
   }
 
   body.mobile-search-active #dashboardView {

@@ -631,6 +631,12 @@ class Application {
   // ---- Mobile-specific setup ----
 
   setupMobileListeners() {
+    // Prevent browser scroll restoration pushing header off-screen
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     // Mobile help button
     const mobileHelpBtn = document.getElementById("mobileHelpBtn");
     if (mobileHelpBtn) {
