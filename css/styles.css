@@ -2905,6 +2905,17 @@ body:has(.help-overlay:not(.hidden)) {
     height: 100%;
     font-size: 16px;
     background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+
+  body.mobile-weight-active .weight-input-wrapper input:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
   }
 
   body.mobile-weight-active .weight-input-wrapper:focus-within {
