@@ -192,16 +192,13 @@ class MedicationRenderer {
       if (Utils.isMobile()) {
         // Toggle action overlay
         const wasOpen = div.classList.contains("mobile-actions-open");
-        const otherWasOpen = document.querySelector(".med-item.mobile-actions-open:not([data-key='" + div.dataset.key + "'])")
-          || document.querySelector(".cart-item.mobile-actions-open");
         document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
           el.classList.remove("mobile-actions-open")
         );
         document.querySelectorAll(".cart-item.mobile-actions-open").forEach(el =>
           el.classList.remove("mobile-actions-open")
         );
-        // Only open if this med was toggled (not if we just dismissed another)
-        if (!wasOpen && !otherWasOpen) div.classList.add("mobile-actions-open");
+        if (!wasOpen) div.classList.add("mobile-actions-open");
       } else {
         // Desktop: quick-print
         if (window.printController) {
@@ -875,7 +872,14 @@ class LocationUIRenderer {
       items.forEach((item, index) => {
         const nameSpan = item.querySelector(".loc-search-name");
         if (nameSpan && nameSpan.textContent === currentName) {
-          item.scrollIntoView({ block: "center", behavior: "smooth" });
+          // On mobile, position as 3rd row so it's visible above keyboard
+          if (Utils.isMobile() && index >= 2) {
+            const scrollContainer = this.dropdown.querySelector(".location-search-results") || this.dropdown;
+            const targetItem = items[index - 2];
+            scrollContainer.scrollTop = targetItem.offsetTop - scrollContainer.offsetTop;
+          } else {
+            item.scrollIntoView({ block: "center", behavior: "smooth" });
+          }
           // Set active index so arrow keys continue from this position
           this.activeLocationIndex = index;
           // Apply visual highlight with enter hint (don't steal focus from search input)

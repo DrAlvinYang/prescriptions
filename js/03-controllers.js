@@ -946,25 +946,10 @@ class ResetController {
       document.body.classList.remove("mobile-search-active", "has-search-query");
       document.documentElement.classList.remove("mobile-search-active");
 
-      // Close weight modal if open
-      if (this.state._mobileWeightMode && window.app) {
-        window.app.closeMobileWeightModal();
-      }
-
-      // Close location picker if open
-      document.body.classList.remove("mobile-location-active");
-      document.documentElement.classList.remove("mobile-location-active");
+      // Close all mobile modals (provider, location, add-location, weight)
       if (window.app) {
-        window.app.controllers.location.exitSearchMode();
+        window.app._closeActiveMobileModal();
       }
-
-      // Close provider dropdown if open
-      const providerDropdown = document.getElementById("providerEditDropdown");
-      if (providerDropdown && !providerDropdown.classList.contains("hidden")) {
-        providerDropdown.classList.add("hidden");
-      }
-      const providerBackdrop = document.getElementById("providerEditBackdrop");
-      if (providerBackdrop) providerBackdrop.classList.add("hidden");
     } else {
       searchInput?.focus();
     }

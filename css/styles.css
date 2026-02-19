@@ -2543,11 +2543,18 @@ body:has(.help-overlay:not(.hidden)) {
     width: 100%;
   }
 
-  /* Hide action buttons by default on mobile (revealed on tap) */
+  /* Hide action buttons by default on mobile (revealed on tap only) */
   .med-item-overlay-actions,
   .med-item-actions {
     visibility: hidden;
     position: absolute;
+  }
+
+  /* Override desktop hover/active/in-cart rules that leak into mobile */
+  .med-item:hover .med-item-actions,
+  .med-item.is-active .med-item-actions,
+  .med-item.has-overlay-actions:hover .med-item-overlay-actions {
+    visibility: hidden;
   }
 
   /* In-cart meds: also hidden by default, revealed on tap */
