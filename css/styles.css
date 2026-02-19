@@ -2634,25 +2634,80 @@ body:has(.help-overlay:not(.hidden)) {
     font-size: 15px;
   }
 
-  /* --- LOCATION BOTTOM-SHEET (when shown on mobile) --- */
+  /* --- LOCATION TAKEOVER (replaces search bar on mobile) --- */
+  html.mobile-location-active,
+  body.mobile-location-active {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  body.mobile-location-active .search-section {
+    display: none;
+  }
+
+  body.mobile-location-active #locationSearchBackdrop {
+    display: none;
+  }
+
   .location-wrapper.mobile-location-active {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column;
     position: fixed !important;
-    top: auto !important;
-    bottom: 0 !important;
+    top: 48px !important;
+    bottom: 0;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    z-index: 201;
-    background: var(--panel);
-    border-radius: 22px 22px 0 0;
-    padding: 12px;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 101;
+    background: var(--bg);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .location-wrapper.mobile-location-active .location-btn {
     width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: none;
+    flex-shrink: 0;
+  }
+
+  .location-wrapper.mobile-location-active .location-search-input {
+    flex: 1;
+    height: 36px;
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 6px 14px;
+    border: none;
+    background: var(--hover-bg);
+    color: var(--text);
+    outline: none;
+  }
+
+  .mobile-location-close {
+    background: var(--hover-bg);
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
   }
 
   .location-wrapper.mobile-location-active .location-search-dropdown {
@@ -2661,9 +2716,23 @@ body:has(.help-overlay:not(.hidden)) {
     left: auto;
     right: auto;
     width: 100%;
-    max-height: 50vh;
-    border-radius: 12px;
-    margin-top: 8px;
+    flex: 1;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .location-wrapper.mobile-location-active .location-search-results {
+    height: auto;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
   }
 
   .loc-search-item {

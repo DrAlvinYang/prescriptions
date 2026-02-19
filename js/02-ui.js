@@ -657,6 +657,19 @@ class LocationUIRenderer {
     // Replace button content with search input
     button.innerHTML = `<input id="locationSearchInput" type="text" class="location-search-input" placeholder="Search hospital" autocomplete="off" />`;
 
+    // Add close button on mobile
+    if (Utils.isMobile()) {
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "mobile-location-close";
+      closeBtn.type = "button";
+      closeBtn.innerHTML = "&times;";
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.exitSearchMode();
+      });
+      button.appendChild(closeBtn);
+    }
+
     this.searchInput = document.getElementById("locationSearchInput");
     
     // Create dropdown if it doesn't exist
@@ -848,6 +861,10 @@ class LocationUIRenderer {
       wrapper.classList.remove("typing-mode");
       wrapper.classList.remove("mobile-location-active");
     }
+
+    // Remove body/html lock classes (mobile location takeover)
+    document.body.classList.remove("mobile-location-active");
+    document.documentElement.classList.remove("mobile-location-active");
 
     this.hideDropdown();
     this.updateHeader();

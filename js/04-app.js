@@ -750,6 +750,8 @@ class Application {
   }
 
   openMobileLocation() {
+    document.body.classList.add("mobile-location-active");
+    document.documentElement.classList.add("mobile-location-active");
     const wrapper = document.getElementById("locationWrapper");
     if (wrapper) {
       wrapper.classList.add("mobile-location-active");
