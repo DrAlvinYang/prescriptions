@@ -2607,15 +2607,20 @@ body:has(.help-overlay:not(.hidden)) {
     display: none !important;
   }
 
-  /* --- HELP POPUP: full width --- */
-  .help-popup-box {
-    width: 95%;
-    max-height: 80vh;
-    border-radius: 22px 22px 0 0;
+  /* --- HELP POPUP: full-screen on mobile --- */
+  .help-overlay {
+    align-items: stretch;
   }
 
-  .help-overlay {
-    align-items: flex-end;
+  .help-popup-box {
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
   /* --- TOAST: above search bar --- */
