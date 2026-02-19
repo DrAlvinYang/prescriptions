@@ -940,11 +940,31 @@ class ResetController {
       window.undoManager.clear();
     }
 
-    // On mobile: exit search mode and return to folder/dashboard view
+    // On mobile: close all modals/takeovers and return to folder/dashboard view
     // On desktop: focus search for keyboard-ready state
     if (Utils.isMobile()) {
       document.body.classList.remove("mobile-search-active", "has-search-query");
       document.documentElement.classList.remove("mobile-search-active");
+
+      // Close weight modal if open
+      if (this.state._mobileWeightMode && window.app) {
+        window.app.closeMobileWeightModal();
+      }
+
+      // Close location picker if open
+      document.body.classList.remove("mobile-location-active");
+      document.documentElement.classList.remove("mobile-location-active");
+      if (window.app) {
+        window.app.controllers.location.exitSearchMode();
+      }
+
+      // Close provider dropdown if open
+      const providerDropdown = document.getElementById("providerEditDropdown");
+      if (providerDropdown && !providerDropdown.classList.contains("hidden")) {
+        providerDropdown.classList.add("hidden");
+      }
+      const providerBackdrop = document.getElementById("providerEditBackdrop");
+      if (providerBackdrop) providerBackdrop.classList.add("hidden");
     } else {
       searchInput?.focus();
     }

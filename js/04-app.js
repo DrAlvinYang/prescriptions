@@ -638,6 +638,13 @@ class Application {
     window.scrollTo(0, 0);
 
     // Mobile help button
+    // Dismiss med action overlays when tapping outside any med item
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
+        el.classList.remove("mobile-actions-open")
+      );
+    });
+
     const mobileHelpBtn = document.getElementById("mobileHelpBtn");
     if (mobileHelpBtn) {
       mobileHelpBtn.addEventListener("click", () => {
@@ -667,7 +674,11 @@ class Application {
     const mobileWeightBtn = document.getElementById("mobileWeightBtn");
     if (mobileWeightBtn) {
       mobileWeightBtn.addEventListener("click", () => {
-        this.openMobileWeightModal();
+        if (this.state._mobileWeightMode) {
+          this.closeMobileWeightModal();
+        } else {
+          this.openMobileWeightModal();
+        }
       });
     }
 
@@ -789,7 +800,7 @@ class Application {
       closeBtn.innerHTML = "&times;";
       closeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        this.controllers.weight.skipWeight(() => {});
+        this.closeMobileWeightModal();
       });
       // Insert close button into the input row area
       const inputGroup = modal.querySelector(".modal-input-group");
@@ -800,6 +811,11 @@ class Application {
     input.value = this.state.currentWeight ? this.state.currentWeight.toString() : "";
     modal.classList.remove("hidden");
     setTimeout(() => input.focus(), 100);
+  }
+
+  closeMobileWeightModal() {
+    this.managers.modal._resetMobileWeightModal();
+    this.managers.modal.closeWeight();
   }
 
   updateMobileWeightBadge() {

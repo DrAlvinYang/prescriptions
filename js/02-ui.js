@@ -89,6 +89,7 @@ class MedicationRenderer {
     });
     editBtn.onclick = (e) => {
       e.stopPropagation();
+      medItemDiv.classList.remove("mobile-actions-open");
       if (window.searchEditController) {
         window.searchEditController.openEdit(med);
       }
@@ -100,6 +101,7 @@ class MedicationRenderer {
     });
     addRemoveBtn.onclick = (e) => {
       e.stopPropagation();
+      medItemDiv.classList.remove("mobile-actions-open");
       if (medItemDiv.classList.contains('in-cart')) {
         if (window.cartController) {
           const key = medItemDiv.dataset.key;
@@ -124,6 +126,23 @@ class MedicationRenderer {
 
     container.appendChild(editBtn);
     container.appendChild(addRemoveBtn);
+
+    // On mobile, add a Print button
+    if (Utils.isMobile()) {
+      const printBtn = DOMBuilder.createElement('button', 'med-action-btn med-action-btn-print', {
+        textContent: 'Print',
+        type: 'button'
+      });
+      printBtn.onclick = (e) => {
+        e.stopPropagation();
+        medItemDiv.classList.remove("mobile-actions-open");
+        if (window.printController) {
+          window.printController.quickPrint(med);
+        }
+      };
+      container.appendChild(printBtn);
+    }
+
     return container;
   }
 
@@ -167,11 +186,25 @@ class MedicationRenderer {
       }
     }
 
-    // Click/Enter on med item triggers quick-print
+    // Click/Enter on med item
     div.onclick = (e) => {
       e.stopPropagation();
-      if (window.printController) {
-        window.printController.quickPrint(med);
+      if (Utils.isMobile()) {
+        // In-cart meds: do nothing (Remove is always visible)
+        if (div.classList.contains("in-cart")) return;
+        // Toggle action overlay
+        const wasOpen = div.classList.contains("mobile-actions-open");
+        const otherWasOpen = document.querySelector(".med-item.mobile-actions-open:not([data-key='" + div.dataset.key + "'])");
+        document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
+          el.classList.remove("mobile-actions-open")
+        );
+        // Only open if this med was toggled (not if we just dismissed another med's overlay)
+        if (!wasOpen && !otherWasOpen) div.classList.add("mobile-actions-open");
+      } else {
+        // Desktop: quick-print
+        if (window.printController) {
+          window.printController.quickPrint(med);
+        }
       }
     };
 
@@ -1147,11 +1180,33 @@ class ModalManager {
     this.state.pendingMed = medication;
     const modal = document.getElementById("weightModal");
     const input = document.getElementById("modalWeightInput");
-    
+
+    // On mobile, use the same top takeover styling as the weight button
+    if (Utils.isMobile()) {
+      document.body.classList.add("mobile-weight-active");
+      document.documentElement.classList.add("mobile-weight-active");
+      const title = document.getElementById("weightModalTitle");
+      if (title) title.style.display = "none";
+
+      // Inject close button if not present
+      const inputGroup = modal.querySelector(".modal-input-group");
+      if (inputGroup && !modal.querySelector(".mobile-weight-close")) {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "mobile-weight-close";
+        closeBtn.type = "button";
+        closeBtn.innerHTML = "&times;";
+        closeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.skipWeight(() => {});
+        });
+        inputGroup.appendChild(closeBtn);
+      }
+    }
+
     input.value = "";
     modal.classList.remove("hidden");
     input.focus();
-    
+
     // Do NOT trap focus for weight modal - we want Tab to be completely disabled
     // (handled in KeyboardController)
   }
@@ -1159,7 +1214,20 @@ class ModalManager {
   closeWeight() {
     this.removeFocusTrap();
     document.getElementById("weightModal").classList.add("hidden");
-    
+
+    // Clean up mobile takeover if active
+    document.body.classList.remove("mobile-weight-active");
+    document.documentElement.classList.remove("mobile-weight-active");
+    const title = document.getElementById("weightModalTitle");
+    if (title) title.style.display = "";
+    const closeBtn = document.querySelector(".mobile-weight-close");
+    if (closeBtn) closeBtn.remove();
+
+    // Dismiss any open med action overlays
+    document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
+      el.classList.remove("mobile-actions-open")
+    );
+
     // Return focus to active search item
     const results = document.querySelectorAll("#searchResults .med-item");
     if (this.state.activeSearchIndex >= 0 && results[this.state.activeSearchIndex]) {

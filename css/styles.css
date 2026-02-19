@@ -2248,8 +2248,8 @@ body:has(.help-overlay:not(.hidden)) {
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
     border-top: none;
-    border-bottom: 1px solid var(--border);
-    box-shadow: none;
+    border-bottom: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   /* Remove fade pseudo-elements on mobile */
@@ -2275,7 +2275,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .searchbar input:focus {
-    box-shadow: none;
+    box-shadow: inset 0 0 0 2px var(--accent);
     border-color: transparent;
   }
 
@@ -2516,18 +2516,79 @@ body:has(.help-overlay:not(.hidden)) {
     min-height: 44px;
   }
 
-  /* Always show med item actions (no hover on mobile) */
-  .med-item-overlay-actions {
-    visibility: visible;
-    opacity: 1;
+  /* Search results: let content take full width (buttons are hidden/overlay) */
+  .med-item.has-actions {
+    display: block;
   }
 
+  .med-item.has-actions .med-item-content {
+    flex: none;
+    width: 100%;
+  }
+
+  /* Hide action buttons by default on mobile (revealed on tap) */
+  .med-item-overlay-actions,
   .med-item-actions {
-    visibility: visible;
+    visibility: hidden;
+    position: absolute;
   }
 
-  .med-item.in-cart .med-item-actions .med-action-btn-edit {
+  /* In-cart meds: always show Remove button */
+  .med-item.in-cart .med-item-overlay-actions,
+  .med-item.in-cart .med-item-actions {
     visibility: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+  }
+
+  /* In-cart: hide Edit and Print, only show Remove */
+  .med-item.in-cart .med-action-btn-edit,
+  .med-item.in-cart .med-action-btn-print {
+    display: none;
+  }
+
+  /* Frosted centered overlay when med is tapped */
+  .med-item.mobile-actions-open .med-item-overlay-actions,
+  .med-item.mobile-actions-open .med-item-actions {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    z-index: 1;
+    border-radius: 0;
+  }
+
+  /* Large tap-friendly buttons in the overlay */
+  .med-item.mobile-actions-open .med-action-btn {
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 12px;
+    min-height: 44px;
+    flex: 1;
+    max-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Hide shortcut-hint underlines on mobile */
+  .med-action-btn .shortcut-hint {
+    text-decoration: none !important;
   }
 
   /* --- MODAL GRID REARRANGEMENT --- */
@@ -2598,16 +2659,16 @@ body:has(.help-overlay:not(.hidden)) {
   /* --- PROVIDER DROPDOWN (mobile top-sheet, above keyboard) --- */
   .provider-edit-dropdown {
     position: fixed !important;
-    top: 48px !important;
+    top: 56px !important;
     bottom: auto !important;
-    left: 0 !important;
-    right: 0 !important;
-    border-radius: 0 0 22px 22px;
-    padding: 20px 16px;
-    padding-bottom: 20px;
+    left: 8px !important;
+    right: 8px !important;
+    border-radius: 16px;
+    padding: 16px;
     z-index: 200;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     width: auto !important;
+    background: var(--panel);
   }
 
   .provider-edit-row {
@@ -2619,6 +2680,18 @@ body:has(.help-overlay:not(.hidden)) {
   .provider-edit-input {
     width: 100% !important;
     font-size: 16px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: var(--hover-bg);
+    padding: 6px 14px;
+  }
+
+  .provider-edit-input:focus {
+    box-shadow: inset 0 0 0 2px var(--accent);
+    border-color: transparent;
+    background: var(--hover-bg);
+    outline: none;
   }
 
   .provider-edit-label {
@@ -2677,9 +2750,8 @@ body:has(.help-overlay:not(.hidden)) {
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
     border: none;
-    border-bottom: 1px solid var(--border);
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
   }
 
@@ -2693,6 +2765,10 @@ body:has(.help-overlay:not(.hidden)) {
     background: var(--hover-bg);
     color: var(--text);
     outline: none;
+  }
+
+  .location-wrapper.mobile-location-active .location-search-input:focus {
+    box-shadow: inset 0 0 0 2px var(--accent);
   }
 
   .mobile-location-close {
@@ -2780,7 +2856,7 @@ body:has(.help-overlay:not(.hidden)) {
     background: color-mix(in srgb, var(--panel) 85%, transparent);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   body.mobile-weight-active .weight-input-wrapper {
@@ -2800,7 +2876,7 @@ body:has(.help-overlay:not(.hidden)) {
 
   body.mobile-weight-active .weight-input-wrapper:focus-within {
     border-color: transparent;
-    box-shadow: none;
+    box-shadow: inset 0 0 0 2px var(--accent);
   }
 
   .mobile-weight-close {
