@@ -539,6 +539,14 @@ class CartRenderer {
       printBtn.disabled = count === 0;
     }
 
+    // Update mobile weight badge
+    const mobileWeightBadge = document.getElementById("mobileWeightBadge");
+    if (mobileWeightBadge) {
+      mobileWeightBadge.textContent = this.state.currentWeight
+        ? this.state.currentWeight + "kg"
+        : "";
+    }
+
     // Render cart items or empty state
     if (count === 0) {
       cartList.innerHTML = `<div class="cart-empty">No medication added</div>`;
@@ -838,6 +846,7 @@ class LocationUIRenderer {
     if (wrapper) {
       wrapper.classList.remove("search-active");
       wrapper.classList.remove("typing-mode");
+      wrapper.classList.remove("mobile-location-active");
     }
 
     this.hideDropdown();
@@ -1147,6 +1156,25 @@ class ModalManager {
     const MIN_WEIGHT = 0.01;
     const MAX_WEIGHT = 500;
 
+    // Mobile weight mode: just set weight and close, no pending med
+    if (this.state._mobileWeightMode) {
+      if (!isNaN(value) && value >= MIN_WEIGHT && value <= MAX_WEIGHT) {
+        this.state.setWeight(value);
+        document.getElementById("weightInput").value = value.toFixed(2);
+      } else if (!isNaN(value) && value > MAX_WEIGHT) {
+        alert(`Weight cannot exceed ${MAX_WEIGHT} kg. Please enter a valid weight.`);
+        return;
+      } else {
+        alert("Please enter a valid weight greater than 0 kg.");
+        return;
+      }
+      this._resetMobileWeightModal();
+      this.closeWeight();
+      if (window.cartController) window.cartController.render();
+      if (window.app) window.app.updateMobileWeightBadge();
+      return;
+    }
+
     if (!isNaN(value) && value >= MIN_WEIGHT && value <= MAX_WEIGHT) {
       this.state.setWeight(value);
       document.getElementById("weightInput").value = value.toFixed(2);
@@ -1180,7 +1208,28 @@ class ModalManager {
     }
   }
 
+  _resetMobileWeightModal() {
+    this.state._mobileWeightMode = false;
+    const title = document.getElementById("weightModalTitle");
+    const saveBtn = document.getElementById("modalSaveBtn");
+    const skipBtn = document.getElementById("modalSkipBtn");
+    if (title) title.innerHTML = "Medication is weight-based.<br>Enter weight to calculate dose.";
+    if (saveBtn) saveBtn.textContent = "Calculate & Add";
+    if (skipBtn) skipBtn.textContent = "Skip";
+  }
+
   skipWeight(onSkip) {
+    // Mobile weight mode: clear weight and close
+    if (this.state._mobileWeightMode) {
+      this.state.setWeight(null);
+      document.getElementById("weightInput").value = "";
+      this._resetMobileWeightModal();
+      this.closeWeight();
+      if (window.cartController) window.cartController.render();
+      if (window.app) window.app.updateMobileWeightBadge();
+      return;
+    }
+
     if (this.state.pendingMed) {
       const med = this.state.pendingMed;
       this.state.pendingMed = null;
@@ -1408,7 +1457,12 @@ class ModalManager {
 
     backdrop.classList.add("hidden");
     dropdown.classList.add("hidden");
-    wrapper.classList.remove("edit-active");
+    if (wrapper) wrapper.classList.remove("edit-active");
+
+    // On mobile, move dropdown back to its original parent if it was moved to body
+    if (dropdown && dropdown.parentElement === document.body && wrapper) {
+      wrapper.appendChild(dropdown);
+    }
   }
 
   saveProvider(providerManager, onSuccess) {

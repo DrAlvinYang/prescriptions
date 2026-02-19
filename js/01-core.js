@@ -284,6 +284,10 @@ const ConfirmModal = {
 // ============================================================================
 
 const Utils = {
+  isMobile() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  },
+
   normalize(value) {
     return (value ?? "").toString().trim();
   },

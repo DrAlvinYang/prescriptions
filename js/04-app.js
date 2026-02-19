@@ -189,6 +189,7 @@ class Application {
     this.setupHelpListeners();
     this.setupGlobalKeyboard();
     this.setupResizeListener();
+    this.setupMobileListeners();
   }
 
   setupResizeListener() {
@@ -483,8 +484,11 @@ class Application {
     // Close search mode when clicking outside
     document.addEventListener("click", (e) => {
       const locationWrapper = document.getElementById("locationWrapper");
-      const dropdown = document.getElementById("locationSearchDropdown");
-      
+      const mobileLocBtn = document.getElementById("mobileLocationBtn");
+
+      // Don't close if clicking the mobile location button (it handles its own toggle)
+      if (mobileLocBtn && mobileLocBtn.contains(e.target)) return;
+
       if (locationWrapper && !locationWrapper.contains(e.target)) {
         this.controllers.location.exitSearchMode();
       }
@@ -624,6 +628,151 @@ class Application {
     });
   }
 
+  // ---- Mobile-specific setup ----
+
+  setupMobileListeners() {
+    // Mobile help button
+    const mobileHelpBtn = document.getElementById("mobileHelpBtn");
+    if (mobileHelpBtn) {
+      mobileHelpBtn.addEventListener("click", () => {
+        this.updateHelpText();
+        const helpPopup = document.getElementById("helpPopup");
+        if (helpPopup) helpPopup.classList.remove("hidden");
+      });
+    }
+
+    // Mobile provider button
+    const mobileProviderBtn = document.getElementById("mobileProviderBtn");
+    if (mobileProviderBtn) {
+      mobileProviderBtn.addEventListener("click", () => {
+        this.openMobileProvider();
+      });
+    }
+
+    // Mobile location button
+    const mobileLocationBtn = document.getElementById("mobileLocationBtn");
+    if (mobileLocationBtn) {
+      mobileLocationBtn.addEventListener("click", () => {
+        this.openMobileLocation();
+      });
+    }
+
+    // Mobile weight button
+    const mobileWeightBtn = document.getElementById("mobileWeightBtn");
+    if (mobileWeightBtn) {
+      mobileWeightBtn.addEventListener("click", () => {
+        this.openMobileWeightModal();
+      });
+    }
+
+    // Mobile search cancel button
+    const mobileSearchCancel = document.getElementById("mobileSearchCancel");
+    if (mobileSearchCancel) {
+      mobileSearchCancel.addEventListener("click", () => {
+        this.exitMobileSearch();
+      });
+    }
+
+    // Mobile cart close button
+    const mobileCartClose = document.getElementById("mobileCartClose");
+    if (mobileCartClose) {
+      mobileCartClose.addEventListener("click", () => {
+        this.controllers.cart.closeCartDropdown();
+      });
+    }
+
+    // Search input focus triggers mobile takeover
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.addEventListener("focus", () => {
+        if (Utils.isMobile()) {
+          this.enterMobileSearch();
+        }
+      });
+    }
+  }
+
+  enterMobileSearch() {
+    if (this._exitingMobileSearch) return;
+    document.body.classList.add("mobile-search-active");
+  }
+
+  exitMobileSearch() {
+    this._exitingMobileSearch = true;
+    document.body.classList.remove("mobile-search-active");
+    // Clear search without re-focusing (clear() calls safeFocus which would re-trigger)
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.value = "";
+      searchInput.blur();
+    }
+    this.controllers.search.search("");
+    Utils.safeRemoveClass("clearSearchBtn", "visible");
+    // Allow re-entry after a tick
+    requestAnimationFrame(() => {
+      this._exitingMobileSearch = false;
+    });
+  }
+
+  openMobileProvider() {
+    // Move provider dropdown to body so it's visible (it's inside a hidden wrapper on mobile)
+    const dropdown = document.getElementById("providerEditDropdown");
+    if (dropdown && Utils.isMobile()) {
+      this._providerDropdownParent = dropdown.parentElement;
+      document.body.appendChild(dropdown);
+    }
+    this.controllers.provider.openEditModal();
+  }
+
+  closeMobileProvider() {
+    // Move provider dropdown back to its original parent
+    const dropdown = document.getElementById("providerEditDropdown");
+    if (dropdown && this._providerDropdownParent) {
+      this._providerDropdownParent.appendChild(dropdown);
+      this._providerDropdownParent = null;
+    }
+  }
+
+  openMobileLocation() {
+    const wrapper = document.getElementById("locationWrapper");
+    if (wrapper) {
+      wrapper.classList.add("mobile-location-active");
+    }
+    this.controllers.location.toggleMenu();
+  }
+
+  openMobileWeightModal() {
+    const modal = document.getElementById("weightModal");
+    const title = document.getElementById("weightModalTitle");
+    const input = document.getElementById("modalWeightInput");
+    const saveBtn = document.getElementById("modalSaveBtn");
+    const skipBtn = document.getElementById("modalSkipBtn");
+
+    if (!modal || !title || !input || !saveBtn || !skipBtn) return;
+
+    // Set mobile weight mode flag
+    this.state._mobileWeightMode = true;
+
+    // Change modal text for direct weight entry
+    title.innerHTML = "Enter patient weight.";
+    saveBtn.textContent = "Set Weight";
+    skipBtn.textContent = "Clear";
+
+    // Pre-fill current weight if set
+    input.value = this.state.currentWeight ? this.state.currentWeight.toString() : "";
+    modal.classList.remove("hidden");
+    setTimeout(() => input.focus(), 100);
+  }
+
+  updateMobileWeightBadge() {
+    const badge = document.getElementById("mobileWeightBadge");
+    if (badge) {
+      badge.textContent = this.state.currentWeight
+        ? this.state.currentWeight + "kg"
+        : "";
+    }
+  }
+
   async loadData() {
     this.state.medications = await this.managers.data.loadMedications();
     
@@ -649,6 +798,11 @@ class Application {
   }
 
   updateLayoutMode() {
+    if (Utils.isMobile()) {
+      this.isOneColumn = true;
+      this.isTwoColumn = false;
+      return;
+    }
     const width = window.innerWidth;
     this.isOneColumn = width <= this.ONE_COLUMN_BREAKPOINT;
     this.isTwoColumn = !this.isOneColumn && width <= this.TWO_COLUMN_BREAKPOINT;
@@ -674,6 +828,7 @@ class Application {
   }
 
   checkLocationCollapse() {
+    if (Utils.isMobile()) return;
     const locationWrapper = document.getElementById("locationWrapper") ||
       document.querySelector(".location-wrapper");
     const providerWrapper = document.querySelector(".provider-wrapper");
@@ -742,6 +897,7 @@ class Application {
   }
 
   checkMinWidthOverlay() {
+    if (Utils.isMobile()) return;
     const overlay = document.getElementById("desktopOnlyOverlay");
     const providerWrapper = document.querySelector(".provider-wrapper");
     const topbarRight = document.querySelector(".topbar-right");
@@ -794,8 +950,8 @@ class Application {
     // Check if overlay should show
     this.checkMinWidthOverlay();
 
-    // Reposition cart dropdown if open
-    if (this.controllers.cart && this.controllers.cart.isCartDropdownOpen) {
+    // Reposition cart dropdown if open (desktop only - mobile uses CSS full-screen)
+    if (!Utils.isMobile() && this.controllers.cart && this.controllers.cart.isCartDropdownOpen) {
       const dropdown = document.getElementById("cartDropdown");
       const cartBtn = document.getElementById("cartBtn");
       if (dropdown && cartBtn) {
@@ -876,6 +1032,8 @@ class Application {
   }
 
   focus() {
+    // Skip auto-focus on mobile to avoid triggering the keyboard on load
+    if (Utils.isMobile()) return;
     // Focus search input for immediate use
     Utils.safeFocus("searchInput");
   }

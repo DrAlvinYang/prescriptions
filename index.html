@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="color-scheme" content="light dark" />
   <title>ED Prescriptions</title>
   <link rel="stylesheet" href="css/styles.css" />
@@ -19,6 +19,14 @@
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
             <span class="brand">ED Prescriptions</span>
+          </button>
+          <!-- Mobile-only: Help icon in header (right of brand text) -->
+          <button id="mobileHelpBtn" class="mobile-header-btn mobile-only" type="button" title="Help">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
           </button>
 
           <div class="provider-wrapper">
@@ -61,6 +69,21 @@
         </div>
 
         <div class="topbar-right">
+          <!-- Mobile-only header icons -->
+          <button id="mobileProviderBtn" class="mobile-header-btn mobile-only" type="button" title="Provider">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.8 2.3A2 2 0 0 0 3 4.5v4a5 5 0 0 0 10 0v-4a2 2 0 0 0-1.8-2.2"/>
+              <line x1="8" y1="15" x2="8" y2="18"/>
+              <circle cx="16" cy="16" r="2"/>
+              <path d="M14 16a4 4 0 0 1-4 4H8"/>
+              <line x1="16" y1="14" x2="16" y2="11"/>
+            </svg>
+          </button>
+          <button id="mobileLocationBtn" class="mobile-header-btn mobile-only" type="button" title="Location">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path fill-rule="evenodd" d="M12 23C8 17 4 14 4 10A8 8 0 1 1 20 10C20 14 16 17 12 23ZM12 7A3 3 0 1 0 12 13A3 3 0 1 0 12 7Z"/>
+            </svg>
+          </button>
           <div class="status">
             <button id="resetViewBtn" class="icon-btn reset-btn" title="New patient">
               <svg class="reset-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
@@ -74,6 +97,13 @@
               <span class="reset-label">New Patient</span>
             </button>
           </div>
+          <button id="mobileWeightBtn" class="mobile-header-btn mobile-only" type="button" title="Weight">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.2 8H6.8L5 21h14l-1.8-13z"/>
+              <circle cx="12" cy="5" r="3"/>
+            </svg>
+            <span id="mobileWeightBadge" class="mobile-weight-badge"></span>
+          </button>
 
           <div class="weight-section">
             <label for="weightInput">Wt:</label>
@@ -96,10 +126,12 @@
         <div class="searchbar">
           <input id="searchInput" type="text" placeholder="Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)" autocomplete="off" />
           <button id="clearSearchBtn" class="search-clear-btn" type="button" aria-label="Clear search">&times;</button>
+          <button id="mobileSearchCancel" class="mobile-search-cancel mobile-only" type="button">Cancel</button>
         </div>
       </div>
 
       <div class="content-scroll">
+        <div id="mobileSearchHeader" class="mobile-search-header mobile-only">Results</div>
         <div id="dashboardView" class="dashboard-container">
           <div id="col1" class="dash-col"></div>
           <div id="col2" class="dash-col"></div>
@@ -121,6 +153,7 @@
   <!-- Cart Dropdown -->
   <div id="cartDropdown" class="cart-dropdown hidden">
     <div class="cart-dropdown-header">
+      <button id="mobileCartClose" class="mobile-cart-close mobile-only" type="button" aria-label="Close cart">&times;</button>
       <div class="cart-count"><span id="cartCount">0</span> prescriptions</div>
       <div class="cart-header-buttons">
         <button id="clearCartBtn" class="clear-cart-btn hidden" type="button" title="Clear cart">

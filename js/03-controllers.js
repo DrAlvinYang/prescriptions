@@ -126,19 +126,22 @@ class CartController {
     const cartBtn = document.getElementById("cartBtn");
     const cartBtnWrapper = cartBtn ? cartBtn.closest(".cart-btn-wrapper") : null;
 
-    if (!overlay || !dropdown || !cartBtn) return;
+    if (!dropdown || !cartBtn) return;
 
     this.isCartDropdownOpen = true;
 
-    // Position dropdown: right edge aligned to cart button, 4px gap below button (matches location dropdown)
-    const btnRect = cartBtn.getBoundingClientRect();
-    dropdown.style.right = (window.innerWidth - btnRect.right) + "px";
-    dropdown.style.top = (btnRect.bottom + 4) + "px";
+    if (!Utils.isMobile()) {
+      // Desktop: position dropdown relative to cart button
+      const btnRect = cartBtn.getBoundingClientRect();
+      dropdown.style.right = (window.innerWidth - btnRect.right) + "px";
+      dropdown.style.top = (btnRect.bottom + 4) + "px";
 
-    // Keep cart button above overlay
-    if (cartBtnWrapper) cartBtnWrapper.classList.add("dropdown-active");
+      // Keep cart button above overlay
+      if (cartBtnWrapper) cartBtnWrapper.classList.add("dropdown-active");
+      if (overlay) overlay.classList.remove("hidden");
+    }
+    // Mobile: CSS handles full-screen positioning, no overlay needed
 
-    overlay.classList.remove("hidden");
     dropdown.classList.remove("hidden");
 
     // Re-render cart to ensure up-to-date
@@ -151,7 +154,12 @@ class CartController {
     const cartBtnWrapper = document.querySelector(".cart-btn-wrapper");
 
     if (overlay) overlay.classList.add("hidden");
-    if (dropdown) dropdown.classList.add("hidden");
+    if (dropdown) {
+      dropdown.classList.add("hidden");
+      // Clear inline position styles (set by desktop positioning)
+      dropdown.style.right = "";
+      dropdown.style.top = "";
+    }
     if (cartBtnWrapper) cartBtnWrapper.classList.remove("dropdown-active");
 
     this.isCartDropdownOpen = false;
@@ -842,7 +850,12 @@ class KeyboardController {
     }
 
     if (event.key === "Escape") {
-      this.searchController.clear();
+      // On mobile, also exit the search takeover
+      if (Utils.isMobile() && document.body.classList.contains("mobile-search-active")) {
+        if (window.app) window.app.exitMobileSearch();
+      } else {
+        this.searchController.clear();
+      }
       return true;
     }
 

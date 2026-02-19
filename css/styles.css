@@ -2054,6 +2054,11 @@ body:has(.help-overlay:not(.hidden)) {
   justify-content: center;
 }
 
+/* Mobile-only elements: hidden on desktop */
+.mobile-only {
+  display: none !important;
+}
+
 /* Dark mode overrides for inline SVG data URIs */
 @media (prefers-color-scheme: dark) {
   .loc-enter-hint {
@@ -2066,3 +2071,570 @@ body:has(.help-overlay:not(.hidden)) {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
   }
 }
+
+/* ============================================================================
+   MOBILE LAYOUT (max-width: 768px)
+   All mobile styles are contained here. Desktop is completely unchanged.
+   ============================================================================ */
+@media (max-width: 768px) {
+
+  /* --- SHOW MOBILE-ONLY ELEMENTS --- */
+  .mobile-only {
+    display: flex !important;
+  }
+
+  /* --- DISABLE DESKTOP-ONLY OVERLAY --- */
+  .desktop-only-overlay,
+  .desktop-only-overlay.active {
+    display: none !important;
+  }
+
+  /* --- MOBILE HEADER --- */
+  .topbar {
+    height: 48px;
+    padding: 6px 12px;
+    gap: 4px;
+  }
+
+  .topbar-left {
+    flex: 0 0 auto;
+    gap: 0;
+  }
+
+  .menu-btn {
+    padding: 4px 0;
+    gap: 0;
+  }
+
+  .menu-btn svg {
+    display: none;
+  }
+
+  .menu-btn .brand {
+    font-size: 14px;
+  }
+
+  /* Hide desktop provider, location, weight */
+  .provider-wrapper {
+    display: none;
+  }
+
+  .location-wrapper {
+    display: none;
+  }
+
+  .weight-section {
+    display: none;
+  }
+
+  /* Right side icon row */
+  .topbar-right {
+    flex: 1;
+    justify-content: flex-end;
+    gap: 0;
+  }
+
+  .topbar-right .status {
+    display: contents;
+  }
+
+  /* Mobile header icon buttons */
+  .mobile-header-btn {
+    position: relative;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    -webkit-tap-highlight-color: transparent;
+    padding: 0;
+  }
+
+  .mobile-header-btn:active {
+    background: var(--hover-bg);
+  }
+
+  .mobile-header-btn svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  /* Mobile weight badge */
+  .mobile-weight-badge {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  /* New Patient button: icon only */
+  .icon-btn.reset-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    justify-content: center;
+  }
+
+  .icon-btn.reset-btn:active {
+    background: var(--hover-bg);
+  }
+
+  .icon-btn.reset-btn .reset-label {
+    display: none;
+  }
+
+  .icon-btn.reset-btn .reset-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Cart button */
+  .icon-btn.cart-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
+    border: none;
+    background: transparent;
+  }
+
+  .icon-btn.cart-btn:active {
+    background: var(--hover-bg);
+  }
+
+  .cart-badge {
+    top: 0;
+    right: 0;
+  }
+
+  /* --- MOBILE SEARCH BAR (fixed bottom, Safari-style) --- */
+  .search-section {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    padding: 8px 12px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    z-index: 100;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Remove fade pseudo-elements on mobile */
+  .search-section::after {
+    display: none;
+  }
+
+  .main::after {
+    display: none;
+  }
+
+  .searchbar {
+    max-width: 100%;
+  }
+
+  .searchbar input {
+    height: 42px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    border-radius: 12px;
+    padding: 8px 36px 8px 14px;
+  }
+
+  /* Content area: add bottom padding for fixed search bar */
+  .content-scroll {
+    padding: 8px 0;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* --- MOBILE SEARCH CANCEL BUTTON --- */
+  .mobile-search-cancel {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 0 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    height: 42px;
+    -webkit-tap-highlight-color: transparent;
+    display: none !important;
+  }
+
+  /* --- SEARCH FULL-SCREEN TAKEOVER --- */
+  body.mobile-search-active {
+    overflow: hidden;
+  }
+
+  body.mobile-search-active .search-section {
+    border-top: none;
+    box-shadow: none;
+  }
+
+  body.mobile-search-active .searchbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  body.mobile-search-active .searchbar input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  body.mobile-search-active .mobile-search-cancel {
+    display: block !important;
+  }
+
+  /* Hide the X clear button during search takeover; Cancel handles clearing */
+  body.mobile-search-active .search-clear-btn {
+    display: none !important;
+  }
+
+  body.mobile-search-active .content-scroll {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding: 0;
+    padding-bottom: 0;
+    z-index: 101;
+    background: var(--bg);
+  }
+
+  body.mobile-search-active #dashboardView {
+    display: none;
+  }
+
+  body.mobile-search-active #searchView {
+    margin: 0;
+  }
+
+  body.mobile-search-active #searchResults {
+    padding: 0;
+  }
+
+  /* Mobile search "Results" header */
+  .mobile-search-header {
+    display: none !important;
+  }
+
+  body.mobile-search-active .mobile-search-header {
+    display: block !important;
+    padding: 12px 16px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  /* Hide search enter hints on mobile */
+  .search-enter-hint {
+    display: none !important;
+  }
+
+  /* --- CART FULL-SCREEN --- */
+  .cart-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    border-radius: 0;
+    border: none;
+    z-index: 501;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-dropdown.hidden {
+    display: none;
+  }
+
+  .cart-overlay {
+    display: none !important;
+  }
+
+  .cart-dropdown-header {
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    flex-shrink: 0;
+  }
+
+  .mobile-cart-close {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    margin-right: 8px;
+  }
+
+  .mobile-cart-close:active {
+    background: var(--hover-bg);
+  }
+
+  .cart-dropdown-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Always show cart item actions (no hover on mobile) */
+  .cart-item-overlay-actions {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .cart-item {
+    padding: 12px 16px;
+  }
+
+  /* --- SINGLE-COLUMN FOLDERS --- */
+  .dashboard-container {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 12px 14px 0 14px;
+    gap: 10px;
+  }
+
+  #col2, #col3 {
+    display: none;
+  }
+
+  .dash-col {
+    padding: 0;
+    width: 100%;
+  }
+
+  details.specialty-card {
+    border-radius: 12px;
+  }
+
+  .med-item {
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+
+  /* Always show med item actions (no hover on mobile) */
+  .med-item-overlay-actions {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .med-item-actions {
+    visibility: visible;
+  }
+
+  .med-item.in-cart .med-item-actions .med-action-btn-edit {
+    visibility: visible;
+  }
+
+  /* --- MODAL GRID REARRANGEMENT --- */
+  .modal-box.modal-wide {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .edit-grid-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Dose spans full width */
+  .edit-grid-row .edit-field:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .edit-field input,
+  .edit-full-row input,
+  .edit-full-row textarea {
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+
+  .modal-actions {
+    gap: 8px;
+    padding-top: 12px;
+    flex-shrink: 0;
+  }
+
+  .modal-actions .btn {
+    flex: 1;
+    padding: 12px 14px;
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  /* Standard modals: bottom-sheet style */
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .modal-box {
+    border-radius: 22px 22px 0 0;
+    width: 100%;
+    max-width: 100%;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .modal-box .modal-input-group input {
+    font-size: 16px;
+  }
+
+  /* Confirm modal: also bottom-sheet */
+  .confirm-modal-box {
+    max-width: 100%;
+    border-radius: 22px 22px 0 0;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* --- PROVIDER DROPDOWN (mobile bottom-sheet) --- */
+  .provider-edit-dropdown {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 22px 22px 0 0;
+    padding: 20px 16px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    z-index: 200;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    width: auto !important;
+  }
+
+  .provider-edit-row {
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .provider-edit-input {
+    width: 100% !important;
+    font-size: 16px;
+  }
+
+  .provider-edit-label {
+    min-width: auto;
+  }
+
+  .provider-edit-actions {
+    margin-top: 12px;
+  }
+
+  .provider-edit-actions .btn {
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  /* --- LOCATION BOTTOM-SHEET (when shown on mobile) --- */
+  .location-wrapper.mobile-location-active {
+    display: block !important;
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 201;
+    background: var(--panel);
+    border-radius: 22px 22px 0 0;
+    padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .location-wrapper.mobile-location-active .location-btn {
+    width: 100%;
+  }
+
+  .location-wrapper.mobile-location-active .location-search-dropdown {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    max-height: 50vh;
+    border-radius: 12px;
+    margin-top: 8px;
+  }
+
+  .loc-search-item {
+    min-height: 44px;
+    padding: 12px 14px;
+  }
+
+  /* --- HELP BUTTON: hide floating version on mobile, use header icon --- */
+  .help-btn {
+    display: none !important;
+  }
+
+  /* --- HELP POPUP: full width --- */
+  .help-popup-box {
+    width: 95%;
+    max-height: 80vh;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .help-overlay {
+    align-items: flex-end;
+  }
+
+  /* --- TOAST: above search bar --- */
+  .toast-container {
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* --- ADD NEW MED BUTTON --- */
+  .add-new-med-btn {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .add-new-med-from-search-btn {
+    min-height: 44px;
+  }
+
+  .add-new-med-from-search-btn .enter-symbol {
+    display: none;
+  }
+
+} /* End @media (max-width: 768px) */
