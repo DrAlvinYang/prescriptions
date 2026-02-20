@@ -89,7 +89,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   position: absolute;
   top: 100%;
   left: 0;
-  margin-top: 4px;
+  padding-top: 4px;
   min-width: 200px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -129,7 +129,19 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 .shell-header__icon-btn svg {
   width: 18px;
   height: 18px;
-  fill: currentColor;
+}
+
+/* Elevate header above backdrops (z-index: 199) when provider/location editing */
+.shell-header:has(.location-wrapper.search-active),
+.shell-header:has(.provider-wrapper.edit-active) {
+  z-index: 200;
+}
+
+/* Rx header buttons (prescriptions page) */
+.shell-header__rx-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 /* Search bar */
@@ -228,22 +240,41 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     gap: 0;
   }
 
+  .shell-header__left {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
   .shell-header__brand {
     font-size: 15px;
     padding: 6px 6px;
     gap: 4px;
+    min-width: 0;
+  }
+  #shell-brand-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .shell-header__brand svg { width: 16px; height: 16px; }
 
-  /* Hide desktop dropdown on mobile */
+  /* Hide desktop dropdown and help button on mobile */
   .shell-header__dropdown { display: none !important; }
   .shell-header__dropdown-arrow { display: none; }
+  #mobileHelpBtn { display: none !important; }
 
   /* Icon buttons become tap targets */
   .shell-header__icon-btn {
     min-width: 44px;
     min-height: 44px;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hide search bar when mobile top-sheet modals are open */
+  body.mobile-weight-active .shell-header__search,
+  body.mobile-provider-active .shell-header__search,
+  body.mobile-location-active .shell-header__search {
+    display: none;
   }
 
   /* Search bar Row 2 */
@@ -312,10 +343,55 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     margin-left: auto;
   }
 
+  /* Remove .status wrapper from layout so reset button sits directly in flex row */
+  .shell-header__rx-buttons .status {
+    display: contents;
+  }
+
+  /* Ensure reset button icon is visible on mobile */
+  .icon-btn.reset-btn .reset-icon {
+    display: block !important;
+  }
+
   /* Hide desktop-only elements on mobile */
   .desktop-only { display: none !important; }
+
+  /* Show provider/location wrappers when their mobile modals are active.
+     Provider: use display:contents (only the fixed dropdown needs to render).
+     Location: use display:flex (the wrapper itself becomes the fixed modal). */
+  body.mobile-provider-active .provider-wrapper.desktop-only {
+    display: contents !important;
+  }
+  body.mobile-provider-active .provider-wrapper.desktop-only > .provider-btn {
+    display: none !important;
+  }
+  body.mobile-location-active .location-wrapper.desktop-only {
+    display: flex !important;
+  }
   /* Show mobile-only elements */
   .mobile-only { display: flex !important; }
+
+  /* Prescriptions page: distribute header icons equidistantly */
+  .shell-header:has(#rx-header-right:not([hidden])) {
+    justify-content: space-evenly;
+  }
+  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__left,
+  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__right,
+  .shell-header:has(#rx-header-right:not([hidden])) #rx-header-right {
+    display: contents;
+  }
+  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__brand-wrapper {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  .shell-header:has(#rx-header-right:not([hidden])) .icon-btn {
+    align-self: center;
+  }
+  .shell-header:has(#rx-header-right:not([hidden])) .icon-btn svg {
+    width: 22px;
+    height: 22px;
+    transform: none;
+  }
 
   /* Mobile header buttons */
   .mobile-header-btn {

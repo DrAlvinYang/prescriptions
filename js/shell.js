@@ -742,6 +742,14 @@
     if (helpBtn) helpBtn.addEventListener("click", showHelp);
     if (mobileHelpBtn) mobileHelpBtn.addEventListener("click", showHelp);
 
+    // On mobile, tapping the brand text opens help (replaces hidden ? icon)
+    var brandBtn = document.getElementById("shell-brand");
+    if (brandBtn) {
+      brandBtn.addEventListener("click", function () {
+        if (Shell.isMobile()) showHelp();
+      });
+    }
+
     if (helpCloseBtn) {
       helpCloseBtn.addEventListener("click", function () {
         if (helpPopup) helpPopup.classList.add("hidden");
