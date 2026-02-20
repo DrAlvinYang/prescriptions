@@ -4,13 +4,17 @@
 
   /** Open the modal overlay */
   App.openModal = function () {
-    document.getElementById("modal-overlay").classList.add("active");
+    var overlay = document.getElementById("modal-overlay");
+    overlay.classList.remove("hidden");
+    overlay.classList.add("active");
     document.body.classList.add("modal-open");
   };
 
   /** Close the modal overlay */
   App.closeModal = function () {
-    document.getElementById("modal-overlay").classList.remove("active");
+    var overlay = document.getElementById("modal-overlay");
+    overlay.classList.remove("active");
+    overlay.classList.add("hidden");
     document.body.classList.remove("modal-open");
   };
 
