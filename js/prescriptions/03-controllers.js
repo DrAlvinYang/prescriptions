@@ -1033,7 +1033,7 @@ class ResetController {
     this.state.activeSearchIndex = -1;
 
     // Reset folder navigation state
-    this.state.nav.population = "Adult";
+    this.state.nav.population = Utils.isMobile() ? "" : "Adult";
     this.state.nav.navPath = [];
     this.state.nav.activeColumn = 2;
     this.state.nav.col1Index = 0;

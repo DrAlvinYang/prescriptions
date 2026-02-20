@@ -591,6 +591,10 @@ class FolderNavigationRenderer {
     ctxContainer.appendChild(ctxOldPanel);
     ctxContainer.appendChild(ctxNewPanel);
 
+    // Force layout to complete before starting animation so entire list renders
+    void newPanel.offsetHeight;
+    void ctxNewPanel.offsetHeight;
+
     if (direction === "forward") {
       oldPanel.classList.add("rx-slide-panel--exit-left");
       newPanel.classList.add("rx-slide-panel--enter-right");
@@ -679,7 +683,7 @@ class MobileFolderRenderer {
 
     // Level 0: Population selection
     if (!nav.population || nav.population === "") {
-      header.textContent = "ED Prescriptions";
+      header.textContent = "Population";
       POPULATION_ITEMS.forEach(pop => {
         const count = NavigationDataHelper.countMeds(this.state.medications, pop.key);
         const item = this._createMobileFolder(pop.label, count);
@@ -770,7 +774,7 @@ class MobileFolderRenderer {
     }
   }
 
-  /** Update the header with full breadcrumb path (e.g. Prescriptions › Adult › ENT › Ear). */
+  /** Update the header with full breadcrumb path (e.g. Population › Adult › ENT › Ear). */
   renderMobileBreadcrumb() {
     const header = document.getElementById("rx-meds-header");
     if (!header) return;
@@ -786,14 +790,14 @@ class MobileFolderRenderer {
     nav.navPath.forEach(seg => parts.push(seg));
 
     if (parts.length === 0) {
-      header.textContent = "Prescriptions";
+      header.textContent = "Population";
       header.classList.remove("rx-col__header--nav");
       return;
     }
 
-    // Full path: Prescriptions › Adult › ENT › Ear
+    // Full path: Population › Adult › ENT › Ear
     // Each segment except the last is clickable (navigates back to that level)
-    const allSegments = ["Prescriptions", ...parts];
+    const allSegments = ["Population", ...parts];
 
     allSegments.forEach((seg, i) => {
       const isLast = i === allSegments.length - 1;
@@ -808,7 +812,7 @@ class MobileFolderRenderer {
 
       if (!isLast) {
         // Clicking navigates back to this level
-        const targetLevel = i; // 0 = Prescriptions root, 1 = population, 2 = specialty, etc.
+        const targetLevel = i; // 0 = Population root, 1 = population, 2 = specialty, etc.
         span.addEventListener("click", () => {
           if (targetLevel === 0) {
             // Back to root (Level 0: population selection)
@@ -858,34 +862,59 @@ class MobileFolderRenderer {
     const container = document.getElementById("rx-meds-list");
     if (!container) { this.renderCurrentLevel(); return; }
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      !container.children.length ||
+      container.classList.contains("is-animating") ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       this.renderCurrentLevel();
       return;
     }
 
-    // Lock height so container doesn't collapse when children become absolute
-    const containerHeight = container.offsetHeight;
-    container.style.minHeight = containerHeight + "px";
+    // Lock container height to prevent flex collapse when children become absolute-positioned.
+    const savedMinHeight = container.style.minHeight;
+    const savedHeight = container.style.height;
+    const lockHeight = container.offsetHeight;
+    container.style.minHeight = lockHeight + "px";
+    container.style.height = lockHeight + "px";
 
+    // Capture old content
     const scrollTop = container.scrollTop;
     const oldPanel = document.createElement("div");
     oldPanel.className = "rx-slide-panel";
     oldPanel.style.top = -scrollTop + "px";
     while (container.firstChild) oldPanel.appendChild(container.firstChild);
 
+    // Render new content
     this.renderCurrentLevel();
 
+    // Wrap new content
     const newPanel = document.createElement("div");
     newPanel.className = "rx-slide-panel";
     while (container.firstChild) newPanel.appendChild(container.firstChild);
 
+    // Lock and animate
     container.classList.add("is-animating");
     container.scrollTop = 0;
     container.appendChild(oldPanel);
     container.appendChild(newPanel);
 
-    // Force layout so browser registers initial positions before animation starts
-    void container.offsetHeight;
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) return;
+      cleaned = true;
+      container.classList.remove("is-animating");
+      container.style.minHeight = savedMinHeight;
+      container.style.height = savedHeight;
+      if (oldPanel.parentNode) oldPanel.remove();
+      if (newPanel.parentNode) {
+        while (newPanel.firstChild) container.appendChild(newPanel.firstChild);
+        newPanel.remove();
+      }
+    };
+
+    // Force layout to complete before starting animation so entire list renders
+    void newPanel.offsetHeight;
 
     if (direction === "forward") {
       oldPanel.classList.add("rx-slide-panel--exit-left");
@@ -894,19 +923,6 @@ class MobileFolderRenderer {
       oldPanel.classList.add("rx-slide-panel--exit-right");
       newPanel.classList.add("rx-slide-panel--enter-left");
     }
-
-    let cleaned = false;
-    const cleanup = () => {
-      if (cleaned) return;
-      cleaned = true;
-      container.classList.remove("is-animating");
-      container.style.minHeight = "";
-      if (oldPanel.parentNode) oldPanel.remove();
-      if (newPanel.parentNode) {
-        while (newPanel.firstChild) container.appendChild(newPanel.firstChild);
-        newPanel.remove();
-      }
-    };
 
     newPanel.addEventListener("animationend", cleanup, { once: true });
     // Safety: if animationend doesn't fire, clean up after animation duration + buffer

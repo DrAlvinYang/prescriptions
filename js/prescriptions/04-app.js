@@ -297,6 +297,8 @@ class Application {
     let startX = 0, startY = 0, currentX = 0, startTime = 0;
     let isDragging = false, directionLocked = false, isHorizontal = false, active = false;
     let panelsReady = false, oldPanel = null, newPanel = null, savedScrollTop = 0;
+    let savedContainerMinHeight = "", savedContainerHeight = "";
+    let panelWidth = 0;
 
     const renderer = this.renderers.mobileFolder;
 
@@ -359,14 +361,26 @@ class Application {
         const container = document.getElementById("rx-meds-list");
         if (!container) return;
 
+        // Lock container height while children are moved into absolutely positioned drag panels.
+        // Prevents transient flex collapse/blank frames on iOS during interactive swipe.
+        savedContainerMinHeight = container.style.minHeight;
+        savedContainerHeight = container.style.height;
+        const lockHeight = container.offsetHeight;
+        container.style.minHeight = lockHeight + "px";
+        container.style.height = lockHeight + "px";
+        panelWidth = container.clientWidth || window.innerWidth;
+
         savedScrollTop = container.scrollTop;
 
         // Wrap current content
         oldPanel = document.createElement("div");
         oldPanel.className = "folder-drag-panel";
-        oldPanel.style.transform = "translateX(0)";
-        oldPanel.style.top = -savedScrollTop + "px";
+        oldPanel.style.transform = "translate3d(0, 0, 0)";
+        oldPanel.style.top = "0";
         while (container.firstChild) oldPanel.appendChild(container.firstChild);
+        container.classList.add("folder-dragging");
+        container.appendChild(oldPanel);
+        oldPanel.scrollTop = savedScrollTop;
 
         // Render parent content
         const nav = this.state.nav;
@@ -380,13 +394,28 @@ class Application {
         } else if (nav.population) {
           nav.population = "";
         }
-        renderer.renderCurrentLevel();
+        // Render parent level offscreen so the current panel never flashes blank.
+        const originalContainerId = container.id;
+        const liveContainerId = originalContainerId + "-live";
+        const scratch = document.createElement("div");
+        scratch.id = originalContainerId;
+        scratch.className = "rx-col__content";
+        scratch.style.display = "none";
+        document.body.appendChild(scratch);
 
-        // Wrap new content
-        newPanel = document.createElement("div");
-        newPanel.className = "folder-drag-panel";
-        newPanel.style.transform = "translateX(-100%)";
-        while (container.firstChild) newPanel.appendChild(container.firstChild);
+        container.id = liveContainerId;
+        try {
+          renderer.renderCurrentLevel();
+
+          // Wrap new content
+          newPanel = document.createElement("div");
+          newPanel.className = "folder-drag-panel";
+          newPanel.style.transform = "translate3d(" + (-panelWidth) + "px, 0, 0)";
+          while (scratch.firstChild) newPanel.appendChild(scratch.firstChild);
+        } finally {
+          container.id = originalContainerId;
+          if (scratch.parentNode) scratch.remove();
+        }
 
         // Restore state
         nav.navPath = savedNavPath;
@@ -394,15 +423,28 @@ class Application {
         nav._flatSpecialty = savedFlat;
         renderer.renderMobileBreadcrumb();
 
-        container.classList.add("folder-dragging");
-        container.appendChild(newPanel);
-        container.appendChild(oldPanel);
+        if (!newPanel) {
+          container.classList.remove("folder-dragging");
+          container.style.minHeight = savedContainerMinHeight;
+          container.style.height = savedContainerHeight;
+          savedContainerMinHeight = "";
+          savedContainerHeight = "";
+          if (oldPanel.parentNode) oldPanel.remove();
+          const restored = document.createDocumentFragment();
+          while (oldPanel.firstChild) restored.appendChild(oldPanel.firstChild);
+          container.appendChild(restored);
+          oldPanel = null;
+          active = false;
+          return;
+        }
+
+        container.insertBefore(newPanel, oldPanel);
         panelsReady = true;
       }
 
       const offset = Math.max(0, dx);
-      oldPanel.style.transform = "translateX(" + offset + "px)";
-      newPanel.style.transform = "translateX(calc(-100% + " + offset + "px))";
+      oldPanel.style.transform = "translate3d(" + offset + "px, 0, 0)";
+      newPanel.style.transform = "translate3d(" + (-panelWidth + offset) + "px, 0, 0)";
     }, { passive: false });
 
     const onTouchEnd = () => {
@@ -434,8 +476,8 @@ class Application {
       let cleaned = false;
 
       if (shouldComplete && dx > 0) {
-        oldPanel.style.transform = "translateX(100%)";
-        newPanel.style.transform = "translateX(0)";
+        oldPanel.style.transform = "translate3d(" + panelWidth + "px, 0, 0)";
+        newPanel.style.transform = "translate3d(0, 0, 0)";
 
         const cleanup = () => {
           if (cleaned) return;
@@ -452,9 +494,15 @@ class Application {
 
           // Unwrap new panel content into container
           container.classList.remove("folder-dragging");
+          container.style.minHeight = savedContainerMinHeight;
+          container.style.height = savedContainerHeight;
+          savedContainerMinHeight = "";
+          savedContainerHeight = "";
           if (oldPanel.parentNode) oldPanel.remove();
-          while (newPanel.firstChild) container.appendChild(newPanel.firstChild);
-          newPanel.remove();
+          if (newPanel.parentNode) newPanel.remove();
+          const restored = document.createDocumentFragment();
+          while (newPanel.firstChild) restored.appendChild(newPanel.firstChild);
+          container.appendChild(restored);
 
           // Update header to reflect new nav state
           renderer.renderMobileBreadcrumb();
@@ -477,17 +525,23 @@ class Application {
         // Safety: if transitionend doesn't fire, clean up after transition duration + buffer
         setTimeout(cleanup, 400);
       } else {
-        oldPanel.style.transform = "translateX(0)";
-        newPanel.style.transform = "translateX(-100%)";
+        oldPanel.style.transform = "translate3d(0, 0, 0)";
+        newPanel.style.transform = "translate3d(" + (-panelWidth) + "px, 0, 0)";
 
         const cleanup = () => {
           if (cleaned) return;
           cleaned = true;
 
           container.classList.remove("folder-dragging");
+          container.style.minHeight = savedContainerMinHeight;
+          container.style.height = savedContainerHeight;
+          savedContainerMinHeight = "";
+          savedContainerHeight = "";
           if (newPanel.parentNode) newPanel.remove();
-          while (oldPanel.firstChild) container.appendChild(oldPanel.firstChild);
-          oldPanel.remove();
+          if (oldPanel.parentNode) oldPanel.remove();
+          const restored = document.createDocumentFragment();
+          while (oldPanel.firstChild) restored.appendChild(oldPanel.firstChild);
+          container.appendChild(restored);
           container.scrollTop = savedScrollTop;
           oldPanel = null;
           newPanel = null;
@@ -1103,8 +1157,19 @@ class Application {
 
   render() {
     if (Utils.isMobile()) {
+      // Mobile default: start at population picker (not preselected Adult).
+      if (!this.state._mobileDefaultApplied) {
+        this.state.nav.population = "";
+        this.state.nav.navPath = [];
+        this.state.nav._flatSpecialty = false;
+        this.state._mobileDefaultApplied = true;
+      }
       this.renderers.mobileFolder.renderCurrentLevel();
     } else {
+      // Desktop default remains Adult.
+      if (!this.state.nav.population) {
+        this.state.nav.population = "Adult";
+      }
       this.renderers.folder.render();
     }
 

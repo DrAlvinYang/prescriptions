@@ -496,6 +496,7 @@
     isDragging: false,
     directionLocked: false,
     isHorizontal: false,
+    wrapMode: null, // "diag-right" | "rx-left" | null
     SWIPE_THRESHOLD: 50,
     VELOCITY_THRESHOLD: 0.3,
     ANGLE_LOCK: 1.2,
@@ -532,6 +533,35 @@
     return -(idx * 33.333);
   };
 
+  // During circular edge drags, temporarily reorder pages so the wrap target
+  // is adjacent and can glide in under the finger.
+  Shell._getWrapModeForDrag = function (dx) {
+    if (Shell.activePage === "diagnostic" && dx > 0) return "diag-right";
+    if (Shell.activePage === "prescriptions" && dx < 0) return "rx-left";
+    return null;
+  };
+
+  Shell._applyWrapMode = function (mode) {
+    if (!carousel.container) return;
+    if (carousel.wrapMode === mode) return;
+
+    var pages = carousel.container.querySelectorAll(".shell-page");
+    for (var i = 0; i < pages.length; i++) {
+      pages[i].style.order = "";
+    }
+
+    if (mode === "diag-right") {
+      var rxEl = document.getElementById("page-prescriptions");
+      if (rxEl) rxEl.style.order = "-1";
+    } else if (mode === "rx-left") {
+      var dxEl = document.getElementById("page-diagnostic");
+      if (dxEl) dxEl.style.order = String(PAGES.length);
+    }
+
+    carousel.wrapMode = mode;
+    carousel.container.offsetHeight;
+  };
+
   Shell._updateCarouselPosition = function (animate) {
     if (!carousel.container || !Shell.isMobile()) return;
 
@@ -546,6 +576,7 @@
     for (var i = 0; i < pages.length; i++) {
       pages[i].style.order = "";
     }
+    carousel.wrapMode = null;
 
     var pct = Shell._getCarouselTranslate(Shell.activePage);
     carousel.container.style.transform = "translateX(" + pct + "%)";
@@ -585,6 +616,7 @@
     carousel.isDragging = false;
     carousel.directionLocked = false;
     carousel.isHorizontal = false;
+    carousel.wrapMode = null;
 
     // Remove transition for direct manipulation
     carousel.container.classList.add("no-transition");
@@ -627,11 +659,22 @@
     carousel.isDragging = true;
     carousel.currentX = touch.clientX;
 
+    var wrapMode = Shell._getWrapModeForDrag(dx);
+    Shell._applyWrapMode(wrapMode);
+
     // Calculate drag position
-    var basePct = Shell._getCarouselTranslate(Shell.activePage);
+    var basePct = wrapMode ? -33.333 : Shell._getCarouselTranslate(Shell.activePage);
     var containerWidth = carousel.container.offsetWidth / 3; // Each page is 1/3 of container
     var dragPct = (dx / containerWidth) * 33.333;
     var newPct = basePct + dragPct;
+
+    if (wrapMode === "diag-right") {
+      newPct = Math.max(-33.333, Math.min(0, newPct));
+    } else if (wrapMode === "rx-left") {
+      newPct = Math.max(-66.666, Math.min(-33.333, newPct));
+    } else {
+      newPct = Math.max(-66.666, Math.min(0, newPct));
+    }
 
     carousel.container.style.transform = "translateX(" + newPct + "%)";
   };
@@ -666,74 +709,46 @@
 
       // Circular wrapping
       if (targetIdx < 0) {
-        targetIdx = PAGES.length - 1; // wrap to prescriptions
-        Shell._carouselWrap(Shell.activePage, INDEX_PAGE[targetIdx], dx > 0);
-        return;
+        // diagnostic -> prescriptions
+        Shell._applyWrapMode("diag-right");
+        carousel.container.style.transform = "translateX(0%)";
+        Shell._pendingWrap = { toPage: "prescriptions" };
       } else if (targetIdx >= PAGES.length) {
-        targetIdx = 0; // wrap to diagnostic
-        Shell._carouselWrap(Shell.activePage, INDEX_PAGE[targetIdx], dx > 0);
-        return;
-      }
+        // prescriptions -> diagnostic
+        Shell._applyWrapMode("rx-left");
+        carousel.container.style.transform = "translateX(-66.666%)";
+        Shell._pendingWrap = { toPage: "diagnostic" };
+      } else {
+        // Normal (non-wrapping) transition
+        Shell._applyWrapMode(null);
+        Shell.activePage = INDEX_PAGE[targetIdx];
+        if (!Shell.isMobile()) {
+          Shell.activeDesktopView = Shell.activePage;
+        }
+        Shell._updateHeader();
+        history.replaceState(null, "", "#" + Shell.activePage);
 
-      // Normal (non-wrapping) transition
-      Shell.activePage = INDEX_PAGE[targetIdx];
-      if (!Shell.isMobile()) {
-        Shell.activeDesktopView = Shell.activePage;
-      }
-      Shell._updateHeader();
-      history.replaceState(null, "", "#" + Shell.activePage);
+        var pct = Shell._getCarouselTranslate(Shell.activePage);
+        carousel.container.style.transform = "translateX(" + pct + "%)";
 
-      var pct = Shell._getCarouselTranslate(Shell.activePage);
-      carousel.container.style.transform = "translateX(" + pct + "%)";
-
-      // First-activate prescriptions
-      if (Shell.activePage === "prescriptions" && !Shell._rxFirstActivated) {
-        Shell._rxFirstActivated = true;
-        if (window.app && window.app.handleResize) {
-          setTimeout(function () { window.app.handleResize(); }, 350);
+        // First-activate prescriptions
+        if (Shell.activePage === "prescriptions" && !Shell._rxFirstActivated) {
+          Shell._rxFirstActivated = true;
+          if (window.app && window.app.handleResize) {
+            setTimeout(function () { window.app.handleResize(); }, 350);
+          }
         }
       }
     } else {
-      // Snap back
-      var pct2 = Shell._getCarouselTranslate(Shell.activePage);
-      carousel.container.style.transform = "translateX(" + pct2 + "%)";
+      // Snap back (in wrap mode, snap to wrapped center then reset on transitionend)
+      if (carousel.wrapMode) {
+        carousel.container.style.transform = "translateX(-33.333%)";
+        Shell._pendingWrap = { toPage: Shell.activePage };
+      } else {
+        var pct2 = Shell._getCarouselTranslate(Shell.activePage);
+        carousel.container.style.transform = "translateX(" + pct2 + "%)";
+      }
     }
-
-    carousel.isDragging = false;
-    carousel.startTime = 0;
-  };
-
-  // Circular wrap: move target page adjacent via CSS order, animate, then reset
-  Shell._carouselWrap = function (fromPage, toPage, swipedRight) {
-    var fromIdx = PAGE_INDEX[fromPage];
-    var toIdx = PAGE_INDEX[toPage];
-    var toEl = document.getElementById("page-" + toPage);
-
-    if (!toEl) return;
-
-    // Position target adjacent
-    if (swipedRight) {
-      // Moving right: target should appear to the left
-      toEl.style.order = "-1";
-      // Current position was fromIdx * -33.333%. Target is at -1 * 33.333% = one slot to the left.
-      // Animate to (fromIdx - 1) * -33.333% = show the -1 order slot
-      var animPct = (fromIdx - 1) * -33.333;
-    } else {
-      // Moving left: target should appear to the right
-      toEl.style.order = String(PAGES.length);
-      // Animate to (fromIdx + 1) * -33.333%
-      var animPct = (fromIdx + 1) * -33.333;
-    }
-
-    // Force reflow so the order change takes effect
-    carousel.container.offsetHeight;
-
-    // Animate to the new position
-    carousel.container.classList.remove("no-transition");
-    carousel.container.style.transform = "translateX(" + animPct + "%)";
-
-    // Track pending wrap for transitionend
-    Shell._pendingWrap = { toPage: toPage, toEl: toEl };
 
     carousel.isDragging = false;
     carousel.startTime = 0;

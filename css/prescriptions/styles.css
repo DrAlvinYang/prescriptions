@@ -2153,6 +2153,9 @@ body:has(.help-overlay:not(.hidden)) {
     height: 100%;
     overflow-y: auto;
     will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
     background: var(--panel);
   }
 
