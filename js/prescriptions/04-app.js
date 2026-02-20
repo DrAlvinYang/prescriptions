@@ -217,15 +217,18 @@ class Application {
     const dashboard = document.getElementById("dashboardView");
     const resizer1 = document.getElementById("rx-resizer-1");
     const resizer2 = document.getElementById("rx-resizer-2");
-    if (!dashboard || !resizer1 || !resizer2) return;
+    const resizer3 = document.getElementById("rx-resizer-3");
+    if (!dashboard || !resizer1 || !resizer2 || !resizer3) return;
 
     let activeResizer = null;
     const MIN_POP = 120;     // px — population column
-    const MIN_BROWSE = 180;  // px — specialty / browse column
-    const MIN_MEDS = 200;    // px — preview / meds column
+    const MIN_SPEC = 180;    // px — specialty column
+    const MIN_SUB = 120;     // px — subcategory column (nested only)
+    const MIN_MEDS = 200;    // px — meds column
 
     const onMouseDown = (e) => {
       if (Utils.isMobile()) return;
+      if (this.state.nav.population === "Non-Med") return;
       e.preventDefault();
       activeResizer = e.currentTarget;
       activeResizer.classList.add("rx-col-resizer--active");
@@ -241,33 +244,56 @@ class Application {
 
       const colPop = document.getElementById("rx-col-population");
       const colSpec = document.getElementById("rx-col-specialty");
+      const colSub = document.getElementById("rx-col-subcategory");
       const colMeds = document.getElementById("rx-col-meds");
 
-      let w1, w2, w3;
+      let w1 = colPop.offsetWidth;
+      let w2 = colSpec.offsetWidth;
+      let w3 = colSub.offsetWidth;
+      let w4 = colMeds.offsetWidth;
+      const nested = w3 > 0;
 
       if (activeResizer === resizer1) {
+        // Resize population ↔ specialty (keep subcat + meds fixed)
         w1 = x;
-        w3 = colMeds.offsetWidth;
-        w2 = totalWidth - w1 - w3;
-
-        if (w1 < MIN_POP) { w1 = MIN_POP; w2 = totalWidth - w1 - w3; }
-        if (w2 < MIN_BROWSE) { w2 = MIN_BROWSE; w1 = totalWidth - w2 - w3; }
+        w2 = totalWidth - w1 - w3 - w4;
+        if (w1 < MIN_POP) { w1 = MIN_POP; w2 = totalWidth - w1 - w3 - w4; }
+        if (w2 < MIN_SPEC) { w2 = MIN_SPEC; w1 = totalWidth - w2 - w3 - w4; }
         if (w1 < MIN_POP) return;
-      } else {
-        w1 = colPop.offsetWidth;
-        w3 = totalWidth - x;
-        w2 = totalWidth - w1 - w3;
 
-        if (w3 < MIN_MEDS) { w3 = MIN_MEDS; w2 = totalWidth - w1 - w3; }
-        if (w2 < MIN_BROWSE) { w2 = MIN_BROWSE; w3 = totalWidth - w1 - w2; }
-        if (w3 < MIN_MEDS) return;
+      } else if (activeResizer === resizer2 && nested) {
+        // Nested: resize specialty ↔ subcategory (keep pop + meds fixed)
+        w2 = x - w1;
+        w3 = totalWidth - w1 - w2 - w4;
+        if (w2 < MIN_SPEC) { w2 = MIN_SPEC; w3 = totalWidth - w1 - w2 - w4; }
+        if (w3 < MIN_SUB) { w3 = MIN_SUB; w2 = totalWidth - w1 - w3 - w4; }
+        if (w2 < MIN_SPEC) return;
+
+      } else {
+        // resizer-3 (or resizer-2 in non-nested): resize right boundary
+        w4 = totalWidth - x;
+        if (nested) {
+          // Nested: resize subcategory ↔ meds
+          w3 = totalWidth - w1 - w2 - w4;
+          if (w4 < MIN_MEDS) { w4 = MIN_MEDS; w3 = totalWidth - w1 - w2 - w4; }
+          if (w3 < MIN_SUB) { w3 = MIN_SUB; w4 = totalWidth - w1 - w2 - w3; }
+          if (w4 < MIN_MEDS) return;
+        } else {
+          // Non-nested: resize specialty ↔ meds (subcat stays 0)
+          w2 = totalWidth - w1 - w4;
+          if (w4 < MIN_MEDS) { w4 = MIN_MEDS; w2 = totalWidth - w1 - w4; }
+          if (w2 < MIN_SPEC) { w2 = MIN_SPEC; w4 = totalWidth - w1 - w2; }
+          if (w4 < MIN_MEDS) return;
+        }
       }
 
       const pct1 = (w1 / totalWidth * 100).toFixed(4);
       const pct2 = (w2 / totalWidth * 100).toFixed(4);
       const pct3 = (w3 / totalWidth * 100).toFixed(4);
+      const pct4 = (w4 / totalWidth * 100).toFixed(4);
 
-      dashboard.style.gridTemplateColumns = pct1 + "% 0px " + pct2 + "% 0px " + pct3 + "%";
+      dashboard.style.gridTemplateColumns =
+        pct1 + "% 0px " + pct2 + "% 0px " + pct3 + "% 0px " + pct4 + "%";
     };
 
     const onMouseUp = () => {
@@ -279,6 +305,7 @@ class Application {
 
     resizer1.addEventListener("mousedown", onMouseDown);
     resizer2.addEventListener("mousedown", onMouseDown);
+    resizer3.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
   }
@@ -386,10 +413,8 @@ class Application {
         const nav = this.state.nav;
         const savedNavPath = nav.navPath.slice();
         const savedPop = nav.population;
-        const savedFlat = nav._flatSpecialty;
 
         if (nav.navPath.length > 0) {
-          nav._flatSpecialty = false;
           nav.navPath = nav.navPath.slice(0, -1);
         } else if (nav.population) {
           nav.population = "";
@@ -420,7 +445,6 @@ class Application {
         // Restore state
         nav.navPath = savedNavPath;
         nav.population = savedPop;
-        nav._flatSpecialty = savedFlat;
         renderer.renderMobileBreadcrumb();
 
         if (!newPanel) {
@@ -486,7 +510,6 @@ class Application {
           // Commit navigation directly (don't call goBack which triggers a second animation)
           const nav = renderer.state.nav;
           if (nav.navPath.length > 0) {
-            nav._flatSpecialty = false;
             nav.navPath.pop();
           } else if (nav.population) {
             nav.population = "";
@@ -1161,7 +1184,6 @@ class Application {
       if (!this.state._mobileDefaultApplied) {
         this.state.nav.population = "";
         this.state.nav.navPath = [];
-        this.state.nav._flatSpecialty = false;
         this.state._mobileDefaultApplied = true;
       }
       this.renderers.mobileFolder.renderCurrentLevel();

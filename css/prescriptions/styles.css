@@ -506,6 +506,7 @@
 /* --- Content Area --- */
 .content-scroll {
   flex: 1 1 0;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
   padding: 0;
@@ -522,7 +523,7 @@
 /* --- Prescription Dashboard (3-column grid) --- */
 .rx-dashboard {
   display: grid;
-  grid-template-columns: 180px 0px 1fr 0px 1fr;
+  grid-template-columns: 120px 0px 180px 0px 0 0px 1fr;
   height: 100%;
   overflow: hidden;
 }
@@ -535,6 +536,7 @@
 }
 
 .rx-col--specialty,
+.rx-col--subcategory,
 .rx-col--meds {
   border-left: 1px solid var(--border);
 }
@@ -544,8 +546,6 @@
   font-weight: 600;
   font-size: 12px;
   color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   border-bottom: 1px solid var(--separator);
   flex-shrink: 0;
   min-height: 40px;
@@ -621,9 +621,7 @@ body.is-col-resizing {
 
 .rx-population-item.selected {
   background: var(--accent-tint);
-  box-shadow: inset 3px 0 0 var(--accent);
   font-weight: 600;
-  color: var(--accent);
 }
 
 .rx-population-item__count {
@@ -637,15 +635,16 @@ body.is-col-resizing {
   text-align: center;
 }
 
-.rx-population-item.selected .rx-population-item__count {
-  background: var(--accent);
-  color: #fff;
+/* Full accent when keyboard-navigating in Column 1 */
+.rx-population-item.keyboard-focused {
+  background: var(--accent-tint);
+  box-shadow: inset 3px 0 0 var(--accent);
+  color: var(--accent);
 }
 
-.rx-population-item.keyboard-focused {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-  border-radius: 4px;
+.rx-population-item.keyboard-focused .rx-population-item__count {
+  background: var(--bg);
+  color: var(--muted);
 }
 
 /* --- Folder Items (Column 2) --- */
@@ -662,12 +661,20 @@ body.is-col-resizing {
   transition: background 0.15s ease;
 }
 
-.rx-folder-item:last-child { border-bottom: none; }
+.rx-folder-item:last-child { /* border kept for consistency */ }
 .rx-folder-item:hover { background: var(--hover-bg); }
 
-.rx-folder-item.browse-highlighted {
+.rx-folder-item.browse-highlighted,
+.med-item.browse-highlighted {
   background: var(--accent-tint);
   box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* Dim parent folder highlight when user is navigating a deeper column */
+.col3-active .rx-folder-item.browse-highlighted,
+.col4-active .rx-folder-item.browse-highlighted {
+  background: var(--accent-tint);
+  box-shadow: none;
 }
 
 .rx-folder-item__name {
@@ -682,14 +689,16 @@ body.is-col-resizing {
   font-size: 11px;
   font-weight: 500;
   color: var(--muted);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  min-width: 24px;
+  text-align: center;
   flex-shrink: 0;
 }
 
 .rx-folder-item__arrow {
-  font-size: 9px;
-  color: var(--muted);
-  flex-shrink: 0;
-  margin-left: 2px;
+  display: none;
 }
 
 /* --- Section Headers (sticky within columns) --- */
@@ -711,11 +720,12 @@ body.is-col-resizing {
 .rx-col__header--nav {
   gap: 4px;
   flex-wrap: wrap;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .rx-breadcrumb__item {
   cursor: pointer;
-  text-transform: uppercase;
 }
 
 .rx-breadcrumb__item:hover {
@@ -750,8 +760,6 @@ body.is-col-resizing {
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 100%;
-  background: var(--panel);
 }
 
 .rx-slide-panel--exit-left {
@@ -821,7 +829,7 @@ body.is-col-resizing {
   flex: 1;
   min-width: 0;
 }
-.med-item:last-child { border-bottom: none; }
+.med-item:last-child { /* border kept for consistency */ }
 .med-item:hover { background: var(--med-hover); }
 .med-item.in-cart {
   background: var(--in-cart-bg);
@@ -1520,6 +1528,7 @@ body.show-brands .brand-match-hint {
 /* --- Folder View Overlay Action Buttons --- */
 .med-item.has-overlay-actions {
   position: relative;
+  padding-right: 100px;
 }
 
 .med-item.has-overlay-actions .med-indication {
@@ -1537,7 +1546,8 @@ body.show-brands .brand-match-hint {
 }
 
 .med-item.has-overlay-actions:hover .med-item-overlay-actions,
-.med-item.has-overlay-actions.in-cart .med-item-overlay-actions {
+.med-item.has-overlay-actions.in-cart .med-item-overlay-actions,
+.med-item.has-overlay-actions.browse-highlighted .med-item-overlay-actions {
   visibility: visible;
 }
 
@@ -1546,7 +1556,8 @@ body.show-brands .brand-match-hint {
   visibility: hidden;
 }
 
-.med-item.has-overlay-actions.in-cart:hover .med-item-overlay-actions .med-action-btn-edit {
+.med-item.has-overlay-actions.in-cart:hover .med-item-overlay-actions .med-action-btn-edit,
+.med-item.has-overlay-actions.in-cart.browse-highlighted .med-item-overlay-actions .med-action-btn-edit {
   visibility: visible;
 }
 
@@ -1558,8 +1569,9 @@ body.show-brands .brand-match-hint {
   box-shadow: 0 0 12px 8px var(--panel);
 }
 
-.med-item.has-overlay-actions:hover:not(.in-cart) .med-item-overlay-actions .med-action-btn {
-  box-shadow: 0 0 12px 8px var(--med-hover);
+.med-item.has-overlay-actions:hover:not(.in-cart) .med-item-overlay-actions .med-action-btn,
+.med-item.has-overlay-actions.browse-highlighted:not(.in-cart) .med-item-overlay-actions .med-action-btn {
+  box-shadow: 0 0 12px 8px var(--accent-tint);
 }
 
 .med-item.has-overlay-actions.in-cart .med-item-overlay-actions .med-action-btn {
@@ -2123,7 +2135,8 @@ body:has(.help-overlay:not(.hidden)) {
 
   /* Only show one column at a time on mobile */
   .rx-col--population,
-  .rx-col--specialty {
+  .rx-col--specialty,
+  .rx-col--subcategory {
     display: none;
   }
 
@@ -2163,6 +2176,25 @@ body:has(.help-overlay:not(.hidden)) {
     transition: transform 0.3s ease-out;
   }
 
+  /* Search results: full-width on mobile (no card container) */
+  .search-container {
+    padding: 0;
+  }
+
+  #searchResults {
+    flex: 1 1 0;
+    margin-left: 0;
+    margin-right: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .med-list-flat {
+    border: none;
+    border-radius: 0;
+  }
+
   .med-item {
     padding: 12px 14px;
     min-height: 44px;
@@ -2176,6 +2208,11 @@ body:has(.help-overlay:not(.hidden)) {
   .med-item.has-actions .med-item-content {
     flex: none;
     width: 100%;
+  }
+
+  /* Folder view: remove right padding reserved for desktop hover buttons */
+  .med-item.has-overlay-actions {
+    padding-right: 14px;
   }
 
   /* Hide action buttons by default on mobile (revealed on tap only) */

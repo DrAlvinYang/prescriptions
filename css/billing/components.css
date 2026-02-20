@@ -630,14 +630,14 @@ body.modal-open {
   flex-wrap: wrap;
 }
 
-/* Root "BILLING CODES" link */
+/* Root "Billing Codes" link */
 .billing-col__header--nav .breadcrumb__item:first-child:hover {
   text-decoration: underline;
 }
 
-/* Path segments after root — normal case */
+/* All breadcrumb segments — normal case */
 .billing-col__header--nav .breadcrumb__sep,
-.billing-col__header--nav .breadcrumb__item:not(:first-child) {
+.billing-col__header--nav .breadcrumb__item {
   text-transform: none;
   letter-spacing: normal;
   font-weight: 500;

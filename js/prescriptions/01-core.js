@@ -22,7 +22,7 @@ const FALLBACK_LOCATION = { name: "Michael Garron Hospital (MGH)", address: "825
 // Will be populated from Locations.json
 let BASE_LOCATIONS = [FALLBACK_LOCATION];
 
-const NESTED_SPECIALTIES = ["Allergy, Analgesia, Antiemetic", "ENT", "GI & GU", "Substance Use"];
+const NESTED_SPECIALTIES = ["ENT", "Substance Use"];
 
 // Population items for Column 1
 const POPULATION_ITEMS = [
@@ -33,16 +33,14 @@ const POPULATION_ITEMS = [
 
 // Specialty display order for Column 2
 const SPECIALTY_ORDER = [
-  "Allergy, Analgesia, Antiemetic", "Anti-Infective", "Cardiac & Heme", "Derm",
-  "ENT", "Eye", "GI & GU", "Neuro & Endocrine", "OBGYN",
+  "Allergy", "Analgesia", "Antiemetic", "Anti-infective", "Cardiac & Heme", "Derm",
+  "ENT", "Eye", "GI", "GU", "Neuro & Endocrine", "OBGYN",
   "Psych", "Respiratory", "STI", "Substance Use"
 ];
 
 const SORT_ORDER = {
   subcategory: {
     "Ear": 1, "Nose": 2, "Throat": 3, "Other": 4,
-    "Allergy": 1, "Analgesia": 2, "Antiemetic": 3,
-    "GI": 1, "GU": 2,
     "Withdrawal Management": 1, "Symptom Relief": 2
   },
   population: { "Adult": 1, "Pediatric": 2 }
@@ -78,10 +76,11 @@ class AppState {
     this.nav = {
       population: "Adult",    // "Adult" | "Pediatric" | "Non-Med"
       navPath: [],             // [] = specialties, ["ENT"] = subcategories
-      activeColumn: 2,         // 1, 2, or 3
+      activeColumn: 1,         // 1, 2, 3, or 4
       col1Index: 0,
       col2Index: 0,
       col3Index: -1,
+      col4Index: -1,
     };
   }
 

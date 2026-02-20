@@ -278,18 +278,31 @@ class FolderNavigationRenderer {
     });
   }
 
-  /** Switch population, reset navPath, animate, auto-select first. */
-  selectPopulation(key) {
+  /** Switch population, reset navPath, animate, auto-select first.
+   *  @param {string} key - Population key
+   *  @param {object} [opts] - Options
+   *  @param {boolean} [opts.fromKeyboard=false] - True when called from keyboard nav (stay in Col 1)
+   */
+  selectPopulation(key, { fromKeyboard = false } = {}) {
     if (this.state.nav.population === key) return;
+    const stayInCol1 = fromKeyboard && this.state.nav.activeColumn === 1;
     this.state.nav.population = key;
     this.state.nav.navPath = [];
     this.state.nav.col1Index = POPULATION_ITEMS.findIndex(p => p.key === key);
     this.state.nav.col2Index = 0;
     this.state.nav.col3Index = -1;
-    this.state.nav.activeColumn = 2;
+    if (!stayInCol1) {
+      this.state.nav.activeColumn = 2;
+    }
 
     this.renderPopulationColumn();
     this.renderBrowse();
+
+    // Re-apply keyboard focus after re-render if still in Column 1
+    if (stayInCol1) {
+      const popItems = document.querySelectorAll("#rx-population-list .rx-population-item");
+      popItems.forEach((el, i) => el.classList.toggle("keyboard-focused", i === this.state.nav.col1Index));
+    }
   }
 
   /** Column 2: Render browse content based on navPath. */
@@ -299,87 +312,49 @@ class FolderNavigationRenderer {
     container.innerHTML = "";
 
     this.renderBrowseHeader();
+    this.clearSubcategoryColumn();
+    this.renderPreviewEmpty();
 
     const pop = this.state.nav.population;
-    const navPath = this.state.nav.navPath;
 
+    // Adjust grid columns based on population
     if (pop === "Non-Med") {
-      // Non-Med: show items as med items directly in Column 2
+      this._updateGridLayout("non-med");
       const meds = NavigationDataHelper.getNonMedMedications(this.state.medications);
       meds.forEach(med => {
         const item = this.medRenderer.createMedItem(med, { overlayActions: true });
         container.appendChild(item);
       });
-      // Column 3 is blank for Non-Med
-      this.renderPreviewEmpty();
       return;
     }
 
-    if (navPath.length === 0) {
-      // Top-level: specialty folders
-      const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, pop);
-      specialties.forEach((spec, i) => {
-        const isNested = NESTED_SPECIALTIES.includes(spec);
-        const count = NavigationDataHelper.countMeds(this.state.medications, pop, spec);
-        const item = this._createFolderItem(spec, count, isNested);
-        item.dataset.specialty = spec;
+    // Default grid (subcategory hidden)
+    this._updateGridLayout("default");
 
-        item.addEventListener("click", () => {
-          if (isNested) {
-            // Drill into subcategories
-            this.state.nav.navPath = [spec];
-            this.state.nav.col2Index = 0;
-            this.state.nav.col3Index = -1;
-            this.animateBrowse("forward");
-          } else {
-            // Flat: highlight only, show meds in Column 3
-            this.state.nav.col2Index = i;
-            this._highlightBrowseItem(i);
-            this.renderPreviewMeds(pop, spec);
-          }
-        });
+    const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, pop);
+    specialties.forEach((spec, i) => {
+      const count = NavigationDataHelper.countMeds(this.state.medications, pop, spec);
+      const item = this._createFolderItem(spec, count, false);
+      item.dataset.specialty = spec;
 
-        item.addEventListener("mouseenter", () => {
-          this.state.nav.col2Index = i;
-          this._highlightBrowseItem(i);
-          // Live preview on hover
-          if (isNested) {
-            this.renderPreviewSubcategories(pop, spec);
-          } else {
-            this.renderPreviewMeds(pop, spec);
-          }
-        });
+      item.addEventListener("click", () => {
+        this.state.nav.col2Index = i;
+        this.state.nav.col3Index = -1;
+        this.state.nav.col4Index = -1;
+        // Clear keyboard-nav dimming classes
+        container.classList.remove("col3-active");
+        document.getElementById("rx-subcategory-list")?.classList.remove("col4-active");
+        this._highlightBrowseItem(i);
 
-        container.appendChild(item);
+        if (NESTED_SPECIALTIES.includes(spec)) {
+          this.renderSubcategories(pop, spec);
+        } else {
+          this.renderPreviewMeds(pop, spec);
+        }
       });
-    } else if (navPath.length === 1) {
-      // Drilled into a nested specialty: show subcategory folders
-      const specialty = navPath[0];
-      const subs = NavigationDataHelper.getSubcategories(this.state.medications, pop, specialty);
-      subs.forEach((sub, i) => {
-        const count = NavigationDataHelper.countMeds(this.state.medications, pop, specialty, sub);
-        const item = this._createFolderItem(sub, count, false);
-        item.dataset.subcategory = sub;
 
-        item.addEventListener("click", () => {
-          // Subcategory click = highlight only, show meds in Column 3
-          this.state.nav.col2Index = i;
-          this._highlightBrowseItem(i);
-          this.renderPreviewMeds(pop, specialty, sub);
-        });
-
-        item.addEventListener("mouseenter", () => {
-          this.state.nav.col2Index = i;
-          this._highlightBrowseItem(i);
-          this.renderPreviewMeds(pop, specialty, sub);
-        });
-
-        container.appendChild(item);
-      });
-    }
-
-    // Auto-select first item
-    this.autoSelectFirst();
+      container.appendChild(item);
+    });
   }
 
   /** Column 2 header: breadcrumb or "Specialties". */
@@ -424,29 +399,61 @@ class FolderNavigationRenderer {
     header.appendChild(current);
   }
 
-  /** Column 3: Show meds for a specialty/subcategory. */
-  renderPreviewMeds(population, specialty, subcategory) {
+  /** Subcategory column: Show subcategory folders for a nested specialty. */
+  renderSubcategories(population, specialty) {
+    const container = document.getElementById("rx-subcategory-list");
+    const header = document.getElementById("rx-subcategory-header");
+    if (!container || !header) return;
+
+    header.textContent = specialty;
+    container.innerHTML = "";
+
+    // Expand grid to show subcategory column
+    this._updateGridLayout("nested");
+
+    // Clear meds column (empty until subcategory is clicked)
+    this.renderPreviewEmpty();
+
+    const subs = NavigationDataHelper.getSubcategories(this.state.medications, population, specialty);
+    subs.forEach((sub, i) => {
+      const count = NavigationDataHelper.getMedications(this.state.medications, population, specialty, sub).length;
+      const item = this._createFolderItem(sub, count, false);
+      item.dataset.subcategory = sub;
+
+      item.addEventListener("click", () => {
+        this.state.nav.col3Index = i;
+        this.state.nav.col4Index = -1;
+        // Clear keyboard-nav dimming on subcategory column
+        container.classList.remove("col4-active");
+        this._highlightSubcategoryItem(i);
+        this.renderSubcategoryMeds(population, specialty, sub);
+      });
+
+      container.appendChild(item);
+    });
+  }
+
+  /** Meds column: Show meds for a specific subcategory of a nested specialty. */
+  renderSubcategoryMeds(population, specialty, subcategory) {
     const container = document.getElementById("rx-meds-list");
     const header = document.getElementById("rx-meds-header");
     if (!container || !header) return;
 
-    header.textContent = subcategory || specialty;
+    header.textContent = subcategory;
     container.innerHTML = "";
 
     const meds = NavigationDataHelper.getMedications(this.state.medications, population, specialty, subcategory);
     meds.forEach(med => {
-      const item = this.medRenderer.createMedItem(med, { overlayActions: true });
-      container.appendChild(item);
+      container.appendChild(this.medRenderer.createMedItem(med, { overlayActions: true }));
     });
 
-    // Update cart indicators
     if (window.cartRenderer) {
       window.cartRenderer.updateSelectedIndicators();
     }
   }
 
-  /** Column 3: Show subcategory folders as preview (for nested specialty hover). */
-  renderPreviewSubcategories(population, specialty) {
+  /** Meds column: Show meds for a non-nested specialty. */
+  renderPreviewMeds(population, specialty) {
     const container = document.getElementById("rx-meds-list");
     const header = document.getElementById("rx-meds-header");
     if (!container || !header) return;
@@ -454,22 +461,21 @@ class FolderNavigationRenderer {
     header.textContent = specialty;
     container.innerHTML = "";
 
-    const subs = NavigationDataHelper.getSubcategories(this.state.medications, population, specialty);
-    subs.forEach(sub => {
-      const count = NavigationDataHelper.countMeds(this.state.medications, population, specialty, sub);
-      const item = this._createFolderItem(sub, count, false);
-      item.dataset.previewSubcategory = sub;
+    // Hide subcategory column for non-nested specialties
+    this.clearSubcategoryColumn();
+    this._updateGridLayout("default");
 
-      // Clicking a subfolder in preview → glide
-      item.addEventListener("click", () => {
-        this.glideToSubcategoryView(specialty, sub);
-      });
-
-      container.appendChild(item);
+    const meds = NavigationDataHelper.getMedications(this.state.medications, population, specialty);
+    meds.forEach(med => {
+      container.appendChild(this.medRenderer.createMedItem(med, { overlayActions: true }));
     });
+
+    if (window.cartRenderer) {
+      window.cartRenderer.updateSelectedIndicators();
+    }
   }
 
-  /** Column 3: Empty (for Non-Med). */
+  /** Clear meds column. */
   renderPreviewEmpty() {
     const container = document.getElementById("rx-meds-list");
     const header = document.getElementById("rx-meds-header");
@@ -478,21 +484,12 @@ class FolderNavigationRenderer {
     container.innerHTML = "";
   }
 
-  /** Glide: Click subfolder in Column 3 → drill Column 2 with that subfolder highlighted. */
-  glideToSubcategoryView(specialty, subcategory) {
-    this.state.nav.navPath = [specialty];
-
-    // Find the index of the clicked subcategory
-    const pop = this.state.nav.population;
-    const subs = NavigationDataHelper.getSubcategories(this.state.medications, pop, specialty);
-    const targetIndex = subs.indexOf(subcategory);
-    this.state.nav.col2Index = targetIndex >= 0 ? targetIndex : 0;
-
-    this.animateBrowse("forward", () => {
-      // After animation: highlight the target subcategory and show its meds
-      this._highlightBrowseItem(this.state.nav.col2Index);
-      this.renderPreviewMeds(pop, specialty, subcategory);
-    });
+  /** Clear subcategory column. */
+  clearSubcategoryColumn() {
+    const container = document.getElementById("rx-subcategory-list");
+    const header = document.getElementById("rx-subcategory-header");
+    if (container) container.innerHTML = "";
+    if (header) header.textContent = "";
   }
 
   /** Navigate back to a specific level (pop navPath). */
@@ -500,10 +497,11 @@ class FolderNavigationRenderer {
     this.state.nav.navPath = this.state.nav.navPath.slice(0, level);
     this.state.nav.col2Index = 0;
     this.state.nav.col3Index = -1;
+    this.state.nav.col4Index = -1;
     this.animateBrowse("back");
   }
 
-  /** Auto-select/highlight first item in Column 2 and update Column 3. */
+  /** Auto-select/highlight first item in Column 2 and update preview. */
   autoSelectFirst() {
     const container = document.getElementById("rx-specialty-list");
     if (!container) return;
@@ -516,27 +514,44 @@ class FolderNavigationRenderer {
     this.state.nav.col2Index = target;
     this._highlightBrowseItem(target);
 
-    // Trigger preview for first item
     const pop = this.state.nav.population;
     if (pop === "Non-Med") return;
 
-    const navPath = this.state.nav.navPath;
-    if (navPath.length === 0) {
-      const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, pop);
-      if (specialties[target]) {
-        const spec = specialties[target];
-        if (NESTED_SPECIALTIES.includes(spec)) {
-          this.renderPreviewSubcategories(pop, spec);
-        } else {
-          this.renderPreviewMeds(pop, spec);
-        }
+    const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, pop);
+    if (specialties[target]) {
+      if (NESTED_SPECIALTIES.includes(specialties[target])) {
+        this.renderSubcategories(pop, specialties[target]);
+      } else {
+        this.renderPreviewMeds(pop, specialties[target]);
       }
-    } else if (navPath.length === 1) {
-      const specialty = navPath[0];
-      const subs = NavigationDataHelper.getSubcategories(this.state.medications, pop, specialty);
-      if (subs[target]) {
-        this.renderPreviewMeds(pop, specialty, subs[target]);
+    }
+  }
+
+  /** Update preview for the currently highlighted Column 2 item. */
+  updatePreviewForIndex(index) {
+    const pop = this.state.nav.population;
+    if (pop === "Non-Med") return;
+
+    const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, pop);
+    if (specialties[index]) {
+      if (NESTED_SPECIALTIES.includes(specialties[index])) {
+        this.renderSubcategories(pop, specialties[index]);
+      } else {
+        this.renderPreviewMeds(pop, specialties[index]);
       }
+    }
+  }
+
+  /** Update meds preview for the currently highlighted subcategory item. */
+  updateSubcategoryPreviewForIndex(index) {
+    const pop = this.state.nav.population;
+    const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, pop);
+    const specialty = specialties[this.state.nav.col2Index];
+    if (!specialty || !NESTED_SPECIALTIES.includes(specialty)) return;
+
+    const subs = NavigationDataHelper.getSubcategories(this.state.medications, pop, specialty);
+    if (subs[index]) {
+      this.renderSubcategoryMeds(pop, specialty, subs[index]);
     }
   }
 
@@ -660,6 +675,33 @@ class FolderNavigationRenderer {
       item.classList.toggle("browse-highlighted", i === index);
     });
   }
+
+  /** Highlight the item at the given index in the subcategory column. */
+  _highlightSubcategoryItem(index) {
+    const container = document.getElementById("rx-subcategory-list");
+    if (!container) return;
+    const items = container.querySelectorAll(".rx-folder-item");
+    items.forEach((item, i) => {
+      item.classList.toggle("browse-highlighted", i === index);
+    });
+  }
+
+  /** Update grid layout mode: "non-med", "nested", or "default". */
+  _updateGridLayout(mode) {
+    const dashboard = document.getElementById("dashboardView");
+    if (!dashboard) return;
+    switch (mode) {
+      case "non-med":
+        dashboard.style.gridTemplateColumns = "120px 0px max-content 0px 0 0px 1fr";
+        break;
+      case "nested":
+        dashboard.style.gridTemplateColumns = "120px 0px 180px 0px 220px 0px 1fr";
+        break;
+      default:
+        dashboard.style.gridTemplateColumns = "";
+        break;
+    }
+  }
 }
 
 // ============================================================================
@@ -711,35 +753,28 @@ class MobileFolderRenderer {
       this.renderMobileBreadcrumb();
       const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, nav.population);
       specialties.forEach(spec => {
-        const isNested = NESTED_SPECIALTIES.includes(spec);
         const count = NavigationDataHelper.countMeds(this.state.medications, nav.population, spec);
-        const item = this._createMobileFolder(spec, count, isNested);
+        const item = this._createMobileFolder(spec, count);
         item.addEventListener("click", () => {
-          if (isNested) {
-            nav.navPath = [spec];
-            this.animateForward();
-          } else {
-            nav.navPath = [spec];
-            nav._flatSpecialty = true;
-            this.animateForward();
-          }
+          nav.navPath = [spec];
+          this.animateForward();
         });
         container.appendChild(item);
       });
       return;
     }
 
-    // Level 2: Subcategories (nested) or Med list (flat)
+    // Level 2: Nested specialties show subcategory folders, non-nested show meds
     if (nav.navPath.length === 1) {
       this.renderMobileBreadcrumb();
       const specialty = nav.navPath[0];
       const isNested = NESTED_SPECIALTIES.includes(specialty);
 
       if (isNested) {
-        // Show subcategory folders
+        // Show subcategory folders (user clicks into one to see meds)
         const subs = NavigationDataHelper.getSubcategories(this.state.medications, nav.population, specialty);
         subs.forEach(sub => {
-          const count = NavigationDataHelper.countMeds(this.state.medications, nav.population, specialty, sub);
+          const count = NavigationDataHelper.getMedications(this.state.medications, nav.population, specialty, sub).length;
           const item = this._createMobileFolder(sub, count);
           item.addEventListener("click", () => {
             nav.navPath = [specialty, sub];
@@ -753,11 +788,14 @@ class MobileFolderRenderer {
         meds.forEach(med => {
           container.appendChild(this.medRenderer.createMedItem(med, { overlayActions: true }));
         });
+        if (window.cartRenderer) {
+          window.cartRenderer.updateSelectedIndicators();
+        }
       }
       return;
     }
 
-    // Level 3: Meds for a subcategory (nested only)
+    // Level 3: Meds for a subcategory of a nested specialty
     if (nav.navPath.length === 2) {
       this.renderMobileBreadcrumb();
       const specialty = nav.navPath[0];
@@ -766,11 +804,10 @@ class MobileFolderRenderer {
       meds.forEach(med => {
         container.appendChild(this.medRenderer.createMedItem(med, { overlayActions: true }));
       });
-    }
-
-    // Update cart indicators
-    if (window.cartRenderer) {
-      window.cartRenderer.updateSelectedIndicators();
+      if (window.cartRenderer) {
+        window.cartRenderer.updateSelectedIndicators();
+      }
+      return;
     }
   }
 
@@ -795,7 +832,7 @@ class MobileFolderRenderer {
       return;
     }
 
-    // Full path: Population › Adult › ENT › Ear
+    // Full path: Population › Adult › ENT
     // Each segment except the last is clickable (navigates back to that level)
     const allSegments = ["Population", ...parts];
 
@@ -812,21 +849,18 @@ class MobileFolderRenderer {
 
       if (!isLast) {
         // Clicking navigates back to this level
-        const targetLevel = i; // 0 = Population root, 1 = population, 2 = specialty, etc.
+        const targetLevel = i; // 0 = Population root, 1 = population, 2 = specialty, 3 = subcategory
         span.addEventListener("click", () => {
           if (targetLevel === 0) {
             // Back to root (Level 0: population selection)
             nav.population = "";
             nav.navPath = [];
-            nav._flatSpecialty = false;
           } else if (targetLevel === 1) {
             // Back to specialty list (Level 1)
             nav.navPath = [];
-            nav._flatSpecialty = false;
           } else if (targetLevel === 2) {
             // Back to subcategory list (Level 2)
-            nav.navPath = [nav.navPath[0]];
-            nav._flatSpecialty = false;
+            nav.navPath = nav.navPath.slice(0, 1);
           }
           this.animateBack();
         });
@@ -840,7 +874,6 @@ class MobileFolderRenderer {
   goBack() {
     const nav = this.state.nav;
     if (nav.navPath.length > 0) {
-      nav._flatSpecialty = false;
       nav.navPath.pop();
     } else if (nav.population) {
       nav.population = "";
@@ -871,13 +904,6 @@ class MobileFolderRenderer {
       return;
     }
 
-    // Lock container height to prevent flex collapse when children become absolute-positioned.
-    const savedMinHeight = container.style.minHeight;
-    const savedHeight = container.style.height;
-    const lockHeight = container.offsetHeight;
-    container.style.minHeight = lockHeight + "px";
-    container.style.height = lockHeight + "px";
-
     // Capture old content
     const scrollTop = container.scrollTop;
     const oldPanel = document.createElement("div");
@@ -893,28 +919,11 @@ class MobileFolderRenderer {
     newPanel.className = "rx-slide-panel";
     while (container.firstChild) newPanel.appendChild(container.firstChild);
 
-    // Lock and animate
+    // Animate
     container.classList.add("is-animating");
     container.scrollTop = 0;
     container.appendChild(oldPanel);
     container.appendChild(newPanel);
-
-    let cleaned = false;
-    const cleanup = () => {
-      if (cleaned) return;
-      cleaned = true;
-      container.classList.remove("is-animating");
-      container.style.minHeight = savedMinHeight;
-      container.style.height = savedHeight;
-      if (oldPanel.parentNode) oldPanel.remove();
-      if (newPanel.parentNode) {
-        while (newPanel.firstChild) container.appendChild(newPanel.firstChild);
-        newPanel.remove();
-      }
-    };
-
-    // Force layout to complete before starting animation so entire list renders
-    void newPanel.offsetHeight;
 
     if (direction === "forward") {
       oldPanel.classList.add("rx-slide-panel--exit-left");
@@ -924,9 +933,13 @@ class MobileFolderRenderer {
       newPanel.classList.add("rx-slide-panel--enter-left");
     }
 
-    newPanel.addEventListener("animationend", cleanup, { once: true });
-    // Safety: if animationend doesn't fire, clean up after animation duration + buffer
-    setTimeout(cleanup, 350);
+    // Cleanup after animation (matches billing's animateBrowse exactly)
+    newPanel.addEventListener("animationend", function () {
+      container.classList.remove("is-animating");
+      if (oldPanel.parentNode) oldPanel.remove();
+      while (newPanel.firstChild) container.appendChild(newPanel.firstChild);
+      newPanel.remove();
+    }, { once: true });
   }
 
   _createMobileFolder(name, count, hasArrow = false) {

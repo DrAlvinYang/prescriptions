@@ -807,38 +807,83 @@ class KeyboardController {
 
     const col = nav.activeColumn;
 
+    // Helper: check if the currently highlighted specialty is nested
+    const isNested = () => {
+      if (nav.population === "Non-Med") return false;
+      const specialties = NavigationDataHelper.getSpecialtiesForPopulation(this.state.medications, nav.population);
+      return NESTED_SPECIALTIES.includes(specialties[nav.col2Index]);
+    };
+
+    // ── Arrow Up / Down ──────────────────────────────────────────────────
     if (event.key === "ArrowUp" || event.key === "ArrowDown") {
       const dir = event.key === "ArrowDown" ? 1 : -1;
 
       if (col === 1) {
         const items = document.querySelectorAll("#rx-population-list .rx-population-item");
+        // First activation: highlight current item without moving
+        if (!document.querySelector("#rx-population-list .keyboard-focused")) {
+          items.forEach((el, i) => el.classList.toggle("keyboard-focused", i === nav.col1Index));
+          return true;
+        }
         const newIndex = Math.max(0, Math.min(items.length - 1, nav.col1Index + dir));
         if (newIndex !== nav.col1Index) {
-          nav.col1Index = newIndex;
-          // Update keyboard focus indicator
-          items.forEach((el, i) => el.classList.toggle("keyboard-focused", i === newIndex));
-          // Select the population
+          // Select the population (handles col1Index update + keyboard-focused re-apply)
           const popKey = items[newIndex]?.dataset.popKey;
-          if (popKey) renderer.selectPopulation(popKey);
+          if (popKey) renderer.selectPopulation(popKey, { fromKeyboard: true });
         }
+
       } else if (col === 2) {
-        const items = document.querySelectorAll("#rx-specialty-list .rx-folder-item");
+        const items = document.querySelectorAll("#rx-specialty-list .rx-folder-item, #rx-specialty-list .med-item");
+        // First activation: highlight current item without moving
+        if (!document.querySelector("#rx-specialty-list .browse-highlighted")) {
+          renderer._highlightBrowseItem(nav.col2Index);
+          renderer.updatePreviewForIndex(nav.col2Index);
+          items[nav.col2Index]?.scrollIntoView({ block: "nearest" });
+          return true;
+        }
         const newIndex = Math.max(0, Math.min(items.length - 1, nav.col2Index + dir));
         if (newIndex !== nav.col2Index) {
           nav.col2Index = newIndex;
+          nav.col3Index = -1;
+          nav.col4Index = -1;
           renderer._highlightBrowseItem(newIndex);
+          renderer.updatePreviewForIndex(newIndex);
+          items[newIndex]?.scrollIntoView({ block: "nearest" });
         }
+
       } else if (col === 3) {
-        const items = document.querySelectorAll("#rx-meds-list .rx-folder-item, #rx-meds-list .med-item");
+        // Column 3 = subcategory folders (nested specialties only)
+        const items = document.querySelectorAll("#rx-subcategory-list .rx-folder-item");
+        // First activation: highlight current item without moving
+        if (!document.querySelector("#rx-subcategory-list .browse-highlighted")) {
+          const idx = nav.col3Index >= 0 ? nav.col3Index : 0;
+          nav.col3Index = idx;
+          renderer._highlightSubcategoryItem(idx);
+          renderer.updateSubcategoryPreviewForIndex(idx);
+          items[idx]?.scrollIntoView({ block: "nearest" });
+          return true;
+        }
         const newIndex = Math.max(0, Math.min(items.length - 1, nav.col3Index + dir));
-        nav.col3Index = newIndex;
-        // Scroll item into view and highlight
+        if (newIndex !== nav.col3Index) {
+          nav.col3Index = newIndex;
+          nav.col4Index = -1;
+          renderer._highlightSubcategoryItem(newIndex);
+          renderer.updateSubcategoryPreviewForIndex(newIndex);
+          items[newIndex]?.scrollIntoView({ block: "nearest" });
+        }
+
+      } else if (col === 4) {
+        // Column 4 = meds
+        const items = document.querySelectorAll("#rx-meds-list .med-item");
+        const newIndex = Math.max(0, Math.min(items.length - 1, nav.col4Index + dir));
+        nav.col4Index = newIndex;
         items.forEach((el, i) => el.classList.toggle("browse-highlighted", i === newIndex));
         items[newIndex]?.scrollIntoView({ block: "nearest" });
       }
       return true;
     }
 
+    // ── Arrow Right ──────────────────────────────────────────────────────
     if (event.key === "ArrowRight") {
       if (col === 1) {
         nav.activeColumn = 2;
@@ -847,61 +892,98 @@ class KeyboardController {
           el.classList.remove("keyboard-focused")
         );
         renderer._highlightBrowseItem(nav.col2Index);
-      } else if (col === 2) {
-        const items = document.querySelectorAll("#rx-specialty-list .rx-folder-item");
-        const item = items[nav.col2Index];
-        const isNested = item?.querySelector(".rx-folder-item__arrow");
+        renderer.updatePreviewForIndex(nav.col2Index);
 
-        if (isNested) {
-          // Drill into subcategories
-          const name = item.querySelector(".rx-folder-item__name")?.textContent;
-          if (name && nav.navPath.length === 0) {
-            nav.navPath = [name];
-            nav.col2Index = 0;
-            renderer.animateBrowse("forward", () => {
-              renderer.renderBrowse();
-            });
-          }
-        } else {
-          // Move to Column 3 (meds)
+      } else if (col === 2) {
+        // Non-Med has no columns beyond 2
+        if (nav.population === "Non-Med") return true;
+
+        if (isNested()) {
+          // Move to Column 3 (subcategories)
           nav.activeColumn = 3;
-          nav.col3Index = 0;
-          const medItems = document.querySelectorAll("#rx-meds-list .rx-folder-item, #rx-meds-list .med-item");
+          const idx = nav.col3Index >= 0 ? nav.col3Index : 0;
+          nav.col3Index = idx;
+          document.getElementById("rx-specialty-list")?.classList.add("col3-active");
+          renderer._highlightSubcategoryItem(idx);
+          renderer.updateSubcategoryPreviewForIndex(idx);
+          document.querySelectorAll("#rx-subcategory-list .rx-folder-item")[idx]
+            ?.scrollIntoView({ block: "nearest" });
+        } else {
+          // Move to Column 4 (meds) — skip col 3 for non-nested
+          nav.activeColumn = 4;
+          nav.col4Index = 0;
+          document.getElementById("rx-specialty-list")?.classList.add("col3-active");
+          const medItems = document.querySelectorAll("#rx-meds-list .med-item");
           medItems.forEach((el, i) => el.classList.toggle("browse-highlighted", i === 0));
           medItems[0]?.scrollIntoView({ block: "nearest" });
         }
+
+      } else if (col === 3) {
+        // Move to Column 4 (meds) — only if meds are showing
+        const medItems = document.querySelectorAll("#rx-meds-list .med-item");
+        if (medItems.length === 0) return true;
+        nav.activeColumn = 4;
+        nav.col4Index = 0;
+        document.getElementById("rx-subcategory-list")?.classList.add("col4-active");
+        medItems.forEach((el, i) => el.classList.toggle("browse-highlighted", i === 0));
+        medItems[0]?.scrollIntoView({ block: "nearest" });
       }
       return true;
     }
 
+    // ── Arrow Left ───────────────────────────────────────────────────────
     if (event.key === "ArrowLeft") {
-      if (col === 3) {
-        nav.activeColumn = 2;
-        nav.col3Index = -1;
-        // Remove Column 3 highlights
-        document.querySelectorAll("#rx-meds-list .browse-highlighted").forEach(el =>
-          el.classList.remove("browse-highlighted")
-        );
-        renderer._highlightBrowseItem(nav.col2Index);
-      } else if (col === 2) {
-        if (nav.navPath.length > 0) {
-          // Go back up in browse
-          renderer.navigateBack();
-        } else {
-          // Move to Column 1
-          nav.activeColumn = 1;
-          // Remove Column 2 highlights
-          document.querySelectorAll("#rx-specialty-list .browse-highlighted").forEach(el =>
+      if (col === 4) {
+        if (isNested()) {
+          // Back to Column 3 (subcategories)
+          nav.activeColumn = 3;
+          nav.col4Index = -1;
+          document.getElementById("rx-subcategory-list")?.classList.remove("col4-active");
+          // Remove Column 4 highlights
+          document.querySelectorAll("#rx-meds-list .browse-highlighted").forEach(el =>
             el.classList.remove("browse-highlighted")
           );
-          // Add keyboard focus to current population item
-          const popItems = document.querySelectorAll("#rx-population-list .rx-population-item");
-          popItems.forEach((el, i) => el.classList.toggle("keyboard-focused", i === nav.col1Index));
+          renderer._highlightSubcategoryItem(nav.col3Index);
+        } else {
+          // Back to Column 2 (specialty) — skip col 3 for non-nested
+          nav.activeColumn = 2;
+          nav.col4Index = -1;
+          document.getElementById("rx-specialty-list")?.classList.remove("col3-active");
+          document.querySelectorAll("#rx-meds-list .browse-highlighted").forEach(el =>
+            el.classList.remove("browse-highlighted")
+          );
+          renderer._highlightBrowseItem(nav.col2Index);
         }
+
+      } else if (col === 3) {
+        // Back to Column 2
+        nav.activeColumn = 2;
+        nav.col3Index = -1;
+        nav.col4Index = -1;
+        document.getElementById("rx-specialty-list")?.classList.remove("col3-active");
+        // Remove Column 3 highlights
+        document.querySelectorAll("#rx-subcategory-list .browse-highlighted").forEach(el =>
+          el.classList.remove("browse-highlighted")
+        );
+        // Clear meds column
+        renderer.renderPreviewEmpty();
+        renderer._highlightBrowseItem(nav.col2Index);
+
+      } else if (col === 2) {
+        // Move to Column 1
+        nav.activeColumn = 1;
+        // Remove Column 2 highlights
+        document.querySelectorAll("#rx-specialty-list .browse-highlighted").forEach(el =>
+          el.classList.remove("browse-highlighted")
+        );
+        // Add keyboard focus to current population item
+        const popItems = document.querySelectorAll("#rx-population-list .rx-population-item");
+        popItems.forEach((el, i) => el.classList.toggle("keyboard-focused", i === nav.col1Index));
       }
       return true;
     }
 
+    // ── Enter ────────────────────────────────────────────────────────────
     if (event.key === "Enter") {
       if (col === 1) {
         nav.activeColumn = 2;
@@ -914,17 +996,13 @@ class KeyboardController {
         const item = items[nav.col2Index];
         if (item) item.click();
       } else if (col === 3) {
-        const items = document.querySelectorAll("#rx-meds-list .rx-folder-item, #rx-meds-list .med-item");
+        const items = document.querySelectorAll("#rx-subcategory-list .rx-folder-item");
         const item = items[nav.col3Index];
-        if (item) {
-          if (item.classList.contains("rx-folder-item")) {
-            // Subfolder preview: glide
-            item.click();
-          } else {
-            // Med item: quick-print
-            item.click();
-          }
-        }
+        if (item) item.click();
+      } else if (col === 4) {
+        const items = document.querySelectorAll("#rx-meds-list .med-item");
+        const item = items[nav.col4Index];
+        if (item) item.click();
       }
       return true;
     }
@@ -1035,11 +1113,11 @@ class ResetController {
     // Reset folder navigation state
     this.state.nav.population = Utils.isMobile() ? "" : "Adult";
     this.state.nav.navPath = [];
-    this.state.nav.activeColumn = 2;
+    this.state.nav.activeColumn = 1;
     this.state.nav.col1Index = 0;
     this.state.nav.col2Index = 0;
     this.state.nav.col3Index = -1;
-    this.state.nav._flatSpecialty = false;
+    this.state.nav.col4Index = -1;
 
     // Clear inputs
     document.getElementById("weightInput").value = "";

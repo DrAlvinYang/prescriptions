@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 .history/
 *.bak
+~$*.xlsx
+.vscode/
+Reference Files/
