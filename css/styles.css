@@ -798,115 +798,6 @@ body {
   padding-bottom: 15px;
 }
 
-/* --- Dashboard --- */
-.dashboard-container {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  margin-top: 15px;
-  margin-left: clamp(15px, 4vw, 60px);
-  margin-right: clamp(15px, 4vw, 60px);
-}
-.dash-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-
-/* Specialty Card */
-details.specialty-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease;
-}
-
-summary.specialty-header {
-  background: var(--header-bg);
-  color: var(--header-text);
-  padding: 11px 14px;
-  font-weight: 700;
-  font-size: 12px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  letter-spacing: -0.01em;
-  transition: background 0.15s ease;
-}
-summary.specialty-header:hover {
-  background: var(--header-hover);
-}
-summary.specialty-header::-webkit-details-marker { display: none; }
-summary.specialty-header::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-right: 2px solid var(--muted);
-  border-bottom: 2px solid var(--muted);
-  transform: rotate(45deg);
-  transition: transform 0.25s ease;
-  flex-shrink: 0;
-  margin-left: 8px;
-}
-details[open] summary.specialty-header::after {
-  transform: rotate(-135deg);
-}
-details:not([open]) summary.specialty-header {
-  border-bottom: none;
-}
-.specialty-body { padding: 0; }
-
-/* --- Subfolders (Level 1) --- */
-.subfolder {
-  border-bottom: 1px solid var(--separator);
-}
-.subfolder:last-child { border-bottom: none; }
-
-.subfolder-summary {
-  padding: 9px 14px;
-  background: var(--subfolder-bg);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--subfolder-text);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  user-select: none;
-  transition: background 0.15s ease;
-}
-.subfolder-summary:hover { background: var(--subfolder-hover); }
-.subfolder-arrow {
-  font-size: 9px;
-  transition: transform 0.25s ease;
-  color: var(--subfolder-arrow);
-}
-details[open] > .subfolder-summary .subfolder-arrow {
-  transform: rotate(90deg);
-}
-.subfolder-content { padding: 0; }
-
-/* --- Nested Subfolders (Level 2) --- */
-.subfolder.nested-level {
-  border-bottom: none;
-  border-top: 1px solid var(--separator);
-}
-.subfolder.nested-level .subfolder-summary {
-  padding-left: 24px;
-  background: var(--nested-bg);
-  color: var(--nested-text);
-}
-.subfolder.nested-level .subfolder-content {
-  padding-left: 0;
-}
-
 /* --- Medication Item --- */
 .med-item {
   position: relative;
@@ -1753,27 +1644,6 @@ body.show-brands .brand-match-hint {
   border: 2px solid var(--accent) !important;
 }
 
-/* --- Add New Med Button --- */
-button.add-new-med-btn {
-  background: var(--header-bg);
-  border: 1px dashed var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shadow-sm);
-  padding: 11px 14px;
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--accent);
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  display: block;
-  transition: all 0.2s ease;
-}
-
-button.add-new-med-btn:hover {
-  background: var(--header-hover);
-}
-
 /* Add New Med From Search Button */
 .add-new-med-from-search-btn {
   background: transparent;
@@ -2507,27 +2377,6 @@ body:has(.help-overlay:not(.hidden)) {
     padding: 12px 16px;
   }
 
-  /* --- SINGLE-COLUMN FOLDERS --- */
-  .dashboard-container {
-    flex-direction: column;
-    align-items: stretch;
-    margin: 12px 14px 0 14px;
-    gap: 10px;
-  }
-
-  #col2, #col3 {
-    display: none;
-  }
-
-  .dash-col {
-    padding: 0;
-    width: 100%;
-  }
-
-  details.specialty-card {
-    border-radius: 12px;
-  }
-
   .med-item {
     padding: 12px 14px;
     min-height: 44px;
@@ -3153,12 +3002,6 @@ body:has(.help-overlay:not(.hidden)) {
   /* --- TOAST: above search bar --- */
   .toast-container {
     bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* --- ADD NEW MED BUTTON --- */
-  .add-new-med-btn {
-    min-height: 44px;
-    font-size: 14px;
   }
 
   .add-new-med-from-search-btn {

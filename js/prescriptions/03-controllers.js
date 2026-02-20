@@ -591,6 +591,9 @@ class KeyboardController {
 
     // Handle search navigation
     if (this.handleSearchKeys(event)) return;
+
+    // Handle folder browse navigation (desktop only, no search active)
+    if (this.handleBrowseKeydown(event)) return;
   }
 
   isAnyModalOpen() {
@@ -779,6 +782,156 @@ class KeyboardController {
     return true;
   }
 
+  handleBrowseKeydown(event) {
+    // Only handle on desktop, when no search is active
+    if (Utils.isMobile()) return false;
+    const searchView = document.getElementById("searchView");
+    if (searchView && !searchView.classList.contains("hidden")) return false;
+
+    // Only arrow keys and Enter
+    const validKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter"];
+    if (!validKeys.includes(event.key)) return false;
+
+    // Don't handle if typing in an input
+    const tag = document.activeElement?.tagName?.toLowerCase();
+    if (tag === "input" || tag === "textarea" || tag === "select") return false;
+
+    // Don't handle if any modal is open
+    if (this.isAnyModalOpen()) return false;
+
+    event.preventDefault();
+
+    const nav = this.state.nav;
+    const renderer = window.app?.renderers?.folder;
+    if (!renderer) return false;
+
+    const col = nav.activeColumn;
+
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      const dir = event.key === "ArrowDown" ? 1 : -1;
+
+      if (col === 1) {
+        const items = document.querySelectorAll("#rx-population-list .rx-population-item");
+        const newIndex = Math.max(0, Math.min(items.length - 1, nav.col1Index + dir));
+        if (newIndex !== nav.col1Index) {
+          nav.col1Index = newIndex;
+          // Update keyboard focus indicator
+          items.forEach((el, i) => el.classList.toggle("keyboard-focused", i === newIndex));
+          // Select the population
+          const popKey = items[newIndex]?.dataset.popKey;
+          if (popKey) renderer.selectPopulation(popKey);
+        }
+      } else if (col === 2) {
+        const items = document.querySelectorAll("#rx-specialty-list .rx-folder-item");
+        const newIndex = Math.max(0, Math.min(items.length - 1, nav.col2Index + dir));
+        if (newIndex !== nav.col2Index) {
+          nav.col2Index = newIndex;
+          renderer._highlightBrowseItem(newIndex);
+        }
+      } else if (col === 3) {
+        const items = document.querySelectorAll("#rx-meds-list .rx-folder-item, #rx-meds-list .med-item");
+        const newIndex = Math.max(0, Math.min(items.length - 1, nav.col3Index + dir));
+        nav.col3Index = newIndex;
+        // Scroll item into view and highlight
+        items.forEach((el, i) => el.classList.toggle("browse-highlighted", i === newIndex));
+        items[newIndex]?.scrollIntoView({ block: "nearest" });
+      }
+      return true;
+    }
+
+    if (event.key === "ArrowRight") {
+      if (col === 1) {
+        nav.activeColumn = 2;
+        // Remove Column 1 keyboard focus
+        document.querySelectorAll("#rx-population-list .keyboard-focused").forEach(el =>
+          el.classList.remove("keyboard-focused")
+        );
+        renderer._highlightBrowseItem(nav.col2Index);
+      } else if (col === 2) {
+        const items = document.querySelectorAll("#rx-specialty-list .rx-folder-item");
+        const item = items[nav.col2Index];
+        const isNested = item?.querySelector(".rx-folder-item__arrow");
+
+        if (isNested) {
+          // Drill into subcategories
+          const name = item.querySelector(".rx-folder-item__name")?.textContent;
+          if (name && nav.navPath.length === 0) {
+            nav.navPath = [name];
+            nav.col2Index = 0;
+            renderer.animateBrowse("forward", () => {
+              renderer.renderBrowse();
+            });
+          }
+        } else {
+          // Move to Column 3 (meds)
+          nav.activeColumn = 3;
+          nav.col3Index = 0;
+          const medItems = document.querySelectorAll("#rx-meds-list .rx-folder-item, #rx-meds-list .med-item");
+          medItems.forEach((el, i) => el.classList.toggle("browse-highlighted", i === 0));
+          medItems[0]?.scrollIntoView({ block: "nearest" });
+        }
+      }
+      return true;
+    }
+
+    if (event.key === "ArrowLeft") {
+      if (col === 3) {
+        nav.activeColumn = 2;
+        nav.col3Index = -1;
+        // Remove Column 3 highlights
+        document.querySelectorAll("#rx-meds-list .browse-highlighted").forEach(el =>
+          el.classList.remove("browse-highlighted")
+        );
+        renderer._highlightBrowseItem(nav.col2Index);
+      } else if (col === 2) {
+        if (nav.navPath.length > 0) {
+          // Go back up in browse
+          renderer.navigateBack();
+        } else {
+          // Move to Column 1
+          nav.activeColumn = 1;
+          // Remove Column 2 highlights
+          document.querySelectorAll("#rx-specialty-list .browse-highlighted").forEach(el =>
+            el.classList.remove("browse-highlighted")
+          );
+          // Add keyboard focus to current population item
+          const popItems = document.querySelectorAll("#rx-population-list .rx-population-item");
+          popItems.forEach((el, i) => el.classList.toggle("keyboard-focused", i === nav.col1Index));
+        }
+      }
+      return true;
+    }
+
+    if (event.key === "Enter") {
+      if (col === 1) {
+        nav.activeColumn = 2;
+        document.querySelectorAll("#rx-population-list .keyboard-focused").forEach(el =>
+          el.classList.remove("keyboard-focused")
+        );
+        renderer._highlightBrowseItem(nav.col2Index);
+      } else if (col === 2) {
+        const items = document.querySelectorAll("#rx-specialty-list .rx-folder-item");
+        const item = items[nav.col2Index];
+        if (item) item.click();
+      } else if (col === 3) {
+        const items = document.querySelectorAll("#rx-meds-list .rx-folder-item, #rx-meds-list .med-item");
+        const item = items[nav.col3Index];
+        if (item) {
+          if (item.classList.contains("rx-folder-item")) {
+            // Subfolder preview: glide
+            item.click();
+          } else {
+            // Med item: quick-print
+            item.click();
+          }
+        }
+      }
+      return true;
+    }
+
+    return false;
+  }
+
   handleSearchKeys(event) {
     const searchView = document.getElementById("searchView");
     if (searchView.classList.contains("hidden")) return false;
@@ -875,12 +1028,18 @@ class ResetController {
   }
 
   reset() {
-    // Close all details
-    document.querySelectorAll("details").forEach(el => el.open = false);
-
     // Reset state
     this.state.currentWeight = null;
     this.state.activeSearchIndex = -1;
+
+    // Reset folder navigation state
+    this.state.nav.population = "Adult";
+    this.state.nav.navPath = [];
+    this.state.nav.activeColumn = 2;
+    this.state.nav.col1Index = 0;
+    this.state.nav.col2Index = 0;
+    this.state.nav.col3Index = -1;
+    this.state.nav._flatSpecialty = false;
 
     // Clear inputs
     document.getElementById("weightInput").value = "";

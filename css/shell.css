@@ -186,6 +186,50 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 }
 .shell-search-clear:hover { background: var(--color-text-muted); color: var(--color-surface); }
 
+/* Search action button (+ New Med on prescriptions page) */
+.shell-search-action-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), transform 0.3s ease;
+}
+
+.shell-search-action-btn:hover {
+  background: var(--color-accent-ring);
+}
+
+/* Label shown on wider screens, icon on narrow */
+.shell-search-action-btn .action-btn-icon {
+  display: none;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .shell-search-action-btn .action-btn-label {
+    display: none;
+  }
+  .shell-search-action-btn .action-btn-icon {
+    display: inline;
+  }
+  .shell-search-action-btn {
+    padding: 2px 8px;
+  }
+}
+
 /* Tips button (billing page only) */
 .shell-header__tips-btn {
   padding: 6px 14px;
@@ -410,6 +454,17 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     fill: none;
     stroke: var(--color-text-secondary);
     stroke-width: 1.5;
+  }
+
+  /* Mobile search action button: always show icon form, rotate to × when focused */
+  .shell-search-action-btn .action-btn-label { display: none; }
+  .shell-search-action-btn .action-btn-icon { display: inline; }
+  .shell-search-action-btn {
+    padding: 2px 8px;
+    transition: transform 0.3s ease;
+  }
+  .search-focused .shell-search-action-btn {
+    transform: translateY(-50%) rotate(45deg);
   }
 }
 

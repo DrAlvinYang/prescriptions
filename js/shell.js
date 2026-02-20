@@ -157,6 +157,27 @@
 
     // Desktop dropdown options
     Shell._updateDropdown(page);
+
+    // Action button visibility
+    Shell._updateActionButton();
+  };
+
+  Shell._updateActionButton = function () {
+    var actionBtn = document.getElementById("shell-search-action-btn");
+    if (!actionBtn) return;
+
+    var page = Shell.isMobile() ? Shell.activePage : Shell.activeDesktopView;
+    var searchInput = document.getElementById("shell-search-input");
+    var hasText = searchInput && searchInput.value.trim().length > 0;
+
+    if (page === "prescriptions" && !hasText) {
+      actionBtn.hidden = false;
+    } else if (Shell.isMobile() && page === "prescriptions" && document.body.classList.contains("search-focused")) {
+      // Mobile: show as × when focused (even with no text)
+      actionBtn.hidden = false;
+    } else {
+      actionBtn.hidden = true;
+    }
   };
 
   Shell._updateDropdown = function (currentPage) {
@@ -230,6 +251,42 @@
         clearBtn.hidden = true;
         document.body.classList.remove("has-search-query");
         searchInput.focus();
+      });
+    }
+
+    // Search action button ("+ New Med" on Rx page)
+    var actionBtn = document.getElementById("shell-search-action-btn");
+    if (actionBtn && searchInput) {
+      actionBtn.addEventListener("click", function () {
+        var page = Shell.isMobile() ? Shell.activePage : Shell.activeDesktopView;
+
+        if (Shell.isMobile() && document.body.classList.contains("search-focused")) {
+          // Mobile focused: clear + blur
+          searchInput.value = "";
+          Shell._onSearchInput("");
+          if (clearBtn) clearBtn.hidden = true;
+          document.body.classList.remove("has-search-query");
+          searchInput.blur();
+          return;
+        }
+
+        // Desktop or mobile unfocused: open Add New Med modal
+        if (page === "prescriptions" && window.app && window.app.managers && window.app.managers.modal) {
+          window.app.managers.modal.openAddNewMed();
+        }
+      });
+
+      // Show/hide action button based on input state
+      searchInput.addEventListener("focus", function () {
+        document.body.classList.add("search-focused");
+        Shell._updateActionButton();
+      });
+      searchInput.addEventListener("blur", function () {
+        document.body.classList.remove("search-focused");
+        Shell._updateActionButton();
+      });
+      searchInput.addEventListener("input", function () {
+        Shell._updateActionButton();
       });
     }
 
@@ -513,6 +570,12 @@
     if (Shell.activePage === "billing" && window.App && window.App.shouldHandleFolderBack &&
         window.App.shouldHandleFolderBack(touch.clientX)) {
       return; // Let billing's swipe.js handle it
+    }
+
+    // Check if prescriptions should handle folder-back
+    if (Shell.activePage === "prescriptions" && window.app && window.app.shouldHandleFolderBack &&
+        window.app.shouldHandleFolderBack(touch.clientX)) {
+      return; // Let prescriptions' swipe handler handle it
     }
 
     carousel.startX = touch.clientX;

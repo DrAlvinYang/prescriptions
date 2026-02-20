@@ -8,10 +8,6 @@ class Application {
     this.controllers = {};
     this.renderers = {};
     this.managers = {};
-    this.isTwoColumn = false;
-    this.isOneColumn = false;
-    this.TWO_COLUMN_BREAKPOINT = 1050;
-    this.ONE_COLUMN_BREAKPOINT = 700;
   }
 
   async initialize() {
@@ -75,20 +71,21 @@ class Application {
 
   initializeRenderers() {
     const medRenderer = new MedicationRenderer(this.state);
-    
+
     this.renderers = {
       medication: medRenderer,
-      dashboard: new DashboardRenderer(this.state, medRenderer),
+      folder: new FolderNavigationRenderer(this.state, medRenderer),
+      mobileFolder: new MobileFolderRenderer(this.state, medRenderer),
       search: new SearchResultsRenderer(this.state, medRenderer),
       cart: new CartRenderer(this.state),
       location: new LocationUIRenderer(this.managers.location),
       provider: new ProviderUIRenderer(this.managers.provider)
     };
-    
+
     // Update location and provider headers
     this.renderers.location.updateHeader();
     this.renderers.provider.updateHeader();
-    
+
     // Expose cart renderer globally
     window.cartRenderer = this.renderers.cart;
   }
@@ -97,7 +94,7 @@ class Application {
     this.controllers.cart = new CartController(
       this.state,
       this.renderers.cart,
-      this.renderers.dashboard,
+      this.renderers.folder,
       this.renderers.search,
       this.managers.modal,
       this.managers.provider,
@@ -199,6 +196,8 @@ class Application {
     this.setupHelpListeners();
     this.setupGlobalKeyboard();
     this.setupResizeListener();
+    this.setupColumnResizers();
+    this.setupMobileSwipe();
     this.setupMobileListeners();
   }
 
@@ -210,6 +209,317 @@ class Application {
         this.handleResize();
       });
     });
+  }
+
+  // ── Column Resizers (Desktop Only) ──────────────────────────────
+
+  setupColumnResizers() {
+    const dashboard = document.getElementById("dashboardView");
+    const resizer1 = document.getElementById("rx-resizer-1");
+    const resizer2 = document.getElementById("rx-resizer-2");
+    if (!dashboard || !resizer1 || !resizer2) return;
+
+    let activeResizer = null;
+    const MIN_POP = 120;     // px — population column
+    const MIN_BROWSE = 180;  // px — specialty / browse column
+    const MIN_MEDS = 200;    // px — preview / meds column
+
+    const onMouseDown = (e) => {
+      if (Utils.isMobile()) return;
+      e.preventDefault();
+      activeResizer = e.currentTarget;
+      activeResizer.classList.add("rx-col-resizer--active");
+      document.body.classList.add("is-col-resizing");
+    };
+
+    const onMouseMove = (e) => {
+      if (!activeResizer) return;
+
+      const rect = dashboard.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const totalWidth = rect.width;
+
+      const colPop = document.getElementById("rx-col-population");
+      const colSpec = document.getElementById("rx-col-specialty");
+      const colMeds = document.getElementById("rx-col-meds");
+
+      let w1, w2, w3;
+
+      if (activeResizer === resizer1) {
+        w1 = x;
+        w3 = colMeds.offsetWidth;
+        w2 = totalWidth - w1 - w3;
+
+        if (w1 < MIN_POP) { w1 = MIN_POP; w2 = totalWidth - w1 - w3; }
+        if (w2 < MIN_BROWSE) { w2 = MIN_BROWSE; w1 = totalWidth - w2 - w3; }
+        if (w1 < MIN_POP) return;
+      } else {
+        w1 = colPop.offsetWidth;
+        w3 = totalWidth - x;
+        w2 = totalWidth - w1 - w3;
+
+        if (w3 < MIN_MEDS) { w3 = MIN_MEDS; w2 = totalWidth - w1 - w3; }
+        if (w2 < MIN_BROWSE) { w2 = MIN_BROWSE; w3 = totalWidth - w1 - w2; }
+        if (w3 < MIN_MEDS) return;
+      }
+
+      const pct1 = (w1 / totalWidth * 100).toFixed(4);
+      const pct2 = (w2 / totalWidth * 100).toFixed(4);
+      const pct3 = (w3 / totalWidth * 100).toFixed(4);
+
+      dashboard.style.gridTemplateColumns = pct1 + "% 0px " + pct2 + "% 0px " + pct3 + "%";
+    };
+
+    const onMouseUp = () => {
+      if (!activeResizer) return;
+      activeResizer.classList.remove("rx-col-resizer--active");
+      activeResizer = null;
+      document.body.classList.remove("is-col-resizing");
+    };
+
+    resizer1.addEventListener("mousedown", onMouseDown);
+    resizer2.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }
+
+  // ── Mobile Swipe (Folder-back gesture) ──────────────────────────
+
+  setupMobileSwipe() {
+    const rxPage = document.getElementById("page-prescriptions");
+    if (!rxPage) return;
+
+    const EDGE_ZONE = 25;
+    const SWIPE_THRESHOLD = 50;
+    const VELOCITY_THRESHOLD = 0.3;
+    const ANGLE_LOCK = 1.2;
+
+    let startX = 0, startY = 0, currentX = 0, startTime = 0;
+    let isDragging = false, directionLocked = false, isHorizontal = false, active = false;
+    let panelsReady = false, oldPanel = null, newPanel = null, savedScrollTop = 0;
+
+    const renderer = this.renderers.mobileFolder;
+
+    rxPage.addEventListener("touchstart", (e) => {
+      if (!Utils.isMobile()) return;
+      if (e.touches.length !== 1) return;
+
+      const touch = e.touches[0];
+      if (!this.shouldHandleFolderBack(touch.clientX)) return;
+
+      const container = document.getElementById("rx-meds-list");
+      if (container && (container.classList.contains("is-animating") || container.classList.contains("folder-dragging"))) return;
+
+      startX = touch.clientX;
+      startY = touch.clientY;
+      currentX = startX;
+      startTime = Date.now();
+      isDragging = false;
+      directionLocked = false;
+      isHorizontal = false;
+      panelsReady = false;
+      active = true;
+    }, { passive: true });
+
+    rxPage.addEventListener("touchmove", (e) => {
+      if (!active || !Utils.isMobile() || e.touches.length !== 1) return;
+
+      const touch = e.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (!directionLocked) {
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        if (absDx < 8 && absDy < 8) return;
+
+        directionLocked = true;
+        if (absDx > absDy * ANGLE_LOCK) {
+          isHorizontal = true;
+        } else {
+          isHorizontal = false;
+          active = false;
+          return;
+        }
+      }
+
+      if (!isHorizontal || dx < 0) return;
+
+      e.preventDefault();
+      isDragging = true;
+      currentX = touch.clientX;
+
+      // Setup panels on first drag
+      if (!panelsReady) {
+        // Dismiss any open action overlays so they don't interfere with swipe
+        document.querySelectorAll(".med-item.mobile-actions-open").forEach(el =>
+          el.classList.remove("mobile-actions-open")
+        );
+
+        const container = document.getElementById("rx-meds-list");
+        if (!container) return;
+
+        savedScrollTop = container.scrollTop;
+
+        // Wrap current content
+        oldPanel = document.createElement("div");
+        oldPanel.className = "folder-drag-panel";
+        oldPanel.style.transform = "translateX(0)";
+        oldPanel.style.top = -savedScrollTop + "px";
+        while (container.firstChild) oldPanel.appendChild(container.firstChild);
+
+        // Render parent content
+        const nav = this.state.nav;
+        const savedNavPath = nav.navPath.slice();
+        const savedPop = nav.population;
+        const savedFlat = nav._flatSpecialty;
+
+        if (nav.navPath.length > 0) {
+          nav._flatSpecialty = false;
+          nav.navPath = nav.navPath.slice(0, -1);
+        } else if (nav.population) {
+          nav.population = "";
+        }
+        renderer.renderCurrentLevel();
+
+        // Wrap new content
+        newPanel = document.createElement("div");
+        newPanel.className = "folder-drag-panel";
+        newPanel.style.transform = "translateX(-100%)";
+        while (container.firstChild) newPanel.appendChild(container.firstChild);
+
+        // Restore state
+        nav.navPath = savedNavPath;
+        nav.population = savedPop;
+        nav._flatSpecialty = savedFlat;
+        renderer.renderMobileBreadcrumb();
+
+        container.classList.add("folder-dragging");
+        container.appendChild(newPanel);
+        container.appendChild(oldPanel);
+        panelsReady = true;
+      }
+
+      const offset = Math.max(0, dx);
+      oldPanel.style.transform = "translateX(" + offset + "px)";
+      newPanel.style.transform = "translateX(calc(-100% + " + offset + "px))";
+    }, { passive: false });
+
+    const onTouchEnd = () => {
+      if (!active) return;
+
+      if (!isDragging) {
+        active = false;
+        return;
+      }
+
+      const dx = currentX - startX;
+      const dt = Date.now() - startTime;
+      const velocity = Math.abs(dx) / Math.max(dt, 1);
+      const shouldComplete = Math.abs(dx) > SWIPE_THRESHOLD || velocity > VELOCITY_THRESHOLD;
+
+      if (!panelsReady) {
+        active = false;
+        return;
+      }
+
+      const container = document.getElementById("rx-meds-list");
+
+      // Add transition class then force reflow so the browser registers
+      // the current transform as the "from" value before we set the "to" value
+      oldPanel.classList.add("animate");
+      newPanel.classList.add("animate");
+      void newPanel.offsetWidth;
+
+      let cleaned = false;
+
+      if (shouldComplete && dx > 0) {
+        oldPanel.style.transform = "translateX(100%)";
+        newPanel.style.transform = "translateX(0)";
+
+        const cleanup = () => {
+          if (cleaned) return;
+          cleaned = true;
+
+          // Commit navigation directly (don't call goBack which triggers a second animation)
+          const nav = renderer.state.nav;
+          if (nav.navPath.length > 0) {
+            nav._flatSpecialty = false;
+            nav.navPath.pop();
+          } else if (nav.population) {
+            nav.population = "";
+          }
+
+          // Unwrap new panel content into container
+          container.classList.remove("folder-dragging");
+          if (oldPanel.parentNode) oldPanel.remove();
+          while (newPanel.firstChild) container.appendChild(newPanel.firstChild);
+          newPanel.remove();
+
+          // Update header to reflect new nav state
+          renderer.renderMobileBreadcrumb();
+
+          // Update cart indicators
+          if (window.cartRenderer) {
+            window.cartRenderer.updateSelectedIndicators();
+          }
+
+          oldPanel = null;
+          newPanel = null;
+          panelsReady = false;
+        };
+
+        newPanel.addEventListener("transitionend", function onEnd(ev) {
+          if (ev.target !== newPanel || ev.propertyName !== "transform") return;
+          newPanel.removeEventListener("transitionend", onEnd);
+          cleanup();
+        });
+        // Safety: if transitionend doesn't fire, clean up after transition duration + buffer
+        setTimeout(cleanup, 400);
+      } else {
+        oldPanel.style.transform = "translateX(0)";
+        newPanel.style.transform = "translateX(-100%)";
+
+        const cleanup = () => {
+          if (cleaned) return;
+          cleaned = true;
+
+          container.classList.remove("folder-dragging");
+          if (newPanel.parentNode) newPanel.remove();
+          while (oldPanel.firstChild) container.appendChild(oldPanel.firstChild);
+          oldPanel.remove();
+          container.scrollTop = savedScrollTop;
+          oldPanel = null;
+          newPanel = null;
+          panelsReady = false;
+        };
+
+        oldPanel.addEventListener("transitionend", function onEnd(ev) {
+          if (ev.target !== oldPanel || ev.propertyName !== "transform") return;
+          oldPanel.removeEventListener("transitionend", onEnd);
+          cleanup();
+        });
+        // Safety: if transitionend doesn't fire, clean up after transition duration + buffer
+        setTimeout(cleanup, 400);
+      }
+
+      isDragging = false;
+      directionLocked = false;
+      isHorizontal = false;
+      active = false;
+    };
+
+    rxPage.addEventListener("touchend", onTouchEnd, { passive: true });
+    rxPage.addEventListener("touchcancel", onTouchEnd, { passive: true });
+  }
+
+  /** Check if prescriptions should handle folder-back for a given touch X position. */
+  shouldHandleFolderBack(touchX) {
+    if (!Utils.isMobile()) return false;
+    if (!this.renderers.mobileFolder.shouldHandleFolderBack()) return false;
+    // Edge zone touches go to Shell for page transitions
+    if (touchX <= 25) return false;
+    return true;
   }
 
   setupSearchListeners() {
@@ -563,6 +873,12 @@ class Application {
     if (resetViewBtn) {
       resetViewBtn.addEventListener("click", () => {
         this.controllers.reset.reset();
+        // Re-render folder view with reset nav state
+        if (Utils.isMobile()) {
+          this.renderers.mobileFolder.renderCurrentLevel();
+        } else {
+          this.renderers.folder.render();
+        }
       });
     }
 
@@ -785,33 +1101,12 @@ class Application {
     this.renderers.search.setSearchManager(this.managers.search);
   }
 
-  getColumnConfig() {
-    if (this.isOneColumn) {
-      return { col1: SPECIALTY_SINGLE_COLUMN, col2: [], col3: [] };
-    } else if (this.isTwoColumn) {
-      return { col1: SPECIALTY_2_COLUMNS.col1, col2: SPECIALTY_2_COLUMNS.col2, col3: [] };
-    }
-    return { col1: SPECIALTY_COLUMNS.col1, col2: SPECIALTY_COLUMNS.col2, col3: SPECIALTY_COLUMNS.col3 };
-  }
-
-  updateLayoutMode() {
-    if (Utils.isMobile()) {
-      this.isOneColumn = true;
-      this.isTwoColumn = false;
-      return;
-    }
-    const width = window.innerWidth;
-    this.isOneColumn = width <= this.ONE_COLUMN_BREAKPOINT;
-    this.isTwoColumn = !this.isOneColumn && width <= this.TWO_COLUMN_BREAKPOINT;
-  }
-
   render() {
-    this.updateLayoutMode();
-
-    this.renderers.dashboard.render(
-      this.getColumnConfig(),
-      (med, element) => this.controllers.cart.toggle(med, element)
-    );
+    if (Utils.isMobile()) {
+      this.renderers.mobileFolder.renderCurrentLevel();
+    } else {
+      this.renderers.folder.render();
+    }
 
     // Render initial cart
     this.controllers.cart.render();
@@ -835,39 +1130,6 @@ class Application {
         dropdown.style.top = (btnRect.bottom + 4) + "px";
       }
     }
-
-    const wasTwoColumn = this.isTwoColumn;
-    const wasOneColumn = this.isOneColumn;
-    this.updateLayoutMode();
-
-    // Only re-render if layout mode changed
-    if (wasTwoColumn !== this.isTwoColumn || wasOneColumn !== this.isOneColumn) {
-      // Save open folder states
-      const openFolders = new Set();
-      document.querySelectorAll('details[open]').forEach(details => {
-        const summary = details.querySelector('summary');
-        if (summary) {
-          openFolders.add(summary.textContent.trim());
-        }
-      });
-
-      // Re-render dashboard
-      this.renderers.dashboard.render(
-        this.getColumnConfig(),
-        (med, element) => this.controllers.cart.toggle(med, element)
-      );
-
-      // Restore open folder states
-      document.querySelectorAll('details').forEach(details => {
-        const summary = details.querySelector('summary');
-        if (summary && openFolders.has(summary.textContent.trim())) {
-          details.open = true;
-        }
-      });
-
-      // Update cart indicators
-      this.renderers.cart.updateSelectedIndicators();
-    }
   }
 
   updateSearchPlaceholder() {
@@ -886,11 +1148,12 @@ class Application {
   }
 
   handleProviderChange() {
-    // Re-render dashboard (indications visibility + sort order)
-    this.renderers.dashboard.render(
-      this.getColumnConfig(),
-      (med, element) => this.controllers.cart.toggle(med, element)
-    );
+    // Re-render folder view (indications visibility + sort order)
+    if (Utils.isMobile()) {
+      this.renderers.mobileFolder.renderCurrentLevel();
+    } else {
+      this.renderers.folder.render();
+    }
     this.renderers.cart.updateSelectedIndicators();
 
     // Refresh search results if search is active

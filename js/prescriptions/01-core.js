@@ -22,28 +22,21 @@ const FALLBACK_LOCATION = { name: "Michael Garron Hospital (MGH)", address: "825
 // Will be populated from Locations.json
 let BASE_LOCATIONS = [FALLBACK_LOCATION];
 
-const SPECIALTY_COLUMNS = {
-  col1: ["Add New Med", "Neuro & Endocrine", "Cardiac & Heme", "STI", "Substance Use"],
-  col2: ["Allergy, Analgesia, Antiemetic", "ENT", "Respiratory", "OBGYN", "Psych"],
-  col3: ["Anti-Infective", "Eye", "GI & GU", "Derm", "Non-Med"]
-};
+const NESTED_SPECIALTIES = ["Allergy, Analgesia, Antiemetic", "ENT", "GI & GU", "Substance Use"];
 
-// 2-column layout for narrower screens (at 1000px breakpoint)
-const SPECIALTY_2_COLUMNS = {
-  col1: ["Add New Med", "Allergy, Analgesia, Antiemetic", "ENT", "Cardiac & Heme", "GI & GU", "Derm", "Psych", "Non-Med"],
-  col2: ["Neuro & Endocrine", "Anti-Infective", "Eye", "Respiratory", "OBGYN", "STI", "Substance Use"],
-  col3: []
-};
-
-// All specialties sorted alphabetically for single-column view
-const SPECIALTY_SINGLE_COLUMN = [
-  "Add New Med",
-  ...["Allergy, Analgesia, Antiemetic", "Anti-Infective", "Cardiac & Heme", "Derm",
-      "ENT", "Eye", "GI & GU", "Neuro & Endocrine", "Non-Med", "OBGYN",
-      "Psych", "Respiratory", "STI", "Substance Use"]
+// Population items for Column 1
+const POPULATION_ITEMS = [
+  { key: "Adult", label: "Adult" },
+  { key: "Pediatric", label: "Pediatric" },
+  { key: "Non-Med", label: "Non-Med" }
 ];
 
-const NESTED_SPECIALTIES = ["Allergy, Analgesia, Antiemetic", "ENT", "GI & GU"];
+// Specialty display order for Column 2
+const SPECIALTY_ORDER = [
+  "Allergy, Analgesia, Antiemetic", "Anti-Infective", "Cardiac & Heme", "Derm",
+  "ENT", "Eye", "GI & GU", "Neuro & Endocrine", "OBGYN",
+  "Psych", "Respiratory", "STI", "Substance Use"
+];
 
 const SORT_ORDER = {
   subcategory: {
@@ -81,6 +74,15 @@ class AppState {
     this.searchEditPendingMed = null;
     this.searchEditMed = null; // The medication being edited in search edit modal
     this.searchEditCalculatedDose = null; // Calculated dose for weight-based meds
+    // Folder navigation state
+    this.nav = {
+      population: "Adult",    // "Adult" | "Pediatric" | "Non-Med"
+      navPath: [],             // [] = specialties, ["ENT"] = subcategories
+      activeColumn: 2,         // 1, 2, or 3
+      col1Index: 0,
+      col2Index: 0,
+      col3Index: -1,
+    };
   }
 
   addToCart(medication) {
@@ -578,6 +580,91 @@ const MedicationUtils = {
     }
     
     return groups;
+  }
+};
+
+// ============================================================================
+// NAVIGATION DATA HELPER - Provides filtered/sorted data for folder navigation
+// ============================================================================
+
+const ADULT_ONLY_SPECIALTIES = new Set(["Cardiac & Heme", "OBGYN", "Psych", "STI", "Substance Use"]);
+
+const NavigationDataHelper = {
+  /**
+   * Get ordered specialties for a population, filtered to those with ≥1 med.
+   * Pediatric mode hides adult-only specialties entirely.
+   */
+  getSpecialtiesForPopulation(medications, population) {
+    const validSpecialties = new Set();
+    for (const med of medications) {
+      const pop = (med.population || "").trim();
+      const spec = Utils.normalize(med.specialty);
+      if (pop === population && spec) {
+        validSpecialties.add(spec);
+      }
+    }
+    let ordered = SPECIALTY_ORDER.filter(s => validSpecialties.has(s));
+    if (population === "Pediatric") {
+      ordered = ordered.filter(s => !ADULT_ONLY_SPECIALTIES.has(s));
+    }
+    return ordered;
+  },
+
+  /**
+   * Get medications for a given population + specialty + optional subcategory.
+   * Sorted by med name (case-insensitive).
+   */
+  getMedications(medications, population, specialty, subcategory) {
+    return medications.filter(med => {
+      if ((med.population || "").trim() !== population) return false;
+      if (Utils.normalize(med.specialty) !== specialty) return false;
+      if (subcategory !== undefined) {
+        if (Utils.normalize(med.subcategory) !== subcategory) return false;
+      }
+      return true;
+    }).sort((a, b) => (a.med || "").localeCompare(b.med || "", undefined, { sensitivity: "base" }));
+  },
+
+  /**
+   * Get subcategories for a nested specialty, sorted by SORT_ORDER.subcategory.
+   * Returns array of subcategory name strings.
+   */
+  getSubcategories(medications, population, specialty) {
+    const subs = new Set();
+    for (const med of medications) {
+      if ((med.population || "").trim() !== population) continue;
+      if (Utils.normalize(med.specialty) !== specialty) continue;
+      const sub = Utils.normalize(med.subcategory);
+      if (sub) subs.add(sub);
+    }
+    const order = SORT_ORDER.subcategory;
+    return [...subs].sort((a, b) => (order[a] || 99) - (order[b] || 99));
+  },
+
+  /**
+   * Get Non-Med items (population is neither Adult nor Pediatric).
+   * Sorted by med name.
+   */
+  getNonMedMedications(medications) {
+    return medications.filter(med => {
+      const pop = (med.population || "").trim();
+      return pop !== "Adult" && pop !== "Pediatric";
+    }).sort((a, b) => (a.med || "").localeCompare(b.med || "", undefined, { sensitivity: "base" }));
+  },
+
+  /**
+   * Count meds for a population (total), a specialty, or a subcategory.
+   */
+  countMeds(medications, population, specialty, subcategory) {
+    if (population === "Non-Med") {
+      return this.getNonMedMedications(medications).length;
+    }
+    return medications.filter(med => {
+      if ((med.population || "").trim() !== population) return false;
+      if (specialty && Utils.normalize(med.specialty) !== specialty) return false;
+      if (subcategory && Utils.normalize(med.subcategory) !== subcategory) return false;
+      return true;
+    }).length;
   }
 };
 
@@ -2693,3 +2780,4 @@ window.FlyToCart = FlyToCart;
 window.UndoManager = UndoManager;
 window.ToastManager = ToastManager;
 window.ConfirmModal = ConfirmModal;
+window.NavigationDataHelper = NavigationDataHelper;

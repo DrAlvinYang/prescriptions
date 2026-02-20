@@ -507,129 +507,295 @@
 .content-scroll {
   flex: 1 1 0;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 15px;
-  padding-bottom: 100px;
+  overflow: hidden;
+  padding: 0;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
-
-/* When search view is active, disable parent scrolling */
+/* When search view is active, hide dashboard and show search */
 .content-scroll:has(#dashboardView.hidden) {
   overflow: hidden;
-  padding-bottom: 15px;
 }
 
-/* --- Dashboard --- */
-.dashboard-container {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  margin-top: 15px;
-  margin-left: clamp(15px, 4vw, 60px);
-  margin-right: clamp(15px, 4vw, 60px);
+/* --- Prescription Dashboard (3-column grid) --- */
+.rx-dashboard {
+  display: grid;
+  grid-template-columns: 180px 0px 1fr 0px 1fr;
+  height: 100%;
+  overflow: hidden;
 }
-.dash-col {
-  flex: 1;
+
+.rx-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-
-/* Specialty Card */
-details.specialty-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease;
+  background: var(--panel);
 }
 
-summary.specialty-header {
-  background: var(--header-bg);
-  color: var(--header-text);
-  padding: 11px 14px;
-  font-weight: 700;
+.rx-col--specialty,
+.rx-col--meds {
+  border-left: 1px solid var(--border);
+}
+
+.rx-col__header {
+  padding: 10px 14px;
+  font-weight: 600;
   font-size: 12px;
-  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--separator);
+  flex-shrink: 0;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--header-bg);
+}
+
+.rx-col__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.rx-col__content::-webkit-scrollbar { width: 6px; }
+.rx-col__content::-webkit-scrollbar-track { background: transparent; }
+.rx-col__content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.rx-col__content::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* --- Column Resize Handles --- */
+.rx-col-resizer {
+  width: 0;
+  position: relative;
+  cursor: col-resize;
+  z-index: 10;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.rx-col-resizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -3px;
+  width: 7px;
+  transition: background 0.15s ease;
+}
+
+.rx-col-resizer:hover::before,
+.rx-col-resizer--active::before {
+  background: var(--accent);
+  opacity: 0.4;
+}
+
+body.is-col-resizing,
+body.is-col-resizing * {
+  cursor: col-resize !important;
+}
+body.is-col-resizing {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* --- Population Items (Column 1) --- */
+.rx-population-item {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
   cursor: pointer;
-  list-style: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--separator);
   transition: background 0.15s ease;
 }
-summary.specialty-header:hover {
-  background: var(--header-hover);
-}
-summary.specialty-header::-webkit-details-marker { display: none; }
-summary.specialty-header::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-right: 2px solid var(--muted);
-  border-bottom: 2px solid var(--muted);
-  transform: rotate(45deg);
-  transition: transform 0.25s ease;
-  flex-shrink: 0;
-  margin-left: 8px;
-}
-details[open] summary.specialty-header::after {
-  transform: rotate(-135deg);
-}
-details:not([open]) summary.specialty-header {
-  border-bottom: none;
-}
-.specialty-body { padding: 0; }
 
-/* --- Subfolders (Level 1) --- */
-.subfolder {
-  border-bottom: 1px solid var(--separator);
-}
-.subfolder:last-child { border-bottom: none; }
+.rx-population-item:last-child { border-bottom: none; }
+.rx-population-item:hover { background: var(--hover-bg); }
 
-.subfolder-summary {
-  padding: 9px 14px;
-  background: var(--subfolder-bg);
-  cursor: pointer;
+.rx-population-item.selected {
+  background: var(--accent-tint);
+  box-shadow: inset 3px 0 0 var(--accent);
   font-weight: 600;
-  font-size: 12px;
-  color: var(--subfolder-text);
+  color: var(--accent);
+}
+
+.rx-population-item__count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.rx-population-item.selected .rx-population-item__count {
+  background: var(--accent);
+  color: #fff;
+}
+
+.rx-population-item.keyboard-focused {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* --- Folder Items (Column 2) --- */
+.rx-folder-item {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  user-select: none;
+  border-bottom: 1px solid var(--separator);
   transition: background 0.15s ease;
 }
-.subfolder-summary:hover { background: var(--subfolder-hover); }
-.subfolder-arrow {
-  font-size: 9px;
-  transition: transform 0.25s ease;
-  color: var(--subfolder-arrow);
-}
-details[open] > .subfolder-summary .subfolder-arrow {
-  transform: rotate(90deg);
-}
-.subfolder-content { padding: 0; }
 
-/* --- Nested Subfolders (Level 2) --- */
-.subfolder.nested-level {
-  border-bottom: none;
-  border-top: 1px solid var(--separator);
+.rx-folder-item:last-child { border-bottom: none; }
+.rx-folder-item:hover { background: var(--hover-bg); }
+
+.rx-folder-item.browse-highlighted {
+  background: var(--accent-tint);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
-.subfolder.nested-level .subfolder-summary {
-  padding-left: 24px;
-  background: var(--nested-bg);
-  color: var(--nested-text);
+
+.rx-folder-item__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.subfolder.nested-level .subfolder-content {
-  padding-left: 0;
+
+.rx-folder-item__count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.rx-folder-item__arrow {
+  font-size: 9px;
+  color: var(--muted);
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+/* --- Section Headers (sticky within columns) --- */
+.rx-section-header {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--separator);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* --- Breadcrumb Navigation (Column 2 header) --- */
+.rx-col__header--nav {
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.rx-breadcrumb__item {
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.rx-breadcrumb__item:hover {
+  text-decoration: underline;
+}
+
+.rx-breadcrumb__item--current {
+  cursor: default;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.rx-breadcrumb__item--current:hover {
+  text-decoration: none;
+}
+
+.rx-breadcrumb__sep {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* --- Slide Animations (folder drill-down) --- */
+.rx-col__content.is-animating {
+  overflow: hidden;
+}
+
+.rx-slide-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  background: var(--panel);
+}
+
+.rx-slide-panel--exit-left {
+  animation: rxSlideExitLeft 0.25s ease forwards;
+}
+
+.rx-slide-panel--enter-right {
+  animation: rxSlideEnterRight 0.25s ease forwards;
+}
+
+.rx-slide-panel--exit-right {
+  animation: rxSlideExitRight 0.25s ease forwards;
+}
+
+.rx-slide-panel--enter-left {
+  animation: rxSlideEnterLeft 0.25s ease forwards;
+}
+
+@keyframes rxSlideExitLeft {
+  to { transform: translateX(-100%); }
+}
+
+@keyframes rxSlideEnterRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes rxSlideExitRight {
+  to { transform: translateX(100%); }
+}
+
+@keyframes rxSlideEnterLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* --- Glide Animation (preview subfolder click → drill) --- */
+.rx-glide-freeze {
+  pointer-events: none;
+}
+
+.rx-glide-freeze .rx-folder-item,
+.rx-glide-freeze .med-item {
+  transition: none;
 }
 
 /* --- Medication Item --- */
@@ -689,7 +855,8 @@ details[open] > .subfolder-summary .subfolder-arrow {
   flex-direction: column;
   min-height: 0;
   overflow: visible;
-  padding: 0;
+  padding: 15px;
+  padding-bottom: 100px;
   position: relative;
 }
 .search-container .med-item { border-bottom: 1px solid var(--separator); }
@@ -1082,21 +1249,6 @@ details[open] > .subfolder-summary .subfolder-arrow {
 
 /* --- Responsive Breakpoints --- */
 
-/* 3 columns to 2 columns at 1050px (~300px per column) */
-@media (max-width: 1050px) {
-  #col3 {
-    display: none;
-  }
-}
-
-/* Single column at 700px */
-@media (max-width: 700px) {
-  #col2,
-  #col3 {
-    display: none;
-  }
-}
-
 /* Location collapses to icon-only when gap drops below 12px (toggled by JS) */
 .location-wrapper.icon-only {
   width: 36px;
@@ -1444,26 +1596,7 @@ body.show-brands .brand-match-hint {
   border: 2px solid var(--accent) !important;
 }
 
-/* --- Add New Med Button --- */
-button.add-new-med-btn {
-  background: var(--header-bg);
-  border: 1px dashed var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shadow-sm);
-  padding: 11px 14px;
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--accent);
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  display: block;
-  transition: all 0.2s ease;
-}
-
-button.add-new-med-btn:hover {
-  background: var(--header-hover);
-}
+/* [REMOVED -- Add New Med button moved to search bar action button in shell.css] */
 
 /* Add New Med From Search Button */
 .add-new-med-from-search-btn {
@@ -1976,25 +2109,55 @@ body:has(.help-overlay:not(.hidden)) {
     padding: 12px 16px;
   }
 
-  /* --- SINGLE-COLUMN FOLDERS --- */
-  .dashboard-container {
+  /* --- SINGLE-COLUMN FOLDER DRILL-DOWN --- */
+  .rx-dashboard {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
-    margin: 12px 14px 0 14px;
-    gap: 10px;
+    height: 100%;
+    overflow: hidden;
   }
 
-  #col2, #col3 {
+  .rx-col-resizer {
     display: none;
   }
 
-  .dash-col {
-    padding: 0;
-    width: 100%;
+  /* Only show one column at a time on mobile */
+  .rx-col--population,
+  .rx-col--specialty {
+    display: none;
   }
 
-  details.specialty-card {
-    border-radius: 12px;
+  /* Mobile shows content in the meds column (repurposed as single drill-down column) */
+  .rx-col--meds {
+    flex: 1;
+    width: 100%;
+    border-left: none;
+    min-height: 0;
+  }
+
+  .rx-col__content {
+    overscroll-behavior: contain;
+  }
+
+  /* Folder-back drag panels (mobile swipe) */
+  .folder-dragging {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .folder-drag-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    will-change: transform;
+    background: var(--panel);
+  }
+
+  .folder-drag-panel.animate {
+    transition: transform 0.3s ease-out;
   }
 
   .med-item {
@@ -2622,12 +2785,6 @@ body:has(.help-overlay:not(.hidden)) {
   /* --- TOAST: above search bar --- */
   .toast-container {
     bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* --- ADD NEW MED BUTTON --- */
-  .add-new-med-btn {
-    min-height: 44px;
-    font-size: 14px;
   }
 
   .add-new-med-from-search-btn {

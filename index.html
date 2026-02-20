@@ -119,6 +119,10 @@
     <div class="shell-header__search">
       <input type="text" id="shell-search-input" placeholder="Search billing codes..." autocomplete="off" />
       <button id="shell-clear-search" class="shell-search-clear" type="button" hidden>&times;</button>
+      <button id="shell-search-action-btn" class="shell-search-action-btn" type="button" hidden>
+        <span class="action-btn-label">+ New Med</span>
+        <span class="action-btn-icon">+</span>
+      </button>
     </div>
 
     <!-- Right cluster: Page-specific buttons -->
@@ -202,10 +206,21 @@
     <!-- Prescriptions page -->
     <div class="shell-page" id="page-prescriptions" data-page="prescriptions">
       <div class="content-scroll">
-        <div id="dashboardView" class="dashboard-container">
-          <div id="col1" class="dash-col"></div>
-          <div id="col2" class="dash-col"></div>
-          <div id="col3" class="dash-col"></div>
+        <div id="dashboardView" class="rx-dashboard">
+          <aside class="rx-col rx-col--population" id="rx-col-population">
+            <div class="rx-col__header">Population</div>
+            <div class="rx-col__content" id="rx-population-list"></div>
+          </aside>
+          <div class="rx-col-resizer" id="rx-resizer-1"></div>
+          <section class="rx-col rx-col--specialty" id="rx-col-specialty">
+            <div class="rx-col__header" id="rx-specialty-header">Specialties</div>
+            <div class="rx-col__content" id="rx-specialty-list"></div>
+          </section>
+          <div class="rx-col-resizer" id="rx-resizer-2"></div>
+          <section class="rx-col rx-col--meds" id="rx-col-meds">
+            <div class="rx-col__header" id="rx-meds-header"></div>
+            <div class="rx-col__content" id="rx-meds-list"></div>
+          </section>
         </div>
         <div id="searchView" class="search-container hidden">
           <div id="searchResults" class="med-list-flat"></div>
