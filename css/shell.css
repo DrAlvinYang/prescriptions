@@ -371,18 +371,19 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   /* Show mobile-only elements */
   .mobile-only { display: flex !important; }
 
-  /* Prescriptions page: distribute header icons equidistantly */
-  .shell-header:has(#rx-header-right:not([hidden])) {
+  /* Consistent brand position: allow wrapper to shrink for text truncation */
+  .shell-header__brand-wrapper {
+    min-width: 0;
+  }
+
+  /* Prescriptions page: rx icons distribute in remaining header space */
+  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__right {
+    flex: 1;
+    margin-left: 0;
     justify-content: space-evenly;
   }
-  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__left,
-  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__right,
   .shell-header:has(#rx-header-right:not([hidden])) #rx-header-right {
     display: contents;
-  }
-  .shell-header:has(#rx-header-right:not([hidden])) .shell-header__brand-wrapper {
-    min-width: 0;
-    flex-shrink: 1;
   }
   .shell-header:has(#rx-header-right:not([hidden])) .icon-btn {
     align-self: center;

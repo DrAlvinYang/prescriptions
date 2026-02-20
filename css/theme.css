@@ -41,7 +41,7 @@
   --space-2xl: 48px;
 
   /* ═══ Typography ═══ */
-  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Helvetica Neue", sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.8125rem;
