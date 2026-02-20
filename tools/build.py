@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/python3
+#!/usr/bin/env python3
 """
 Build script for ED Prescriptions.
 
@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = (Path(__file__).parent / "..").resolve()
 DATA_DIR = PROJECT_ROOT / "data"
-JS_DIR = PROJECT_ROOT / "js"
+JS_DIR = PROJECT_ROOT / "js" / "prescriptions"
 
 
 class DataFileEntry(NamedTuple):
