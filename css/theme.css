@@ -1,82 +1,93 @@
-/* Unified Theme — CSS Custom Properties
-   Canonical names follow billing convention (--color-*).
+/* Unified Theme — iOS Human Interface Guidelines
+   Design tokens following Apple's system colors, typography, and spacing.
+   Canonical names: --color-*, --space-*, --font-*, etc.
    Aliases preserve prescription compatibility (--bg, --panel, etc.). */
 :root {
   color-scheme: light dark;
 
-  /* ═══ Core palette (billing canonical) ═══ */
-  --color-bg: #f5f5f7;
-  --color-surface: #ffffff;
-  --color-border: #d2d2d7;
-  --color-border-light: #e5e5ea;
-  --color-text: #1d1d1f;
-  --color-text-secondary: #6e6e73;
-  --color-text-muted: #86868b;
-  --color-accent: #007AFF;
-  --color-accent-hover: #0066e6;
-  --color-accent-light: rgba(0, 122, 255, 0.08);
-  --color-accent-ring: rgba(0, 122, 255, 0.15);
-  --color-warning: #FF3B30;
-  --color-warning-bg: rgba(255, 59, 48, 0.06);
+  /* === Core palette (iOS System Colors - Light) === */
+  --color-bg: #F2F2F7;                          /* Secondary System Background */
+  --color-surface: #FFFFFF;                       /* System Background */
+  --color-surface-elevated: #FFFFFF;              /* Elevated surface */
+  --color-separator: rgba(60, 60, 67, 0.29);     /* iOS Separator */
+  --color-separator-opaque: #C6C6C8;             /* iOS Opaque Separator */
+  --color-border: rgba(60, 60, 67, 0.12);        /* Subtle border for cards */
+  --color-border-light: rgba(60, 60, 67, 0.08);  /* Lighter border */
+  --color-text: #000000;                          /* Label */
+  --color-text-secondary: rgba(60, 60, 67, 0.6); /* Secondary Label */
+  --color-text-muted: #8E8E93;                   /* System Gray */
+  --color-accent: #007AFF;                        /* System Blue */
+  --color-accent-hover: #0066D6;
+  --color-accent-light: rgba(0, 122, 255, 0.1);
+  --color-accent-ring: rgba(0, 122, 255, 0.2);
+  --color-warning: #FF3B30;                       /* System Red */
+  --color-warning-bg: rgba(255, 59, 48, 0.08);
   --color-warning-border: rgba(255, 59, 48, 0.2);
-  --color-success: #34C759;
+  --color-success: #34C759;                       /* System Green */
   --color-time-active: #34C759;
   --color-fee: #007AFF;
-  --color-modifier-calc: #7c3aed;
-  --color-hidden-notes-bg: #fffbeb;
-  --color-hidden-notes-border: #f59e0b;
-  --color-selected: rgba(0, 122, 255, 0.08);
-  --color-hover: #f0f0f5;
-  --color-code-bg: #f0f0f5;
-  --color-header-bg: #f0f0f5;
-  --color-header-hover: #e5e5ea;
+  --color-modifier-calc: #AF52DE;                 /* System Purple */
+  --color-hidden-notes-bg: rgba(255, 204, 0, 0.08);
+  --color-hidden-notes-border: #FF9500;           /* System Orange */
+  --color-selected: rgba(0, 122, 255, 0.1);
+  --color-hover: rgba(0, 0, 0, 0.04);
+  --color-code-bg: rgba(0, 0, 0, 0.03);
+  --color-header-bg: rgba(249, 249, 249, 0.94);  /* Translucent nav bar */
+  --color-header-hover: rgba(0, 0, 0, 0.06);
   --color-overlay-bg: rgba(0, 0, 0, 0.4);
 
-  /* ═══ Spacing ═══ */
+  /* iOS tertiary fill for inputs */
+  --color-fill-tertiary: rgba(118, 118, 128, 0.12);
+  --color-fill-quaternary: rgba(118, 118, 128, 0.08);
+
+  /* === Spacing (iOS generous spacing) === */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
-  --space-lg: 24px;
+  --space-lg: 20px;
   --space-xl: 32px;
   --space-2xl: 48px;
 
-  /* ═══ Typography ═══ */
-  --font-body: "Helvetica Neue", sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.8125rem;
-  --font-size-base: 0.8125rem;
-  --font-size-lg: 1rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
+  /* === Typography (San Francisco / System Font) === */
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "Fira Code", monospace;
+  --font-size-xs: 0.6875rem;     /* 11px - Caption 2 */
+  --font-size-sm: 0.75rem;       /* 12px - Caption 1 */
+  --font-size-base: 0.9375rem;   /* 15px - Subheadline */
+  --font-size-lg: 1.0625rem;     /* 17px - Body */
+  --font-size-xl: 1.375rem;      /* 22px - Title 2 */
+  --font-size-2xl: 1.75rem;      /* 28px - Title 1 */
+  --font-size-3xl: 2.125rem;     /* 34px - Large Title */
 
-  /* ═══ Layout ═══ */
-  --header-height: 56px;
+  /* === Layout === */
+  --header-height: 52px;
   --header-height-mobile: 48px;
   --search-bar-height: 56px;
   --col-diagnostic-width: 25%;
   --col-billing-width: 35%;
   --col-context-width: 40%;
 
-  /* ═══ Shadows ═══ */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* === Shadows (subtle, iOS-style) === */
+  --shadow-sm: 0 0.5px 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
 
-  /* ═══ Borders ═══ */
+  /* === Borders (iOS conventions) === */
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
   --radius-pill: 22px;
 
-  /* ═══ Transitions ═══ */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
+  /* === Transitions (iOS spring-like curves) === */
+  --transition-fast: 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-normal: 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-spring: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* ═══ Prescription aliases (map to billing canonical) ═══ */
+  /* === Prescription aliases (map to canonical) === */
   --bg: var(--color-bg);
   --panel: var(--color-surface);
-  --border: var(--color-border);
+  --border: var(--color-separator);
   --text: var(--color-text);
   --muted: var(--color-text-secondary);
   --accent: var(--color-accent);
@@ -86,7 +97,7 @@
   --hover-bg: var(--color-hover);
   --danger: var(--color-warning);
   --success: var(--color-success);
-  --separator: var(--color-border-light);
+  --separator: var(--color-separator);
   --overlay-bg: var(--color-overlay-bg);
   --header-hover: var(--color-header-hover);
   --accent-ring: var(--color-accent-ring);
@@ -94,87 +105,90 @@
   --in-cart-bg: var(--color-accent-light);
   --active-bg: rgba(0, 122, 255, 0.1);
 
-  /* ═══ Prescription-only vars (no billing equivalent) ═══ */
-  --btn: #f5f5f7;
-  --btn-hover: #e8e8ed;
-  --hover-border: #c7c7cc;
-  --in-cart-bg-opaque: #ebf4ff;
-  --subfolder-bg: #fafafc;
-  --subfolder-text: #444;
-  --subfolder-hover: #f0f0f5;
-  --subfolder-arrow: #888;
-  --nested-bg: #fff;
-  --nested-text: #555;
-  --med-hover: #f7f7fc;
-  --calc-dose: #1a7a2e;
-  --calc-note: #666;
-  --brand-color: #1a56db;
-  --brand-match: #1a7a2e;
-  --brand-name-color: #248a3d;
+  /* === Prescription-only vars === */
+  --btn: rgba(0, 0, 0, 0.04);
+  --btn-hover: rgba(0, 0, 0, 0.08);
+  --hover-border: rgba(60, 60, 67, 0.2);
+  --in-cart-bg-opaque: #EBF2FF;
+  --subfolder-bg: rgba(0, 0, 0, 0.02);
+  --subfolder-text: rgba(60, 60, 67, 0.6);
+  --subfolder-hover: rgba(0, 0, 0, 0.04);
+  --subfolder-arrow: #8E8E93;
+  --nested-bg: #FFFFFF;
+  --nested-text: rgba(60, 60, 67, 0.6);
+  --med-hover: rgba(0, 0, 0, 0.03);
+  --calc-dose: #34C759;
+  --calc-note: #8E8E93;
+  --brand-color: #007AFF;
+  --brand-match: #34C759;
+  --brand-name-color: #34C759;
   --accent-ring-strong: rgba(0, 122, 255, 0.25);
-  --highlight-bg: rgba(0, 122, 255, 0.15);
+  --highlight-bg: rgba(0, 122, 255, 0.12);
   --danger-tint: rgba(255, 59, 48, 0.08);
   --danger-tint-border: rgba(255, 59, 48, 0.15);
   --danger-tint-hover: rgba(255, 59, 48, 0.14);
   --danger-tint-border-hover: rgba(255, 59, 48, 0.25);
   --stuck-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --ghost-bg: rgba(255, 255, 255, 0.9);
+  --ghost-bg: rgba(255, 255, 255, 0.92);
   --ghost-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   --ghost-modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* ═══ Dark mode ═══ */
+/* === Dark mode (iOS System Colors - Dark) === */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Billing canonical dark */
-    --color-bg: #1c1c1e;
-    --color-surface: #2c2c2e;
-    --color-border: #38383a;
-    --color-border-light: #38383a;
-    --color-text: #f5f5f7;
-    --color-text-secondary: #e5e5ea;
-    --color-text-muted: #aeaeb2;
+    --color-bg: #000000;                            /* System Background */
+    --color-surface: #1C1C1E;                       /* Secondary System Background */
+    --color-surface-elevated: #2C2C2E;              /* Elevated surface */
+    --color-separator: rgba(84, 84, 88, 0.65);     /* iOS Dark Separator */
+    --color-separator-opaque: #38383A;
+    --color-border: rgba(84, 84, 88, 0.36);
+    --color-border-light: rgba(84, 84, 88, 0.18);
+    --color-text: #FFFFFF;
+    --color-text-secondary: rgba(235, 235, 245, 0.6);
+    --color-text-muted: #8E8E93;
     --color-accent: #0A84FF;
     --color-accent-hover: #409CFF;
-    --color-accent-light: rgba(10, 132, 255, 0.12);
-    --color-accent-ring: rgba(10, 132, 255, 0.2);
+    --color-accent-light: rgba(10, 132, 255, 0.15);
+    --color-accent-ring: rgba(10, 132, 255, 0.25);
     --color-warning: #FF453A;
-    --color-warning-bg: rgba(255, 69, 58, 0.12);
+    --color-warning-bg: rgba(255, 69, 58, 0.15);
     --color-warning-border: rgba(255, 69, 58, 0.25);
     --color-success: #30D158;
     --color-time-active: #30D158;
     --color-fee: #0A84FF;
     --color-modifier-calc: #BF5AF2;
-    --color-hidden-notes-bg: rgba(255, 214, 10, 0.08);
+    --color-hidden-notes-bg: rgba(255, 214, 10, 0.1);
     --color-hidden-notes-border: #FFD60A;
-    --color-selected: rgba(10, 132, 255, 0.12);
-    --color-hover: #323235;
-    --color-code-bg: #3a3a3c;
-    --color-header-bg: #252528;
-    --color-header-hover: #3a3a3c;
-    --color-overlay-bg: rgba(0, 0, 0, 0.6);
+    --color-selected: rgba(10, 132, 255, 0.15);
+    --color-hover: rgba(255, 255, 255, 0.06);
+    --color-code-bg: rgba(255, 255, 255, 0.06);
+    --color-header-bg: rgba(29, 29, 31, 0.94);
+    --color-header-hover: rgba(255, 255, 255, 0.08);
+    --color-overlay-bg: rgba(0, 0, 0, 0.5);
 
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+    --color-fill-tertiary: rgba(118, 118, 128, 0.24);
+    --color-fill-quaternary: rgba(118, 118, 128, 0.18);
 
-    /* Prescription dark overrides (aliases auto-update via var()) */
+    --shadow-sm: 0 0.5px 1px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+
+    /* Prescription dark overrides */
     --active-bg: rgba(10, 132, 255, 0.15);
-
-    /* Prescription-only dark values */
-    --btn: #3a3a3c;
-    --btn-hover: #48484a;
-    --hover-border: #48484a;
-    --in-cart-bg-opaque: #283747;
-    --subfolder-bg: #323235;
-    --subfolder-text: #b0b0b5;
-    --subfolder-hover: #3a3a3c;
-    --subfolder-arrow: #98989d;
-    --nested-bg: #3a3a3c;
-    --nested-text: #a0a0a5;
-    --med-hover: #323235;
+    --btn: rgba(255, 255, 255, 0.06);
+    --btn-hover: rgba(255, 255, 255, 0.1);
+    --hover-border: rgba(84, 84, 88, 0.4);
+    --in-cart-bg-opaque: rgba(10, 132, 255, 0.15);
+    --subfolder-bg: rgba(255, 255, 255, 0.04);
+    --subfolder-text: rgba(235, 235, 245, 0.6);
+    --subfolder-hover: rgba(255, 255, 255, 0.06);
+    --subfolder-arrow: #8E8E93;
+    --nested-bg: #2C2C2E;
+    --nested-text: rgba(235, 235, 245, 0.6);
+    --med-hover: rgba(255, 255, 255, 0.04);
     --calc-dose: #30D158;
-    --calc-note: #98989d;
+    --calc-note: #8E8E93;
     --brand-color: #5E9EFF;
     --brand-match: #30D158;
     --brand-name-color: #32D74B;
@@ -185,7 +199,7 @@
     --danger-tint-hover: rgba(255, 69, 58, 0.2);
     --danger-tint-border-hover: rgba(255, 69, 58, 0.3);
     --stuck-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    --ghost-bg: rgba(44, 44, 46, 0.9);
+    --ghost-bg: rgba(44, 44, 46, 0.92);
     --ghost-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     --ghost-modal-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }

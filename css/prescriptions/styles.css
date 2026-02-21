@@ -1,12 +1,6 @@
-/* [REMOVED -- Shell provides :root CSS variables and dark mode overrides via css/theme.css] */
+/* Prescriptions Feature - iOS Human Interface Guidelines Style */
 
-/* [REMOVED -- Shell provides box-sizing reset, html, and body styles via shell.css] */
-
-/* [REMOVED -- Shell provides .app-shell, .main, and .main::after layout containers] */
-
-/* [REMOVED -- Shell provides .topbar, .topbar-left, .topbar-right, .brand, .menu-btn header styles] */
-
-/* Provider Button */
+/* --- Provider Button (iOS pill style) --- */
 .provider-wrapper {
   position: relative;
   width: 150px;
@@ -14,33 +8,29 @@
   flex-shrink: 0;
 }
 
-/* Provider shrinks only after location collapses to icon */
 .provider-wrapper.can-shrink {
   flex-shrink: 1;
 }
 
 .provider-btn {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--color-fill-tertiary);
+  border: none;
+  border-radius: var(--radius-md);
   padding: 0 12px;
   height: 36px;
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: flex-start;
-
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
 }
 
 .provider-btn:hover {
-  background: var(--hover-bg);
-  border-color: var(--hover-border);
+  background: var(--color-fill-quaternary);
 }
 
 .provider-label {
@@ -75,26 +65,26 @@
   background: var(--overlay-bg);
   z-index: 199;
 }
-/* Keep provider wrapper above backdrop when editing */
+
 .provider-wrapper.edit-active {
   position: relative;
   z-index: 201;
 }
 
-/* Provider Edit Dropdown */
+/* Provider Edit Dropdown - iOS popover */
 .provider-edit-dropdown {
   position: absolute;
-  top: -13px; /* Align input with button (accounting for 12px top padding + 1px border) */
-  left: -57px; /* Offset so input field aligns with button left edge (35px label + 10px gap + 12px padding) */
+  top: -13px;
+  left: -57px;
   background: var(--panel);
   border: none;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   padding: 12px;
   z-index: 200;
   overflow: hidden;
 }
-/* Border animation container */
+
 .provider-edit-dropdown::before {
   content: "";
   position: absolute;
@@ -102,49 +92,36 @@
   left: 0;
   right: 0;
   bottom: 0;
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
   pointer-events: none;
   transform-origin: left center;
 }
 
-/* Animation states */
 .provider-edit-dropdown.animating::before {
-  animation: provider-border-stretch 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: provider-border-stretch 400ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .provider-edit-dropdown.animating .provider-edit-content {
-  animation: provider-content-fade 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: provider-content-fade 400ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
-/* Border stretch animation - expands from button position rightward */
 @keyframes provider-border-stretch {
-  0% {
-    clip-path: inset(0 57px 0 57px);
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-  }
+  0% { clip-path: inset(0 57px 0 57px); }
+  100% { clip-path: inset(0 0 0 0); }
 }
 
-/* Content fade animation */
 @keyframes provider-content-fade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-/* Content wrapper inherits flex layout */
 .provider-edit-content {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Provider Edit Row - horizontal layout */
 .provider-edit-row {
   display: flex;
   align-items: center;
@@ -152,7 +129,7 @@
 }
 
 .provider-edit-label {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--text);
   width: auto;
@@ -162,22 +139,19 @@
 .provider-edit-input {
   width: 175px;
   padding: 8px 12px;
-  font-size: 13px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  font-size: var(--font-size-base);
+  border: none;
+  border-radius: var(--radius-md);
   height: 36px;
-  background: var(--bg);
-  transition: all 0.2s ease;
+  background: var(--color-fill-tertiary);
+  transition: background var(--transition-fast);
 }
 
 .provider-edit-input:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
-  background: var(--panel);
+  background: var(--color-fill-quaternary);
 }
 
-/* Provider Edit Actions */
 .provider-edit-actions {
   display: flex;
   justify-content: flex-end;
@@ -185,7 +159,7 @@
   margin-top: 4px;
 }
 
-/* Location Dropdown */
+/* --- Location Dropdown --- */
 .location-wrapper {
   position: relative;
   width: 215px;
@@ -194,28 +168,25 @@
 }
 
 .location-btn {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--color-fill-tertiary);
+  border: none;
+  border-radius: var(--radius-md);
   padding: 0 12px;
   height: 36px;
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
 }
 
 .location-btn:hover {
-  background: var(--hover-bg);
-  border-color: var(--hover-border);
+  background: var(--color-fill-quaternary);
 }
 
 .loc-label {
@@ -237,7 +208,6 @@
   transition: transform 0.25s ease;
 }
 
-/* Location pin icon (hidden by default, shown when collapsed) */
 .loc-icon {
   display: none;
   flex-shrink: 0;
@@ -254,22 +224,25 @@
   overflow-y: auto;
   padding: 6px;
 }
+
 .loc-item {
-  padding: 8px 12px;
+  padding: 11px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   border-bottom: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   margin-bottom: 1px;
-  transition: background 0.15s ease;
+  min-height: 44px;
+  transition: background var(--transition-fast);
 }
-.loc-item:hover { background: var(--active-bg); }
+
+.loc-item:hover { background: var(--color-hover); }
 .loc-item.selected { font-weight: 600; color: var(--accent); background: var(--accent-tint); }
 
 .loc-name {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -291,18 +264,20 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  transition: color 0.15s ease;
+  transition: color var(--transition-fast);
 }
+
 .loc-delete-btn:hover { color: var(--danger); }
 
 .location-menu-footer {
   padding: 8px;
-  border-top: 1px solid var(--separator);
+  border-top: 0.33px solid var(--separator);
   background: var(--bg);
 }
+
 .btn-sm {
   width: 100%;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   padding: 7px;
 }
 
@@ -312,26 +287,25 @@
   height: 100%;
   border: none;
   background: transparent;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 400;
   color: var(--text);
   outline: none;
   padding: 0;
 }
+
 .location-search-input::placeholder {
   color: var(--muted);
   font-weight: 400;
 }
 
-/* Highlighted location item via keyboard navigation */
 .loc-search-item.is-active {
   background: var(--accent-tint);
   outline: 2px solid var(--accent);
   outline-offset: -2px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
-/* Enter hint for highlighted location items */
 .loc-enter-hint {
   display: none;
   width: 16px;
@@ -344,7 +318,6 @@
   background-size: 16px 16px;
 }
 
-/* Show enter hint when location item is active/highlighted */
 .loc-search-item.is-active .loc-enter-hint {
   display: block;
 }
@@ -359,13 +332,12 @@
   background: var(--overlay-bg);
   z-index: 199;
 }
-/* Keep location wrapper above backdrop when in search mode */
+
 .location-wrapper.search-active {
   position: relative;
   z-index: 201;
 }
 
-/* Override icon-only button constraints when search is active */
 .location-wrapper.search-active .location-btn {
   width: 100%;
   min-width: 0;
@@ -373,13 +345,11 @@
   justify-content: space-between;
 }
 
-/* Blue border on location search input when typing (not navigating) */
 .location-wrapper.search-active.typing-mode .location-btn {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring-strong);
+  background: var(--color-fill-quaternary);
 }
 
-/* Location Search Dropdown */
+/* Location Search Dropdown - iOS popover */
 .location-search-dropdown {
   position: absolute;
   top: 100%;
@@ -387,8 +357,8 @@
   right: auto;
   margin-top: 6px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   width: 480px;
   z-index: 200;
@@ -396,31 +366,31 @@
   flex-direction: column;
   overflow: hidden;
 }
-/* Search Results Container - fixed height for 10 rows, scrollable */
+
 .location-search-results {
   height: 340px;
   overflow-y: auto;
   padding: 6px;
 }
 
-/* Individual search result item */
 .loc-search-item {
-  padding: 8px 12px;
+  padding: 11px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   border-bottom: none;
-  min-height: 34px;
-  border-radius: 12px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
   margin-bottom: 1px;
-  transition: background 0.15s ease;
+  transition: background var(--transition-fast);
 }
-.loc-search-item:hover { background: var(--active-bg); }
+
+.loc-search-item:hover { background: var(--color-hover); }
 .loc-search-item.selected { font-weight: 600; color: var(--accent); background: var(--accent-tint); }
 
 .loc-search-name {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -435,33 +405,34 @@
   font-style: italic;
 }
 
-/* Sticky footer for Add New Location button */
 .location-search-footer {
   padding: 8px;
-  border-top: 1px solid var(--separator);
+  border-top: 0.33px solid var(--separator);
   background: var(--bg);
   flex-shrink: 0;
 }
 
-/* Weight Section */
+/* --- Weight Section --- */
 .weight-section {
   display: flex;
   align-items: center;
   gap: 1px;
-  background: var(--panel);
+  background: var(--color-fill-tertiary);
   padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: none;
+  border-radius: var(--radius-md);
   height: 36px;
-  transition: border-color 0.2s ease;
+  transition: background var(--transition-fast);
 }
+
 .weight-section label {
   font-weight: 500;
   color: var(--text);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
 }
+
 .weight-section span {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--muted);
   font-weight: 500;
 }
@@ -471,17 +442,16 @@
   padding: 0;
   border: none;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   text-align: center;
   background: transparent;
   outline: none;
   color: var(--text);
 }
+
 .weight-section input:focus {
   background: var(--active-bg);
 }
-
-/* [REMOVED -- Shell provides .search-section, .searchbar, and .search-clear-btn styles] */
 
 .status {
   display: flex;
@@ -492,13 +462,14 @@
   font-size: 17px;
   color: var(--text);
   padding: 4px 8px;
-  border: 1px solid transparent;
-  border-radius: 12px;
+  border: none;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
 }
+
 .reset-btn:hover {
   background: var(--hover-bg);
 }
@@ -515,12 +486,11 @@
   position: relative;
 }
 
-/* When search view is active, hide dashboard and show search */
 .content-scroll:has(#dashboardView.hidden) {
   overflow: hidden;
 }
 
-/* --- Prescription Dashboard (3-column grid) --- */
+/* --- Prescription Dashboard (multi-column grid) --- */
 .rx-dashboard {
   display: grid;
   grid-template-columns: 120px 0px 180px 0px 0 0px 1fr;
@@ -532,27 +502,36 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--panel);
+  background: var(--color-bg);
 }
 
 .rx-col--specialty,
 .rx-col--subcategory,
 .rx-col--meds {
-  border-left: 1px solid var(--border);
+  border-left: 0.33px solid var(--color-separator);
 }
 
 .rx-col__header {
-  padding: 10px 14px;
+  padding: 10px var(--space-md);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--muted);
-  border-bottom: 1px solid var(--separator);
   flex-shrink: 0;
-  min-height: 40px;
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--header-bg);
+  background: var(--color-bg);
+  position: relative;
+}
+
+.rx-col__header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .rx-col__content {
@@ -562,10 +541,15 @@
   position: relative;
 }
 
-.rx-col__content::-webkit-scrollbar { width: 6px; }
+.rx-col__content::-webkit-scrollbar { width: 4px; }
 .rx-col__content::-webkit-scrollbar-track { background: transparent; }
-.rx-col__content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-.rx-col__content::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+.rx-col__content::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 2px; }
+.rx-col__content::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.2); }
+
+@media (prefers-color-scheme: dark) {
+  .rx-col__content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+  .rx-col__content::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+}
 
 /* --- Column Resize Handles --- */
 .rx-col-resizer {
@@ -584,13 +568,13 @@
   bottom: 0;
   left: -3px;
   width: 7px;
-  transition: background 0.15s ease;
+  transition: background var(--transition-fast);
 }
 
 .rx-col-resizer:hover::before,
 .rx-col-resizer--active::before {
   background: var(--accent);
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
 body.is-col-resizing,
@@ -605,15 +589,17 @@ body.is-col-resizing {
 /* --- Population Items (Column 1) --- */
 .rx-population-item {
   padding: 11px 16px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   color: var(--text);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--separator);
-  transition: background 0.15s ease;
+  border-bottom: 0.33px solid var(--color-separator);
+  transition: background var(--transition-fast);
+  min-height: 44px;
+  background: var(--color-surface);
 }
 
 .rx-population-item:last-child { border-bottom: none; }
@@ -624,17 +610,16 @@ body.is-col-resizing {
 }
 
 .rx-population-item__count {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   color: var(--muted);
-  background: var(--bg);
+  background: var(--color-fill-quaternary);
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-pill);
   min-width: 24px;
   text-align: center;
 }
 
-/* Full accent when keyboard-navigating in Column 1 */
 .rx-population-item.keyboard-focused {
   background: var(--accent-tint);
   box-shadow: inset 3px 0 0 var(--accent);
@@ -642,25 +627,26 @@ body.is-col-resizing {
 }
 
 .rx-population-item.keyboard-focused .rx-population-item__count {
-  background: var(--bg);
+  background: var(--color-fill-quaternary);
   color: var(--muted);
 }
 
 /* --- Folder Items (Column 2) --- */
 .rx-folder-item {
   padding: 11px 16px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   color: var(--text);
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid var(--separator);
-  transition: background 0.15s ease;
+  border-bottom: 0.33px solid var(--color-separator);
+  transition: background var(--transition-fast);
+  min-height: 44px;
+  background: var(--color-surface);
 }
 
-.rx-folder-item:last-child { /* border kept for consistency */ }
 .rx-folder-item:hover { background: var(--hover-bg); }
 
 .rx-folder-item.browse-highlighted,
@@ -669,7 +655,6 @@ body.is-col-resizing {
   box-shadow: inset 3px 0 0 var(--accent);
 }
 
-/* Dim parent folder highlight when user is navigating a deeper column */
 .col3-active .rx-folder-item.browse-highlighted,
 .col4-active .rx-folder-item.browse-highlighted {
   background: var(--accent-tint);
@@ -685,12 +670,12 @@ body.is-col-resizing {
 }
 
 .rx-folder-item__count {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   color: var(--muted);
-  background: var(--bg);
+  background: var(--color-fill-quaternary);
   padding: 2px 8px;
-  border-radius: 10px;
+  border-radius: var(--radius-pill);
   min-width: 24px;
   text-align: center;
   flex-shrink: 0;
@@ -703,16 +688,25 @@ body.is-col-resizing {
 /* --- Section Headers (sticky within columns) --- */
 .rx-section-header {
   padding: 8px 14px;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--separator);
+  letter-spacing: 0.02em;
+  background: var(--color-bg);
   position: sticky;
   top: 0;
   z-index: 5;
+}
+
+.rx-section-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 /* --- Breadcrumb Navigation (Column 2 header) --- */
@@ -765,19 +759,19 @@ body.is-col-resizing {
 }
 
 .rx-slide-panel--exit-left {
-  animation: rxSlideExitLeft 0.25s ease forwards;
+  animation: rxSlideExitLeft 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .rx-slide-panel--enter-right {
-  animation: rxSlideEnterRight 0.25s ease forwards;
+  animation: rxSlideEnterRight 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .rx-slide-panel--exit-right {
-  animation: rxSlideExitRight 0.25s ease forwards;
+  animation: rxSlideExitRight 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .rx-slide-panel--enter-left {
-  animation: rxSlideEnterLeft 0.25s ease forwards;
+  animation: rxSlideEnterLeft 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 @keyframes rxSlideExitLeft {
@@ -798,7 +792,6 @@ body.is-col-resizing {
   to { transform: translateX(0); }
 }
 
-/* --- Glide Animation (preview subfolder click → drill) --- */
 .rx-glide-freeze {
   pointer-events: none;
 }
@@ -812,15 +805,15 @@ body.is-col-resizing {
 .med-item {
   position: relative;
   padding: 9px 14px;
-  border-bottom: 1px solid var(--separator);
+  border-bottom: 0.33px solid var(--color-separator);
   cursor: pointer;
   line-height: 1.45;
-  transition: background 0.15s ease;
+  transition: background var(--transition-fast);
   scroll-margin-top: 45px;
   scroll-margin-bottom: 80px;
+  background: var(--color-surface);
 }
 
-/* Flexbox layout for search results with action buttons */
 .med-item.has-actions {
   display: flex;
   align-items: center;
@@ -831,7 +824,7 @@ body.is-col-resizing {
   flex: 1;
   min-width: 0;
 }
-.med-item:last-child { /* border kept for consistency */ }
+
 .med-item:hover { background: var(--med-hover); }
 .med-item.in-cart {
   background: var(--in-cart-bg);
@@ -847,18 +840,20 @@ body.is-col-resizing {
 }
 
 .med-name-text {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text);
   margin-right: 4px;
 }
+
 .med-details-text {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   color: var(--text);
 }
 
 /* --- Search View --- */
 .hidden { display: none !important; }
+
 .search-container {
   flex: 1;
   display: flex;
@@ -869,35 +864,47 @@ body.is-col-resizing {
   padding-bottom: 100px;
   position: relative;
 }
-.search-container .med-item { border-bottom: 1px solid var(--separator); }
+
+.search-container .med-item { border-bottom: 0.33px solid var(--color-separator); }
 .search-no-results { padding: 15px; color: var(--calc-note); display: flex; align-items: center; justify-content: space-between; }
+
 .section-title {
-  font-size: 17px;
+  font-size: var(--font-size-lg);
   margin-top: 0;
   margin-bottom: 15px;
   color: var(--text);
   margin-left: 60px;
 }
+
 .med-list-flat {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  background: var(--color-surface);
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
-/* Search Results Group Headers (Adult/Pediatric/Other) */
+/* Search Results Group Headers */
 .search-group-header {
-  background: var(--header-bg);
+  background: var(--color-bg);
   color: var(--header-text);
   padding: 9px 14px;
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
   line-height: 1.4;
-  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 10;
   letter-spacing: -0.01em;
+}
+
+.search-group-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .search-group-header.is-stuck {
@@ -906,7 +913,7 @@ body.is-col-resizing {
 
 .group-count {
   font-weight: 500;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   color: var(--muted);
   margin-left: 4px;
   letter-spacing: 0;
@@ -920,23 +927,23 @@ body.is-col-resizing {
 }
 
 .icon-btn.cart-btn {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--color-fill-tertiary);
+  border: none;
+  border-radius: var(--radius-md);
   padding: 6px;
   color: var(--text);
   width: 36px;
   height: 36px;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .icon-btn.cart-btn:hover {
-  background: var(--hover-bg);
-  border-color: var(--hover-border);
-  color: var(--text);
+  background: var(--color-fill-quaternary);
 }
+
 .icon-btn.cart-btn svg {
   width: 16px;
   height: 16px;
@@ -960,6 +967,7 @@ body.is-col-resizing {
   pointer-events: none;
   padding: 0 4px;
 }
+
 /* --- Cart Overlay --- */
 .cart-overlay {
   position: fixed;
@@ -970,36 +978,47 @@ body.is-col-resizing {
   background: var(--overlay-bg);
   z-index: 500;
 }
-/* Keep cart button above overlay when dropdown is open */
+
 .cart-btn-wrapper.dropdown-active {
   position: relative;
   z-index: 501;
 }
 
-/* --- Cart Dropdown --- */
+/* --- Cart Dropdown - iOS Sheet style --- */
 .cart-dropdown {
   position: fixed;
   top: 56px;
   width: clamp(240px, 24vw, 320px);
   bottom: 15px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   z-index: 501;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
+
 .cart-dropdown-header {
   padding: 14px 16px;
-  border-bottom: 1px solid var(--separator);
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: var(--panel);
   flex-shrink: 0;
   height: 56px;
+  position: relative;
+}
+
+.cart-dropdown-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .cart-header-buttons {
@@ -1010,18 +1029,19 @@ body.is-col-resizing {
 
 .clear-cart-btn {
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 12px;
+  border: none;
+  border-radius: var(--radius-md);
   padding: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--muted);
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
+
 .clear-cart-btn:hover {
-  background: var(--hover-bg);
+  background: var(--color-hover);
   color: var(--danger);
 }
 
@@ -1038,11 +1058,12 @@ body.is-col-resizing {
 
 .cart-med-name {
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   color: var(--text);
 }
+
 .cart-med-details {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   color: var(--text);
   line-height: 1.5;
 }
@@ -1051,48 +1072,59 @@ body.is-col-resizing {
 .calc-note { font-style: italic; color: var(--calc-note); }
 
 .cart-empty {
-  padding: 24px; text-align: center; color: var(--muted); font-style: italic;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
 }
 
 .cart-count {
   font-weight: 500;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   color: var(--text);
   text-align: left;
 }
 
-/* --- Buttons --- */
+/* --- Buttons (iOS style) --- */
 .btn {
-  padding: 7px 14px;
-  border: 1px solid var(--border);
-  background: var(--btn);
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 11px 14px;
+  border: none;
+  background: var(--color-fill-tertiary);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   color: var(--text);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn:hover { background: var(--btn-hover); }
+
+.btn:hover { background: var(--color-fill-quaternary); }
+
 .btn.btn-secondary {
-  background: var(--panel);
+  background: var(--color-fill-tertiary);
   color: var(--muted);
   font-weight: 500;
 }
+
 .btn.btn-secondary:hover {
-  background: var(--btn);
+  background: var(--color-fill-quaternary);
   color: var(--text);
 }
+
 .btn.btn-green {
   background: var(--accent);
   color: #ffffff;
-  border-color: var(--accent);
   font-weight: 600;
 }
+
 .btn.btn-green:hover {
   background: var(--accent-hover);
-  border-color: var(--accent-hover);
 }
+
 .btn.btn-green:disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -1104,55 +1136,60 @@ body.is-col-resizing {
   align-self: start;
   background: none;
   border: none;
-  font-size: 15px;
+  font-size: var(--font-size-base);
   cursor: pointer;
   color: var(--muted);
   padding: 0;
   line-height: 1;
   text-align: right;
   width: 20px;
-  transition: color 0.15s ease;
+  transition: color var(--transition-fast);
 }
+
 .icon-btn:hover { color: var(--danger); }
 
 /* Override for reset button */
 .icon-btn.reset-btn {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--color-fill-tertiary);
+  border: none;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
   color: var(--text);
   height: 36px;
   width: auto;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
+
 .icon-btn.reset-btn:hover {
-  background: var(--hover-bg);
+  background: var(--color-fill-quaternary);
   color: var(--text);
 }
+
 .icon-btn.reset-btn .reset-icon {
   width: 18px;
   height: 18px;
   display: none;
 }
+
 .reset-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   white-space: nowrap;
 }
 
-/* Collapsed: switch to icon-only (toggled by JS) */
 .icon-btn.reset-btn.icon-only {
   padding: 6px;
   width: 36px;
 }
+
 .icon-btn.reset-btn.icon-only .reset-icon {
   display: block;
 }
+
 .icon-btn.reset-btn.icon-only .reset-label {
   display: none;
 }
@@ -1167,41 +1204,46 @@ body.is-col-resizing {
   justify-content: center;
   z-index: 1000;
 }
+
 .modal-box {
   background: var(--panel);
   padding: 24px;
-  border-radius: 22px;
+  border-radius: var(--radius-lg);
   width: 90%;
   max-width: 400px;
   box-shadow: var(--shadow-lg);
 }
+
 .modal-box h3 { margin-top: 0; font-weight: 600; letter-spacing: -0.02em; }
-.modal-description { margin-top: 0; font-size: 14px; line-height: 1.5; color: var(--text); }
-.modal-title-sm { font-size: 16px; }
-.modal-label { font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px; }
+.modal-description { margin-top: 0; font-size: var(--font-size-base); line-height: 1.5; color: var(--text); }
+.modal-title-sm { font-size: var(--font-size-lg); }
+
+.modal-label { font-size: var(--font-size-sm); font-weight: 600; display: block; margin-bottom: 4px; }
 .modal-input-group { margin: 16px 0; }
+
 .modal-input-group input {
   width: 100%;
-  padding: 10px 12px;
-  font-size: 15px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  padding: 11px 12px;
+  font-size: var(--font-size-base);
+  border: none;
+  border-radius: var(--radius-md);
   -moz-appearance: textfield;
-  background: var(--bg);
+  background: var(--color-fill-tertiary);
   color: var(--text);
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
 }
+
 .modal-input-group input:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
-  background: var(--panel);
+  background: var(--color-fill-quaternary);
 }
+
 .modal-input-group input::-webkit-outer-spin-button,
 .modal-input-group input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -1212,18 +1254,18 @@ body.is-col-resizing {
 .weight-input-wrapper {
   display: flex;
   align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--bg);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-fill-tertiary);
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
 }
 
 .weight-input-wrapper input {
   flex: 1;
   border: none;
-  padding: 10px 12px;
-  font-size: 15px;
+  padding: 11px 12px;
+  font-size: var(--font-size-base);
   outline: none;
   min-width: 0;
   background: transparent;
@@ -1235,31 +1277,24 @@ body.is-col-resizing {
 }
 
 .weight-input-wrapper:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
-  background: var(--panel);
+  background: var(--color-fill-quaternary);
 }
 
 .weight-unit-suffix {
   padding: 10px 14px;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--muted);
   background: transparent;
-  border-left: 1px solid var(--border);
+  border-left: 0.33px solid var(--color-separator);
   user-select: none;
 }
 
-/* Weight Modal - tight fit to text */
 #weightModal .modal-box {
   width: 280px;
 }
 
-/* [REMOVED -- .desktop-only-overlay no longer needed in unified Shell layout] */
-
 /* --- Responsive Breakpoints --- */
-
-/* Location collapses to icon-only when gap drops below 12px (toggled by JS) */
 .location-wrapper.icon-only {
   width: 36px;
   min-width: 36px;
@@ -1281,7 +1316,6 @@ body.is-col-resizing {
   display: inline-flex;
 }
 
-/* On narrow screens, widen location search to match dropdown; provider hides to make room */
 @media (max-width: 900px) {
   .location-wrapper.search-active,
   .location-wrapper.icon-only.search-active {
@@ -1297,20 +1331,16 @@ body.is-col-resizing {
     justify-content: space-between;
   }
 
-  /* Hide provider field to give the search bar room */
   .topbar-left:has(.location-wrapper.search-active) .provider-wrapper {
     display: none;
   }
 
-  /* Dropdown tracks wrapper width: 480px down to 375px */
   .location-wrapper.search-active .location-search-dropdown {
     width: 100%;
     max-width: 480px;
     min-width: 375px;
   }
 }
-
-/* [REMOVED -- .desktop-only-overlay.active no longer needed] */
 
 /* Highlight for search terms */
 .highlight {
@@ -1330,24 +1360,20 @@ body.is-col-resizing {
   margin-left: 6px;
 }
 
-/* Brand Name Display (hidden by default, shown when Tab is held) */
 .brand-name {
   font-weight: 600;
   color: var(--brand-name-color);
   display: none;
 }
 
-/* Show brands when body has show-brands class */
 body.show-brands .brand-name {
   display: inline;
 }
 
-/* Hide brand match hint when brands are visible */
 body.show-brands .brand-match-hint {
   display: none;
 }
 
-/* Show brands inside cart dropdown when Tab held with cart open */
 .cart-dropdown.show-brands .brand-name {
   display: inline;
 }
@@ -1366,7 +1392,7 @@ body.show-brands .brand-match-hint {
 
 .edit-field label, .edit-full-row label {
   display: block;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--muted);
   margin-bottom: 5px;
@@ -1377,21 +1403,19 @@ body.show-brands .brand-match-hint {
 .edit-field input, .edit-full-row input, .edit-full-row textarea {
   width: 100%;
   padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  font-size: 13px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
   font-family: inherit;
   resize: none;
-  background: var(--bg);
+  background: var(--color-fill-tertiary);
   color: var(--text);
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
 }
 
 .edit-field input:focus, .edit-full-row input:focus, .edit-full-row textarea:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-ring);
-  background: var(--panel);
+  background: var(--color-fill-quaternary);
 }
 
 .edit-full-row {
@@ -1399,14 +1423,14 @@ body.show-brands .brand-match-hint {
 }
 
 .cart-item {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  background: var(--color-surface);
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
   padding: 12px;
   margin-bottom: 8px;
   box-shadow: var(--shadow-sm);
   position: relative;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow var(--transition-fast);
 }
 
 .cart-item:hover {
@@ -1436,7 +1460,7 @@ body.show-brands .brand-match-hint {
   background-color: var(--accent-tint);
   outline: 2px solid var(--accent);
   outline-offset: -2px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 /* --- Search Result Action Buttons --- */
@@ -1448,14 +1472,12 @@ body.show-brands .brand-match-hint {
   align-items: center;
 }
 
-/* Show action buttons on hover, keyboard highlight, or when in cart */
 .med-item:hover .med-item-actions,
 .med-item.is-active .med-item-actions,
 .med-item.in-cart .med-item-actions {
   visibility: visible;
 }
 
-/* Enter hint for search results (positioned outside scrollable area) */
 .search-enter-hint {
   display: none;
   position: absolute;
@@ -1476,22 +1498,21 @@ body.show-brands .brand-match-hint {
 
 .med-action-btn {
   padding: 5px 12px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 10px;
-  font-size: 12px;
+  border: none;
+  background: var(--color-fill-tertiary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   color: var(--text);
   white-space: nowrap;
+  transition: background var(--transition-fast);
 }
 
 .med-action-btn:hover {
-  background: var(--btn-hover);
-  border-color: var(--hover-border);
+  background: var(--color-fill-quaternary);
 }
 
-/* Keyboard shortcut hint underlines - hidden by default, shown on keyboard highlight */
 .med-action-btn .shortcut-hint {
   text-decoration: none;
 }
@@ -1508,16 +1529,13 @@ body.show-brands .brand-match-hint {
 
 .med-action-btn-remove {
   background: var(--danger-tint);
-  border-color: var(--danger-tint-border);
   color: var(--danger);
 }
 
 .med-action-btn-remove:hover {
   background: var(--danger-tint-hover);
-  border-color: var(--danger-tint-border-hover);
 }
 
-/* Hide Edit button for in-cart items unless hovering or keyboard highlighted */
 .med-item.in-cart .med-item-actions .med-action-btn-edit {
   visibility: hidden;
 }
@@ -1553,7 +1571,6 @@ body.show-brands .brand-match-hint {
   visibility: visible;
 }
 
-/* Hide Edit button for in-cart items in folder view unless hovering */
 .med-item.has-overlay-actions.in-cart .med-item-overlay-actions .med-action-btn-edit {
   visibility: hidden;
 }
@@ -1563,11 +1580,10 @@ body.show-brands .brand-match-hint {
   visibility: visible;
 }
 
-/* Smaller buttons for folder/cart overlay */
 .med-item-overlay-actions .med-action-btn,
 .cart-item-overlay-actions .med-action-btn {
   padding: 3px 8px;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   box-shadow: 0 0 12px 8px var(--panel);
 }
 
@@ -1580,7 +1596,6 @@ body.show-brands .brand-match-hint {
   box-shadow: 0 0 12px 8px var(--in-cart-bg-opaque);
 }
 
-/* Make remove button opaque in overlay contexts so text doesn't show through */
 .med-item-overlay-actions .med-action-btn-remove,
 .cart-item-overlay-actions .med-action-btn-remove {
   background: linear-gradient(var(--danger-tint), var(--danger-tint)), var(--panel);
@@ -1591,7 +1606,6 @@ body.show-brands .brand-match-hint {
   background: linear-gradient(var(--danger-tint-hover), var(--danger-tint-hover)), var(--panel);
 }
 
-/* Create a 'lane' for the hint on the right of the search results */
 #searchResults {
   flex: 0 1 auto;
   min-height: 0;
@@ -1599,29 +1613,25 @@ body.show-brands .brand-match-hint {
   margin-right: 60px;
   margin-left: 60px;
   position: relative;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  background: var(--color-surface);
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
 }
 
-/* Anchor for the hint - sole match */
 .med-item.is-sole-match {
   position: relative;
   border: 2px solid var(--accent) !important;
 }
 
-/* [REMOVED -- Add New Med button moved to search bar action button in shell.css] */
-
-/* Add New Med From Search Button */
 .add-new-med-from-search-btn {
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 12px;
+  border: none;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background var(--transition-fast);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1638,24 +1648,24 @@ body.show-brands .brand-match-hint {
   width: 18px;
   height: 18px;
   background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 16px 16px;
   vertical-align: middle;
 }
 
-/* --- Help Button (Fixed at bottom left) --- */
+/* --- Help Button --- */
 .help-btn {
   position: fixed;
   bottom: 20px;
   left: 20px;
   width: 40px;
   height: 40px;
-  border-radius: 22px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: none;
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1666,12 +1676,10 @@ body.show-brands .brand-match-hint {
 }
 
 .help-btn:hover {
-  background: var(--panel);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   transform: scale(1.06);
 }
 
-/* Grey out help button when any modal/overlay is open */
 body:has(.modal-overlay:not(.hidden)),
 body:has(.cart-overlay:not(.hidden)),
 body:has(.provider-edit-backdrop:not(.hidden)),
@@ -1703,10 +1711,9 @@ body:has(.help-overlay:not(.hidden)) {
   z-index: 1000;
 }
 
-/* --- Help Popup Box --- */
 .help-popup-box {
   background: var(--panel);
-  border-radius: 22px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   width: 90%;
   max-width: 700px;
@@ -1716,12 +1723,11 @@ body:has(.help-overlay:not(.hidden)) {
   position: relative;
 }
 
-/* --- Help Close Button --- */
 .help-close-btn {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: var(--bg);
+  background: var(--color-fill-tertiary);
   border: none;
   font-size: 20px;
   color: var(--muted);
@@ -1733,19 +1739,18 @@ body:has(.help-overlay:not(.hidden)) {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  transition: all 0.2s ease;
+  border-radius: 50%;
+  transition: all var(--transition-fast);
 }
 
 .help-close-btn:hover {
-  background: var(--btn-hover);
+  background: var(--color-fill-quaternary);
   color: var(--text);
 }
 
-/* --- Help Content Styling --- */
 .help-content {
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-body);
 }
 
 .help-content h2 {
@@ -1791,7 +1796,6 @@ body:has(.help-overlay:not(.hidden)) {
   color: var(--text);
 }
 
-/* Responsive adjustments */
 @media (max-width: 700px) {
   .help-popup-box {
     width: 95%;
@@ -1824,14 +1828,14 @@ body:has(.help-overlay:not(.hidden)) {
 
 .fly-ghost-outline {
   border: 2px solid var(--accent-ring-strong);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--ghost-bg);
   box-shadow: var(--ghost-shadow);
 }
 
 .fly-ghost-modal {
-  border: 1px solid var(--border);
-  border-radius: 18px;
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-xl);
   background: var(--panel);
   box-shadow: var(--ghost-modal-shadow);
   overflow: hidden;
@@ -1847,7 +1851,7 @@ body:has(.help-overlay:not(.hidden)) {
   animation: cart-badge-pulse 350ms ease-out;
 }
 
-/* Toast Notifications */
+/* Toast Notifications - iOS style */
 .toast-container {
   position: fixed;
   bottom: 28px;
@@ -1855,9 +1859,9 @@ body:has(.help-overlay:not(.hidden)) {
   transform: translateX(-50%);
   background: var(--text);
   color: var(--bg);
-  padding: 8px 18px;
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-base);
   font-weight: 500;
   box-shadow: var(--shadow-lg);
   z-index: 10001;
@@ -1882,12 +1886,14 @@ body:has(.help-overlay:not(.hidden)) {
   max-width: 340px;
   text-align: center;
 }
+
 .confirm-message {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1.5;
   color: var(--text);
   margin: 0 0 20px 0;
 }
+
 .confirm-modal-box .modal-actions {
   justify-content: center;
 }
@@ -1906,31 +1912,23 @@ body:has(.help-overlay:not(.hidden)) {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A84FF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
   }
   .add-new-med-from-search-btn .enter-symbol {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6v6a2 2 0 0 1-2 2H6'/%3E%3Cpath d='M10 10l-4 4 4 4'/%3E%3C/svg%3E");
   }
 }
 
 /* ============================================================================
    MOBILE LAYOUT (max-width: 768px)
-   All mobile styles are contained here. Desktop is completely unchanged.
    ============================================================================ */
 @media (max-width: 768px) {
 
-  /* --- PREVENT PULL-TO-REFRESH & OVERSCROLL --- */
   html, body {
     overscroll-behavior-y: none;
   }
 
-  /* --- SHOW MOBILE-ONLY ELEMENTS --- */
   .mobile-only {
     display: flex !important;
   }
 
-  /* [REMOVED -- .desktop-only-overlay mobile override no longer needed] */
-
-  /* [REMOVED -- Shell provides mobile .topbar, .topbar-left, .menu-btn, .brand styles] */
-
-  /* Hide desktop provider, location, weight */
   .provider-wrapper {
     display: none;
   }
@@ -1943,14 +1941,12 @@ body:has(.help-overlay:not(.hidden)) {
     display: none;
   }
 
-  /* [REMOVED -- Shell provides mobile .topbar-right styles] */
-
-  /* Mobile header icon buttons */
+  /* Mobile header icon buttons - iOS tap response */
   .mobile-header-btn {
     position: relative;
     background: transparent;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     width: 40px;
     height: 40px;
     min-width: 44px;
@@ -1964,7 +1960,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .mobile-header-btn:active {
-    background: var(--hover-bg);
+    opacity: 0.7;
   }
 
   .mobile-header-btn svg {
@@ -1973,7 +1969,6 @@ body:has(.help-overlay:not(.hidden)) {
     flex-shrink: 0;
   }
 
-  /* Mobile weight badge */
   .mobile-weight-badge {
     position: absolute;
     bottom: 2px;
@@ -2000,7 +1995,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .icon-btn.reset-btn:active {
-    background: var(--hover-bg);
+    opacity: 0.7;
   }
 
   .icon-btn.reset-btn .reset-label {
@@ -2024,7 +2019,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .icon-btn.cart-btn:active {
-    background: var(--hover-bg);
+    opacity: 0.7;
   }
 
   .cart-badge {
@@ -2032,15 +2027,7 @@ body:has(.help-overlay:not(.hidden)) {
     right: 0;
   }
 
-  /* [REMOVED -- Shell provides mobile .search-section, .searchbar, .search-clear-btn styles] */
-
-  /* [REMOVED -- Shell provides mobile .content-scroll positioning (no topbar offset needed)] */
-
-  /* [REMOVED -- Shell provides mobile .mobile-search-cancel styles] */
-
-  /* [REMOVED -- Shell provides mobile-search-active takeover, .mobile-search-header, .mobile-search-empty, and .search-enter-hint styles] */
-
-  /* --- CART FULL-SCREEN --- */
+  /* Cart full-screen - iOS sheet */
   .cart-dropdown {
     position: fixed;
     top: 0;
@@ -2070,7 +2057,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .mobile-cart-close {
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     border: none;
     color: var(--muted);
     font-size: 18px;
@@ -2094,13 +2081,11 @@ body:has(.help-overlay:not(.hidden)) {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Hide cart item actions by default on mobile (revealed on tap) */
   .cart-item-overlay-actions {
     visibility: hidden;
     opacity: 1;
   }
 
-  /* Frosted overlay for cart items when tapped */
   .cart-item.mobile-actions-open .cart-item-overlay-actions {
     visibility: visible;
     position: absolute;
@@ -2116,14 +2101,14 @@ body:has(.help-overlay:not(.hidden)) {
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     z-index: 1;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
   }
 
   .cart-item {
     padding: 12px 16px;
   }
 
-  /* --- SINGLE-COLUMN FOLDER DRILL-DOWN --- */
+  /* Single-column folder drill-down */
   .rx-dashboard {
     display: flex;
     flex-direction: column;
@@ -2135,14 +2120,12 @@ body:has(.help-overlay:not(.hidden)) {
     display: none;
   }
 
-  /* Only show one column at a time on mobile */
   .rx-col--population,
   .rx-col--specialty,
   .rx-col--subcategory {
     display: none;
   }
 
-  /* Mobile shows content in the meds column (repurposed as single drill-down column) */
   .rx-col--meds {
     flex: 1;
     width: 100%;
@@ -2154,7 +2137,6 @@ body:has(.help-overlay:not(.hidden)) {
     overscroll-behavior: contain;
   }
 
-  /* Folder-back drag panels (mobile swipe) */
   .folder-dragging {
     position: relative;
     overflow: hidden;
@@ -2171,14 +2153,14 @@ body:has(.help-overlay:not(.hidden)) {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     transform: translateZ(0);
-    background: var(--panel);
+    background: var(--color-bg);
   }
 
   .folder-drag-panel.animate {
-    transition: transform 0.3s ease-out;
+    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* Search results: full-width on mobile (no card container) */
+  /* Search results: full-width on mobile */
   .search-container {
     padding: 0;
   }
@@ -2214,7 +2196,6 @@ body:has(.help-overlay:not(.hidden)) {
     min-height: 44px;
   }
 
-  /* Search results: let content take full width (buttons are hidden/overlay) */
   .med-item.has-actions {
     display: block;
   }
@@ -2224,26 +2205,22 @@ body:has(.help-overlay:not(.hidden)) {
     width: 100%;
   }
 
-  /* Folder view: remove right padding reserved for desktop hover buttons */
   .med-item.has-overlay-actions {
     padding-right: 14px;
   }
 
-  /* Hide action buttons by default on mobile (revealed on tap only) */
   .med-item-overlay-actions,
   .med-item-actions {
     visibility: hidden;
     position: absolute;
   }
 
-  /* Override desktop hover/active rules that leak into mobile via iOS sticky hover */
   .med-item:hover:not(.mobile-actions-open) .med-item-actions,
   .med-item.is-active:not(.mobile-actions-open) .med-item-actions,
   .med-item.has-overlay-actions:hover:not(.mobile-actions-open) .med-item-overlay-actions {
     visibility: hidden;
   }
 
-  /* In-cart meds: also hidden by default, revealed on tap */
   .med-item.in-cart .med-item-overlay-actions,
   .med-item.in-cart .med-item-actions,
   .med-item.has-overlay-actions.in-cart:not(.mobile-actions-open) .med-item-overlay-actions {
@@ -2251,7 +2228,6 @@ body:has(.help-overlay:not(.hidden)) {
     position: absolute;
   }
 
-  /* In-cart: show Remove + Print (hide Edit) */
   .med-item.in-cart .med-action-btn-edit {
     display: none;
   }
@@ -2276,13 +2252,12 @@ body:has(.help-overlay:not(.hidden)) {
     border-radius: 0;
   }
 
-  /* Tap-friendly buttons in the overlay */
   .med-item.mobile-actions-open .med-action-btn,
   .cart-item.mobile-actions-open .med-action-btn {
     padding: 7px 20px;
-    font-size: 13px;
+    font-size: var(--font-size-base);
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     min-height: 36px;
     flex: 0 1 auto;
     display: flex;
@@ -2290,19 +2265,17 @@ body:has(.help-overlay:not(.hidden)) {
     justify-content: center;
   }
 
-  /* Show Edit button in overlay for in-cart items (override desktop hiding rules) */
   .med-item.mobile-actions-open .med-item-actions .med-action-btn-edit,
   .med-item.has-overlay-actions.mobile-actions-open .med-item-overlay-actions .med-action-btn-edit {
     display: flex;
     visibility: visible;
   }
 
-  /* Hide shortcut-hint underlines on mobile */
   .med-action-btn .shortcut-hint {
     text-decoration: none !important;
   }
 
-  /* --- MODAL GRID REARRANGEMENT --- */
+  /* Modal grid rearrangement */
   .modal-box.modal-wide {
     max-width: 100%;
     width: 100%;
@@ -2320,7 +2293,6 @@ body:has(.help-overlay:not(.hidden)) {
     gap: 8px;
   }
 
-  /* Dose spans full width */
   .edit-grid-row .edit-field:first-child {
     grid-column: 1 / -1;
   }
@@ -2328,7 +2300,7 @@ body:has(.help-overlay:not(.hidden)) {
   .edit-field input,
   .edit-full-row input,
   .edit-full-row textarea {
-    font-size: 16px; /* Prevents iOS zoom */
+    font-size: 16px;
   }
 
   .modal-actions {
@@ -2341,7 +2313,7 @@ body:has(.help-overlay:not(.hidden)) {
     flex: 1;
     padding: 12px 14px;
     min-height: 44px;
-    font-size: 15px;
+    font-size: var(--font-size-base);
   }
 
   /* Standard modals: bottom-sheet style */
@@ -2350,7 +2322,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .modal-box {
-    border-radius: 22px 22px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     width: 100%;
     max-width: 100%;
     padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
@@ -2360,14 +2332,13 @@ body:has(.help-overlay:not(.hidden)) {
     font-size: 16px;
   }
 
-  /* Confirm modal: also bottom-sheet */
   .confirm-modal-box {
     max-width: 100%;
-    border-radius: 22px 22px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* --- PROVIDER DROPDOWN (mobile weight-modal style takeover) --- */
+  /* Provider dropdown (mobile top-sheet) */
   html.mobile-provider-active,
   body.mobile-provider-active {
     overflow: hidden;
@@ -2390,11 +2361,10 @@ body:has(.help-overlay:not(.hidden)) {
     bottom: auto !important;
     left: 0 !important;
     right: 0 !important;
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     padding: 0;
     z-index: 200;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
     width: auto !important;
     background: var(--panel);
   }
@@ -2431,7 +2401,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   .provider-edit-label {
-    font-size: 14px;
+    font-size: var(--font-size-base);
     font-weight: 500;
     min-width: auto;
     white-space: nowrap;
@@ -2445,23 +2415,23 @@ body:has(.help-overlay:not(.hidden)) {
   .provider-edit-input {
     flex: 1;
     height: 36px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: none;
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     padding: 0 10px;
     font-size: 16px;
     width: 100% !important;
   }
 
   .provider-edit-input:focus {
-    box-shadow: inset 0 0 0 2px var(--accent);
+    background: var(--color-fill-quaternary);
     border-color: transparent;
-    background: var(--hover-bg);
     outline: none;
+    box-shadow: none;
   }
 
   .mobile-provider-close {
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     border: none;
     color: var(--muted);
     font-size: 18px;
@@ -2483,10 +2453,10 @@ body:has(.help-overlay:not(.hidden)) {
   .provider-edit-actions .btn {
     flex: 1;
     min-height: 44px;
-    font-size: 15px;
+    font-size: var(--font-size-base);
   }
 
-  /* --- LOCATION TAKEOVER (replaces search bar on mobile) --- */
+  /* Location takeover */
   html.mobile-location-active,
   body.mobile-location-active {
     overflow: hidden;
@@ -2516,9 +2486,8 @@ body:has(.help-overlay:not(.hidden)) {
     z-index: 101;
     background: var(--panel);
     padding: 0;
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
   }
 
@@ -2540,20 +2509,21 @@ body:has(.help-overlay:not(.hidden)) {
     flex: 1;
     height: 36px;
     font-size: 16px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     padding: 0 10px;
     border: none;
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     color: var(--text);
     outline: none;
   }
 
   .location-wrapper.mobile-location-active .location-search-input:focus {
-    box-shadow: inset 0 0 0 2px var(--accent);
+    background: var(--color-fill-quaternary);
+    box-shadow: none;
   }
 
   .mobile-location-close {
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     border: none;
     color: var(--muted);
     font-size: 18px;
@@ -2600,7 +2570,7 @@ body:has(.help-overlay:not(.hidden)) {
   .location-wrapper.mobile-location-active .location-search-footer {
     order: -1;
     border: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 0.33px solid var(--color-separator);
     background: none;
   }
 
@@ -2609,7 +2579,7 @@ body:has(.help-overlay:not(.hidden)) {
     padding: 12px 14px;
   }
 
-  /* --- ADD LOCATION TAKEOVER (top-sheet, matches provider modal) --- */
+  /* Add Location takeover */
   html.mobile-addlocation-active,
   body.mobile-addlocation-active {
     overflow: hidden;
@@ -2638,11 +2608,10 @@ body:has(.help-overlay:not(.hidden)) {
     right: 0;
     width: 100%;
     max-width: 100%;
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     padding: 0;
     padding-bottom: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
     background: var(--panel);
   }
 
@@ -2670,7 +2639,7 @@ body:has(.help-overlay:not(.hidden)) {
   }
 
   body.mobile-addlocation-active #locationModal .modal-label {
-    font-size: 14px;
+    font-size: var(--font-size-base);
     font-weight: 500;
     white-space: nowrap;
     color: var(--muted);
@@ -2682,23 +2651,22 @@ body:has(.help-overlay:not(.hidden)) {
   body.mobile-addlocation-active #locationModal .modal-input-group input {
     flex: 1;
     height: 36px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: none;
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     padding: 0 10px;
     font-size: 16px;
     width: auto;
   }
 
   body.mobile-addlocation-active #locationModal .modal-input-group input:focus {
-    box-shadow: inset 0 0 0 2px var(--accent);
-    border-color: transparent;
-    background: var(--hover-bg);
+    background: var(--color-fill-quaternary);
     outline: none;
+    box-shadow: none;
   }
 
   .mobile-addloc-close {
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     border: none;
     color: var(--muted);
     font-size: 18px;
@@ -2720,10 +2688,10 @@ body:has(.help-overlay:not(.hidden)) {
   body.mobile-addlocation-active #locationModal .modal-actions .btn {
     flex: 1;
     min-height: 44px;
-    font-size: 15px;
+    font-size: var(--font-size-base);
   }
 
-  /* --- WEIGHT TAKEOVER (replaces search bar on mobile) --- */
+  /* Weight takeover */
   html.mobile-weight-active,
   body.mobile-weight-active {
     overflow: hidden;
@@ -2748,10 +2716,9 @@ body:has(.help-overlay:not(.hidden)) {
     left: 0;
     right: 0;
     width: 100%;
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     padding: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
     background: var(--panel);
   }
 
@@ -2767,9 +2734,9 @@ body:has(.help-overlay:not(.hidden)) {
   body.mobile-weight-active .weight-input-wrapper {
     flex: 1;
     height: 36px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: none;
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     padding: 0 10px;
   }
 
@@ -2792,12 +2759,12 @@ body:has(.help-overlay:not(.hidden)) {
 
   body.mobile-weight-active .weight-input-wrapper:focus-within {
     border: none;
-    box-shadow: inset 0 0 0 2px var(--accent);
-    background: var(--hover-bg);
+    background: var(--color-fill-quaternary);
+    box-shadow: none;
   }
 
   .mobile-weight-close {
-    background: var(--hover-bg);
+    background: var(--color-fill-tertiary);
     border: none;
     color: var(--muted);
     font-size: 18px;
@@ -2815,12 +2782,12 @@ body:has(.help-overlay:not(.hidden)) {
     padding: 12px;
   }
 
-  /* --- HELP BUTTON: hide floating version on mobile, use header icon --- */
+  /* Help button: hide floating version on mobile */
   .help-btn {
     display: none !important;
   }
 
-  /* --- HELP POPUP: full-screen on mobile --- */
+  /* Help popup: full-screen on mobile */
   .help-overlay {
     align-items: stretch;
   }
@@ -2836,9 +2803,9 @@ body:has(.help-overlay:not(.hidden)) {
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* --- TOAST: above search bar --- */
+  /* Toast: positioned above page dots */
   .toast-container {
-    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .add-new-med-from-search-btn {

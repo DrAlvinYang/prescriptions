@@ -330,7 +330,7 @@
   {
     "code": "080",
     "name": "Coronavirus",
-    "subcategory": "Other Viral Diseases",
+    "subcategory": "",
     "search_terms": [],
     "suggested_billing_codes": [],
     "category": "Infectious"
@@ -3810,7 +3810,7 @@
   {
     "code": "781",
     "name": "Leg cramps, leg pain, muscle pain, joint pain, arthralgia, joint swelling, masses",
-    "subcategory": "",
+    "subcategory": "Signs and Symptoms Not Yet Diagnosed",
     "search_terms": [],
     "suggested_billing_codes": [],
     "category": "MSK"

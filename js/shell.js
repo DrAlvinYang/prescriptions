@@ -52,6 +52,18 @@
     return window.innerWidth < 768;
   };
 
+  // ─── Page Indicator Dots (iOS UIPageControl) ─────────────────
+  Shell._updatePageDots = function (page) {
+    var dots = document.querySelectorAll(".page-dot");
+    for (var i = 0; i < dots.length; i++) {
+      if (dots[i].dataset.page === page) {
+        dots[i].classList.add("page-dot--active");
+      } else {
+        dots[i].classList.remove("page-dot--active");
+      }
+    }
+  };
+
   // ─── Initialization ────────────────────────────────────────────
   Shell.init = async function () {
     if (Shell._initialized) return;
@@ -79,6 +91,7 @@
     // Set up UI
     Shell._updateHeader();
     Shell._updatePageVisibility();
+    Shell._updatePageDots(Shell.activePage);
     Shell._bindEvents();
     Shell._initCarousel();
     Shell._initDesktopDropdown();
@@ -106,6 +119,7 @@
 
     Shell._updateHeader();
     Shell._updatePageVisibility();
+    Shell._updatePageDots(page);
 
     // First-activate for prescriptions
     if (page === "prescriptions" && !Shell._rxFirstActivated) {
@@ -775,6 +789,7 @@
           Shell.activeDesktopView = Shell.activePage;
         }
         Shell._updateHeader();
+        Shell._updatePageDots(Shell.activePage);
         history.replaceState(null, "", "#" + Shell.activePage);
 
         var pct = Shell._getCarouselTranslate(Shell.activePage);
@@ -812,6 +827,7 @@
     // Update state
     Shell.activePage = wrap.toPage;
     Shell._updateHeader();
+    Shell._updatePageDots(Shell.activePage);
     history.replaceState(null, "", "#" + Shell.activePage);
 
     // Reset: remove order override, snap to canonical position

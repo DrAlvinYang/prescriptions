@@ -19,10 +19,12 @@ import json
 import logging
 import sys
 from collections import Counter
+from contextlib import closing
 from pathlib import Path
 from typing import Any
 
 from openpyxl import load_workbook
+from openpyxl.workbook import Workbook
 
 logger = logging.getLogger(__name__)
 
@@ -189,6 +191,34 @@ def _write_json(data: list[dict[str, Any]], path: Path) -> None:
     )
 
 
+def _load_workbook(path: Path) -> Workbook | None:
+    """Load an Excel workbook in read-only mode. Returns None on failure."""
+    try:
+        return load_workbook(path, read_only=True)
+    except FileNotFoundError:
+        logger.error("File not found: %s", path)
+        return None
+
+
+def _log_billing_summary(codes: list[dict[str, Any]], path: Path) -> None:
+    """Log billing conversion summary."""
+    groups = Counter(c["group"] for c in codes)
+    filled = sum(1 for c in codes if c["search_terms"])
+    logger.info("Billing: %d codes -> %s", len(codes), path.name)
+    logger.info("  search_terms filled: %d/%d", filled, len(codes))
+    for g, n in sorted(groups.items()):
+        logger.info("  %s: %d codes", g, n)
+
+
+def _log_diagnostic_summary(codes: list[dict[str, Any]], path: Path) -> None:
+    """Log diagnostic conversion summary."""
+    filled_search = sum(1 for c in codes if c["search_terms"])
+    filled_billing = sum(1 for c in codes if c["suggested_billing_codes"])
+    logger.info("Diagnostic: %d codes -> %s", len(codes), path.name)
+    logger.info("  search_terms filled: %d/%d", filled_search, len(codes))
+    logger.info("  suggested_billing_codes filled: %d/%d", filled_billing, len(codes))
+
+
 # -- Public converters ---------------------------------------------------------
 
 def convert_billing() -> bool:
@@ -196,13 +226,11 @@ def convert_billing() -> bool:
     xlsx_path = SCRIPT_DIR / "billing_codes.xlsx"
     json_path = SCRIPT_DIR / "billing_codes.json"
 
-    try:
-        wb = load_workbook(xlsx_path, read_only=True)
-    except FileNotFoundError:
-        logger.error("File not found: %s", xlsx_path)
+    wb = _load_workbook(xlsx_path)
+    if wb is None:
         return False
 
-    try:
+    with closing(wb):
         codes: list[dict[str, Any]] = []
         for ws in wb.worksheets:
             group = ws.title
@@ -210,18 +238,9 @@ def convert_billing() -> bool:
                 entry = _parse_billing_row(row, group)
                 if entry:
                     codes.append(entry)
-    finally:
-        wb.close()
 
     _write_json(codes, json_path)
-
-    groups = Counter(c["group"] for c in codes)
-    filled_search = sum(1 for c in codes if c["search_terms"])
-    logger.info("Billing: %d codes -> %s", len(codes), json_path.name)
-    logger.info("  search_terms filled: %d/%d", filled_search, len(codes))
-    for g, n in sorted(groups.items()):
-        logger.info("  %s: %d codes", g, n)
-
+    _log_billing_summary(codes, json_path)
     return True
 
 
@@ -230,31 +249,24 @@ def convert_diagnostic() -> bool:
     xlsx_path = SCRIPT_DIR / "diagnostic_codes.xlsx"
     json_path = SCRIPT_DIR / "diagnostic_codes.json"
 
-    try:
-        wb = load_workbook(xlsx_path, read_only=True)
-    except FileNotFoundError:
-        logger.error("File not found: %s", xlsx_path)
+    wb = _load_workbook(xlsx_path)
+    if wb is None:
         return False
 
-    try:
+    with closing(wb):
         ws = wb.active
+        if ws is None:
+            logger.error("No active sheet in %s", xlsx_path)
+            return False
         codes: list[dict[str, Any]] = []
         # Row 1 = headers, Row 2 = description row, Row 3+ = data
         for row in ws.iter_rows(min_row=3, values_only=True):
             entry = _parse_diagnostic_row(row)
             if entry:
                 codes.append(entry)
-    finally:
-        wb.close()
 
     _write_json(codes, json_path)
-
-    filled_search = sum(1 for c in codes if c["search_terms"])
-    filled_billing = sum(1 for c in codes if c["suggested_billing_codes"])
-    logger.info("Diagnostic: %d codes -> %s", len(codes), json_path.name)
-    logger.info("  search_terms filled: %d/%d", filled_search, len(codes))
-    logger.info("  suggested_billing_codes filled: %d/%d", filled_billing, len(codes))
-
+    _log_diagnostic_summary(codes, json_path)
     return True
 
 

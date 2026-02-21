@@ -1,14 +1,14 @@
-/* Components */
+/* Billing Components - iOS Human Interface Guidelines Style */
 
-/* ─── Empty States ──────────────────────────────────────────────── */
+/* --- Empty States --- */
 .empty-state {
   padding: var(--space-2xl) var(--space-lg);
   text-align: center;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
 }
 
-/* ─── Loading ───────────────────────────────────────────────────── */
+/* --- Loading --- */
 .loading {
   display: flex;
   align-items: center;
@@ -17,87 +17,134 @@
   color: var(--color-text-muted);
 }
 
-/* ─── Folder Items ──────────────────────────────────────────────── */
+/* --- Folder Items (iOS Grouped List Row) --- */
 .folder-item {
   display: flex;
   align-items: center;
   padding: 11px var(--space-md);
   cursor: pointer;
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 0.33px solid var(--color-separator);
   transition: background var(--transition-fast);
   gap: var(--space-sm);
+  min-height: 44px;
+  background: var(--color-surface);
+}
+
+.folder-item:last-child {
+  border-bottom: none;
 }
 
 .folder-item:hover {
   background: var(--color-hover);
 }
 
+.folder-item:active {
+  background: var(--color-hover);
+}
+
 .folder-item__name {
   flex: 1;
-  font-weight: 600;
-  font-size: var(--font-size-sm);
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
 }
 
 .folder-item__count {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
-  background: var(--color-bg);
+  background: var(--color-fill-quaternary);
   padding: 2px var(--space-sm);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
+  font-weight: 500;
 }
 
 .folder-item__arrow {
   color: var(--color-text-muted);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   flex-shrink: 0;
+  opacity: 0.5;
 }
 
-/* ─── Section Headers (within subgroups) ───────────────────────── */
+/* --- Section Headers --- */
 .section-header {
   display: flex;
   align-items: center;
   padding: var(--space-xs) var(--space-md);
   min-height: 32px;
-  font-weight: 700;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  background: var(--color-header-bg);
-  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-bg);
   letter-spacing: -0.01em;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
-/* ─── Section Dividers (Fractures / Dislocations top-level) ──── */
+/* Hairline separator */
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
+}
+
+/* --- Section Dividers --- */
 .section-divider {
   display: flex;
   align-items: center;
   padding: var(--space-xs) var(--space-md);
   min-height: 32px;
-  font-weight: 800;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary, var(--color-text));
-  background: var(--color-header-bg);
-  border-bottom: 1px solid var(--color-border);
-  border-top: 1px solid var(--color-border);
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  position: relative;
 }
 
-.section-divider:first-child {
-  border-top: none;
+.section-divider::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
-/* ─── Code Items ────────────────────────────────────────────────── */
+.section-divider::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
+}
+
+.section-divider:first-child::before {
+  display: none;
+}
+
+/* --- Code Items (iOS List Row) --- */
 .code-item {
   display: flex;
   align-items: center;
-  padding: var(--space-xs) var(--space-md);
+  padding: 8px var(--space-md);
   cursor: pointer;
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 0.33px solid var(--color-separator);
   transition: background var(--transition-fast);
   gap: var(--space-sm);
-  min-height: 32px;
+  min-height: 44px;
   scroll-margin-top: 32px;
+  background: var(--color-surface);
+}
+
+.code-item:last-child {
+  border-bottom: none;
 }
 
 .code-item:hover {
@@ -109,7 +156,7 @@
   box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
-/* ─── Time-Period Active Indicator ──────────────────────────────── */
+/* Time-Period Active Indicator */
 .code-item--time-active {
   box-shadow: inset -3px 0 0 var(--color-time-active);
 }
@@ -124,28 +171,27 @@
   font-weight: 600;
   color: var(--color-accent);
   background: var(--color-accent-light);
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
   min-width: 48px;
-  margin-top: 1px;
   text-align: center;
 }
 
 .code-item__name {
   flex: 1;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   min-width: 0;
   line-height: 1.45;
+  color: var(--color-text);
 }
 
 .code-item__fee {
   font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-fee);
   flex-shrink: 0;
-  margin-top: 1px;
   white-space: nowrap;
 }
 
@@ -153,14 +199,16 @@
   color: var(--color-modifier-calc);
 }
 
-/* ─── Diagnostic Items ──────────────────────────────────────────── */
+/* --- Diagnostic Items --- */
 .diagnostic-item {
   display: flex;
   align-items: flex-start;
   padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 0.33px solid var(--color-separator);
   gap: var(--space-sm);
   cursor: default;
+  min-height: 44px;
+  background: var(--color-surface);
 }
 
 .diagnostic-item__code {
@@ -168,20 +216,19 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-text-secondary);
-  background: var(--color-bg);
-  padding: 2px 8px;
+  background: var(--color-fill-quaternary);
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  margin-top: 1px;
 }
 
 .diagnostic-item__name {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   color: var(--color-text);
   line-height: 1.45;
 }
 
-/* ─── Breadcrumb ────────────────────────────────────────────────── */
+/* --- Breadcrumb --- */
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -190,7 +237,17 @@
   flex-wrap: wrap;
   padding: var(--space-sm) var(--space-md);
   background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border-light);
+  position: relative;
+}
+
+.breadcrumb::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .breadcrumb__item {
@@ -217,38 +274,59 @@
   color: var(--color-text-muted);
 }
 
-/* ─── Search Result Count ───────────────────────────────────────── */
+/* --- Search Result Count --- */
 .search-result-count {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--color-border-light);
+  position: relative;
 }
 
-/* ─── Context Panel ─────────────────────────────────────────────── */
+.search-result-count::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
+}
+
+/* --- Context Panel --- */
 .context-section {
   padding: var(--space-md);
-  border-bottom: 1px solid var(--color-border-light);
+  position: relative;
+}
+
+.context-section + .context-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--space-md);
+  right: var(--space-md);
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .section__title {
-  font-size: var(--font-size-xs);
-  font-weight: 700;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
   margin-bottom: var(--space-sm);
 }
 
-/* Sedation button */
+/* Sedation button - iOS tinted style */
 .sedation-btn {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: 11px var(--space-md);
   background: var(--color-accent-light);
   color: var(--color-accent);
   border-radius: var(--radius-md);
   font-weight: 600;
   font-size: var(--font-size-base);
+  min-height: 44px;
   transition: all var(--transition-fast);
 }
 
@@ -264,7 +342,7 @@
 }
 
 .ortho-table tr + tr {
-  border-top: 1px solid var(--color-border-light);
+  border-top: 0.33px solid var(--color-separator);
 }
 
 .ortho-table td {
@@ -295,7 +373,7 @@
   font-style: italic;
 }
 
-/* Context panel code items: non-interactive (display only) */
+/* Context panel code items: non-interactive */
 .context-section .code-item {
   cursor: default;
 }
@@ -320,16 +398,16 @@
 
 /* Notes */
 .notes-content {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   line-height: 1.6;
   white-space: pre-wrap;
   color: var(--color-text);
 }
 
-/* Hidden notes */
+/* Hidden notes - iOS warning card */
 .section--hidden-notes {
   background: var(--color-hidden-notes-bg);
-  border: 1px solid var(--color-hidden-notes-border);
+  border: 0.33px solid var(--color-hidden-notes-border);
   border-radius: var(--radius-md);
   margin: var(--space-md);
 }
@@ -338,18 +416,19 @@
   color: var(--color-hidden-notes-border);
 }
 
-/* ─── Action Button ─────────────────────────────────────────────── */
+/* --- Action Button --- */
 .action-btn {
   display: flex;
   align-items: center;
   padding: var(--space-md);
   cursor: pointer;
-  border-bottom: 1px solid var(--color-border-light);
   gap: var(--space-sm);
   background: var(--color-accent-light);
   transition: background var(--transition-fast);
   font-weight: 600;
   color: var(--color-accent);
+  min-height: 44px;
+  border-bottom: 0.33px solid var(--color-separator);
 }
 
 .action-btn:hover {
@@ -357,7 +436,7 @@
   color: white;
 }
 
-/* ─── Modal ─────────────────────────────────────────────────────── */
+/* --- Modal (Billing) - iOS style --- */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -375,7 +454,7 @@
 
 .modal {
   background: var(--color-surface);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   max-width: 600px;
   width: 100%;
@@ -389,11 +468,11 @@
   position: absolute;
   top: var(--space-md);
   right: var(--space-md);
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-lg);
-  background: var(--color-bg);
-  font-size: var(--font-size-xl);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-fill-tertiary);
+  font-size: var(--font-size-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -426,11 +505,11 @@
 
 .tips-list__item {
   padding: var(--space-md);
-  border-bottom: 1px solid var(--color-border-light);
   font-size: var(--font-size-base);
   line-height: 1.6;
   position: relative;
   padding-left: var(--space-lg);
+  border-bottom: 0.33px solid var(--color-separator);
 }
 
 .tips-list__item::before {
@@ -445,39 +524,35 @@
   border-bottom: none;
 }
 
-/* ─── Form elements (modals) ────────────────────────────────────── */
+/* --- Form elements (modals) --- */
 .form-group {
   margin-bottom: var(--space-md);
 }
 
 .form-group label {
   display: block;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   margin-bottom: var(--space-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-border);
+  padding: 11px var(--space-md);
+  border: none;
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
-  background: var(--color-bg);
+  background: var(--color-fill-tertiary);
   color: var(--color-text);
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  transition: background var(--transition-fast);
 }
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-ring);
-  background: var(--color-surface);
+  background: var(--color-fill-quaternary);
 }
 
 .modal__actions {
@@ -486,44 +561,47 @@
   margin-top: var(--space-lg);
 }
 
+/* --- Buttons (iOS style) --- */
 .btn {
-  padding: 7px var(--space-md);
-  border-radius: var(--radius-md);
+  padding: 11px var(--space-md);
+  border-radius: var(--radius-lg);
   font-weight: 600;
   font-size: var(--font-size-base);
   transition: all var(--transition-fast);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg);
+  border: none;
+  background: var(--color-fill-tertiary);
   color: var(--color-text);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn:hover {
-  background: var(--color-header-hover);
+  background: var(--color-fill-quaternary);
 }
 
 .btn--primary {
   background: var(--color-accent);
   color: white;
-  border-color: var(--color-accent);
 }
 
 .btn--primary:hover {
   background: var(--color-accent-hover);
-  border-color: var(--color-accent-hover);
 }
 
 .btn--secondary {
-  background: var(--color-surface);
+  background: var(--color-fill-tertiary);
   color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .btn--secondary:hover {
-  background: var(--color-bg);
+  background: var(--color-fill-quaternary);
   color: var(--color-text);
 }
 
-/* ─── On-Call Results ───────────────────────────────────────────── */
+/* --- On-Call Results --- */
 .oncall-results {
   margin-top: var(--space-md);
 }
@@ -532,7 +610,7 @@
   display: flex;
   align-items: center;
   padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 0.33px solid var(--color-separator);
   gap: var(--space-sm);
 }
 
@@ -554,12 +632,22 @@
   color: var(--color-fee);
 }
 
-/* ─── Mobile Context (inline expand) ────────────────────────────── */
+/* --- Mobile Context (inline expand) --- */
 .mobile-context {
   padding: var(--space-md);
   background: var(--color-bg);
-  border-top: 1px solid var(--color-border-light);
   width: 100%;
+  position: relative;
+}
+
+.mobile-context::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .code-item--expanded {
@@ -567,18 +655,18 @@
   background: var(--color-selected);
 }
 
-/* ─── Body with modal open ──────────────────────────────────────── */
+/* --- Body with modal open --- */
 body.modal-open {
   overflow: hidden;
 }
 
-/* ─── Browse Keyboard Navigation ───────────────────────────────── */
+/* --- Browse Keyboard Navigation --- */
 .browse-highlighted {
   background: var(--color-selected) !important;
   box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
-/* ─── Slide Transition (folder navigation) ─────────────────────── */
+/* --- Slide Transition (folder navigation) --- */
 .billing-col__content.is-animating {
   overflow: hidden;
 }
@@ -591,19 +679,19 @@ body.modal-open {
 }
 
 .slide-panel--exit-left {
-  animation: slideExitLeft 0.25s ease forwards;
+  animation: slideExitLeft 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .slide-panel--enter-right {
-  animation: slideEnterRight 0.25s ease forwards;
+  animation: slideEnterRight 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .slide-panel--exit-right {
-  animation: slideExitRight 0.25s ease forwards;
+  animation: slideExitRight 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 .slide-panel--enter-left {
-  animation: slideEnterLeft 0.25s ease forwards;
+  animation: slideEnterLeft 0.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 @keyframes slideExitLeft {
@@ -630,12 +718,10 @@ body.modal-open {
   flex-wrap: wrap;
 }
 
-/* Root "Billing Codes" link */
 .billing-col__header--nav .breadcrumb__item:first-child:hover {
   text-decoration: underline;
 }
 
-/* All breadcrumb segments -- normal case */
 .billing-col__header--nav .breadcrumb__sep,
 .billing-col__header--nav .breadcrumb__item {
   text-transform: none;
@@ -660,7 +746,7 @@ body.modal-open {
   font-weight: 500;
 }
 
-/* ─── Preview mode (right column showing folder contents) ──────── */
+/* --- Preview mode (right column showing folder contents) --- */
 #context-panel > .code-item {
   cursor: pointer;
 }
@@ -677,9 +763,9 @@ body.modal-open {
   background: var(--color-hover);
 }
 
-/* ─── Scrollbar styling ─────────────────────────────────────────── */
+/* --- Scrollbar styling (thin, minimal) --- */
 .billing-col__content::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .billing-col__content::-webkit-scrollbar-track {
@@ -687,15 +773,24 @@ body.modal-open {
 }
 
 .billing-col__content::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
 }
 
 .billing-col__content::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* ─── Mobile Touch Targets ─────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .billing-col__content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .billing-col__content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* --- Mobile Touch Targets --- */
 @media (max-width: 767px) {
   .folder-item {
     min-height: 44px;
@@ -703,10 +798,18 @@ body.modal-open {
     padding-bottom: 12px;
   }
 
+  .folder-item:active {
+    opacity: 0.7;
+  }
+
   .code-item {
     min-height: 44px;
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+
+  .code-item:active {
+    opacity: 0.7;
   }
 
   .diagnostic-item {

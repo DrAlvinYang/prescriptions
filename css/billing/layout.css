@@ -1,4 +1,4 @@
-/* Billing Layout — Three-column dashboard (scoped to #page-billing) */
+/* Billing Layout - Three-column dashboard (scoped to #page-billing) */
 
 /* Dashboard grid */
 .billing-dashboard {
@@ -8,30 +8,41 @@
   overflow: hidden;
 }
 
-/* Columns */
+/* Columns - iOS grouped background */
 .billing-col {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 .billing-col--billing,
 .billing-col--context {
-  border-left: 1px solid var(--color-border);
+  border-left: 0.33px solid var(--color-separator);
 }
 
+/* Column headers - iOS section header style */
 .billing-col__header {
-  padding: var(--space-sm) var(--space-md);
+  padding: 10px var(--space-md);
   font-weight: 600;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border-light);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
   flex-shrink: 0;
-  min-height: 40px;
   display: flex;
   align-items: center;
-  background: var(--color-header-bg);
+  background: var(--color-bg);
+  position: relative;
+}
+
+/* Hairline separator */
+.billing-col__header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .billing-col__content {
@@ -41,7 +52,7 @@
   position: relative;
 }
 
-/* Column resize handles (desktop only) */
+/* Column resize handles (desktop only) - more subtle */
 .billing-col-resizer {
   width: 0;
   position: relative;
@@ -64,10 +75,9 @@
 .billing-col-resizer:hover::before,
 .billing-col-resizer--active::before {
   background: var(--color-accent);
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
-/* Body-level cursor override during resize */
 body.is-col-resizing,
 body.is-col-resizing * {
   cursor: col-resize !important;
@@ -99,7 +109,7 @@ body.is-col-resizing {
     transform: translateX(100%);
     transition: transform var(--transition-normal);
     z-index: 50;
-    border-left: 1px solid var(--color-border);
+    border-left: 0.33px solid var(--color-separator);
   }
 
   .billing-col--context.active {
@@ -120,19 +130,16 @@ body.is-col-resizing {
     display: none;
   }
 
-  /* Hide diagnostic column on mobile (standalone page handles it) */
   .billing-col--diagnostic {
     display: none;
   }
 
-  /* Billing header: sticky breadcrumb for folder navigation on mobile */
   #billing-header {
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
-  /* Billing column fills the page */
   .billing-col--billing {
     flex: 1;
     width: 100%;
@@ -140,7 +147,6 @@ body.is-col-resizing {
     min-height: 0;
   }
 
-  /* Context column hidden on mobile (inline expand used instead) */
   .billing-col--context {
     display: none;
     position: static;
@@ -153,7 +159,6 @@ body.is-col-resizing {
     overscroll-behavior: contain;
   }
 
-  /* Folder-back drag panels */
   .folder-dragging {
     position: relative;
     overflow: hidden;
@@ -167,10 +172,10 @@ body.is-col-resizing {
     height: 100%;
     overflow-y: auto;
     will-change: transform;
-    background: var(--color-surface);
+    background: var(--color-bg);
   }
 
   .folder-drag-panel.animate {
-    transition: transform 0.3s ease-out;
+    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 }

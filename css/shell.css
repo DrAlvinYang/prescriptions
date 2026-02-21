@@ -1,6 +1,6 @@
-/* Shell — Header, Search, Page Container, Carousel */
+/* Shell - iOS HIG Navigation Bar, Search, Page Container, Carousel, Page Dots */
 
-/* ═══ Reset ═══ */
+/* === Reset === */
 *, *::before, *::after { box-sizing: border-box; }
 html { min-width: 0; }
 body {
@@ -8,18 +8,19 @@ body {
   color: var(--color-text);
   background: var(--color-bg);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--font-size-base);
   min-width: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
+  letter-spacing: -0.01em;
 }
 button { cursor: pointer; border: none; background: none; font: inherit; }
 input { font: inherit; }
 a { text-decoration: none; color: inherit; }
 ul, ol { list-style: none; margin: 0; padding: 0; }
 
-/* ═══ Shell Header — Desktop (single 56px row) ═══ */
+/* === Shell Header - iOS Translucent Navigation Bar (Desktop) === */
 .shell-header {
   position: sticky;
   top: 0;
@@ -28,9 +29,22 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   align-items: center;
   height: var(--header-height);
   padding: 0 var(--space-md);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-header-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: none;
   gap: var(--space-sm);
+}
+
+/* Hairline separator via pseudo-element (iOS style) */
+.shell-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
 }
 
 .shell-header__left {
@@ -48,7 +62,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   margin-left: auto;
 }
 
-/* Brand / Page Title with dropdown */
+/* Brand / Page Title */
 .shell-header__brand-wrapper {
   position: relative;
 }
@@ -71,7 +85,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 .shell-header__brand svg {
   width: 18px;
   height: 18px;
-  stroke: var(--color-text-secondary);
+  stroke: var(--color-text-muted);
   fill: none;
   stroke-width: 2;
   stroke-linecap: round;
@@ -83,18 +97,17 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   margin-left: 2px;
 }
 
-/* Desktop dropdown */
+/* Desktop dropdown - iOS Popover style */
 .shell-header__dropdown {
   display: none;
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
-  padding-top: 4px;
   min-width: 200px;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  border: 0.33px solid var(--color-separator);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   z-index: 110;
   overflow: hidden;
 }
@@ -103,7 +116,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 }
 .shell-header__dropdown-item {
   display: block;
-  padding: 10px 16px;
+  padding: 11px var(--space-md);
   font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--color-text);
@@ -114,7 +127,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   color: var(--color-accent);
 }
 
-/* Icon buttons (help, etc.) */
+/* Icon buttons */
 .shell-header__icon-btn {
   display: flex;
   align-items: center;
@@ -122,7 +135,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   transition: background var(--transition-fast);
 }
 .shell-header__icon-btn:hover { background: var(--color-hover); }
@@ -131,20 +144,20 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   height: 18px;
 }
 
-/* Elevate header above backdrops (z-index: 199) when provider/location editing */
+/* Elevate header above backdrops */
 .shell-header:has(.location-wrapper.search-active),
 .shell-header:has(.provider-wrapper.edit-active) {
   z-index: 200;
 }
 
-/* Rx header buttons (prescriptions page) */
+/* Rx header buttons */
 .shell-header__rx-buttons {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
 }
 
-/* Search bar */
+/* === Search bar - iOS style === */
 .shell-header__search {
   flex: 1;
   max-width: 600px;
@@ -154,19 +167,34 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 #shell-search-input {
   width: 100%;
   height: 36px;
-  padding: 0 36px 0 14px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg);
+  padding: 0 36px 0 32px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-fill-tertiary);
   color: var(--color-text);
   font-size: var(--font-size-base);
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background var(--transition-fast);
 }
 #shell-search-input::placeholder { color: var(--color-text-muted); }
 #shell-search-input:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-ring);
+  background: var(--color-fill-quaternary);
+}
+
+/* Search magnifying glass icon */
+.shell-header__search::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .shell-search-clear {
@@ -174,19 +202,20 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 14px;
-  color: var(--color-text-muted);
-  background: var(--color-border);
+  font-size: 12px;
+  color: var(--color-surface);
+  background: var(--color-text-muted);
+  line-height: 1;
 }
-.shell-search-clear:hover { background: var(--color-text-muted); color: var(--color-surface); }
+.shell-search-clear:hover { background: var(--color-text-secondary); }
 
-/* Search action button (+ New Med on prescriptions page) */
+/* Search action button (+ New Med) */
 .shell-search-action-btn {
   position: absolute;
   right: 6px;
@@ -197,7 +226,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   justify-content: center;
   padding: 4px 12px;
   border-radius: var(--radius-pill);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-accent);
   background: var(--color-accent-light);
@@ -210,7 +239,6 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   background: var(--color-accent-ring);
 }
 
-/* Label shown on wider screens, icon on narrow */
 .shell-search-action-btn .action-btn-icon {
   display: none;
   font-size: 18px;
@@ -230,12 +258,12 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   }
 }
 
-/* Tips button (billing page only) */
+/* Tips button - iOS tinted button style */
 .shell-header__tips-btn {
   padding: 6px 14px;
   border-radius: var(--radius-pill);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-accent);
   background: var(--color-accent-light);
   white-space: nowrap;
@@ -243,7 +271,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 }
 .shell-header__tips-btn:hover { background: var(--color-accent-ring); }
 
-/* ═══ Page Container ═══ */
+/* === Page Container === */
 .shell-pages {
   position: relative;
   width: 100%;
@@ -269,9 +297,43 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   display: none;
 }
 
-/* ═══ Mobile (< 768px) ═══ */
+/* === Mobile Page Indicator Dots (iOS UIPageControl) === */
+.page-dots {
+  position: fixed;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: 8px;
+  z-index: 103;
+  padding: 4px 10px;
+}
+
+.page-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  transition: background var(--transition-normal), transform var(--transition-normal);
+}
+
+.page-dot--active {
+  background: rgba(0, 0, 0, 0.55);
+  transform: scale(1.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .page-dot {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  .page-dot--active {
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* === Mobile (< 768px) === */
 @media (max-width: 767px) {
-  /* Header Row 1 */
+  /* Header Row 1 - iOS translucent nav bar */
   .shell-header {
     position: fixed;
     top: 0;
@@ -290,7 +352,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   }
 
   .shell-header__brand {
-    font-size: 15px;
+    font-size: var(--font-size-lg);
     padding: 6px 6px;
     gap: 4px;
     min-width: 0;
@@ -307,7 +369,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   .shell-header__dropdown-arrow { display: none; }
   #mobileHelpBtn { display: none !important; }
 
-  /* Icon buttons become tap targets */
+  /* Icon buttons: iOS tap targets */
   .shell-header__icon-btn {
     min-width: 44px;
     min-height: 44px;
@@ -321,7 +383,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     display: none;
   }
 
-  /* Search bar Row 2 */
+  /* Search bar Row 2 - iOS translucent material */
   .shell-header__search {
     position: fixed;
     top: var(--header-height-mobile);
@@ -330,24 +392,40 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     max-width: none;
     padding: 6px 12px;
     z-index: 101;
-    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    background: var(--color-header-bg);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
-    border-bottom: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
+  /* Hairline below mobile search */
+  .shell-header__search::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.33px;
+    background: var(--color-separator);
+  }
+
+  /* Reposition search icon for mobile */
+  .shell-header__search::before {
+    left: 22px;
+  }
+
   #shell-search-input {
     flex: 1;
     min-width: 0;
-    height: 44px;
+    height: 36px;
     font-size: 16px; /* prevent iOS zoom */
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
+    padding-left: 32px;
   }
 
-  /* Page container — carousel */
+  /* Page container - carousel */
   .shell-pages {
     position: fixed;
     top: 0;
@@ -356,7 +434,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     height: 100%;
     display: flex;
     flex-direction: row;
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
     transform: translateX(-33.333%); /* default: billing (middle page) */
     overflow: hidden;
   }
@@ -372,14 +450,14 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     flex-shrink: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-top: 106px; /* 48px header + 56px search */
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    padding-top: 96px; /* 48px header + 48px search (6px padding + 36px input + 6px padding) */
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
 
   #page-diagnostic {
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Content scrolls inside .diagnostic-col__content, not shell-page */
+    overflow: hidden;
     order: 0;
   }
   #page-billing {
@@ -389,17 +467,19 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     order: 2;
   }
 
-  /* Right cluster: needs to be pushed to the right on mobile */
+  /* Page indicator dots */
+  .page-dots {
+    display: flex;
+  }
+
   .shell-header__right {
     margin-left: auto;
   }
 
-  /* Remove .status wrapper from layout so reset button sits directly in flex row */
   .shell-header__rx-buttons .status {
     display: contents;
   }
 
-  /* Ensure reset button icon is visible on mobile */
   .icon-btn.reset-btn .reset-icon {
     display: block !important;
   }
@@ -407,9 +487,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   /* Hide desktop-only elements on mobile */
   .desktop-only { display: none !important; }
 
-  /* Show provider/location wrappers when their mobile modals are active.
-     Provider: use display:contents (only the fixed dropdown needs to render).
-     Location: use display:flex (the wrapper itself becomes the fixed modal). */
+  /* Show provider/location wrappers when their mobile modals are active */
   body.mobile-provider-active .provider-wrapper.desktop-only {
     display: contents !important;
   }
@@ -419,11 +497,9 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   body.mobile-location-active .location-wrapper.desktop-only {
     display: flex !important;
   }
-  /* Show mobile-only elements */
   .mobile-only { display: flex !important; }
   .mobile-only[hidden] { display: none !important; }
 
-  /* Consistent brand position: allow wrapper to shrink for text truncation */
   .shell-header__brand-wrapper {
     min-width: 0;
   }
@@ -446,7 +522,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     transform: none;
   }
 
-  /* Mobile header buttons */
+  /* Mobile header buttons - iOS tap targets */
   .mobile-header-btn {
     display: flex;
     align-items: center;
@@ -456,15 +532,18 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     border-radius: 50%;
     -webkit-tap-highlight-color: transparent;
   }
+  .mobile-header-btn:active {
+    opacity: 0.7;
+  }
   .mobile-header-btn svg {
     width: 20px;
     height: 20px;
     fill: none;
-    stroke: var(--color-text-secondary);
+    stroke: var(--color-text-muted);
     stroke-width: 1.5;
   }
 
-  /* Mobile search action button: always show icon form, rotate to × when text entered */
+  /* Mobile search action button */
   .shell-search-action-btn .action-btn-label { display: none; }
   .shell-search-action-btn .action-btn-icon { display: flex; align-items: center; justify-content: center; }
   .shell-search-action-btn {
@@ -480,21 +559,19 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     font-size: 20px;
     transition: transform 0.3s ease;
   }
-  /* Rotate + to × only when there is search text */
   .has-search-query .shell-search-action-btn {
     transform: rotate(45deg);
   }
-  /* Always hide small clear button on mobile; use action button instead */
   .shell-search-clear {
     display: none !important;
   }
 }
 
-/* ═══ Desktop (>= 768px) ═══ */
+/* === Desktop (>= 768px) === */
 @media (min-width: 768px) {
   .mobile-only { display: none !important; }
+  .page-dots { display: none !important; }
 
-  /* Page container: stacked, no carousel */
   .shell-pages {
     width: 100%;
     display: block;
@@ -517,36 +594,43 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   }
 }
 
-/* ═══ Diagnostic mobile page styling ═══ */
+/* === Diagnostic mobile page styling === */
 #page-diagnostic {
   background: var(--color-surface);
 }
 
-/* Diagnostic header: breadcrumb for folder navigation on mobile */
 #page-diagnostic .diagnostic-col__header {
-  padding: var(--space-sm) var(--space-md);
+  padding: 10px var(--space-md);
   font-weight: 600;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border-light);
-  min-height: 40px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
-  background: var(--color-header-bg);
+  background: var(--color-bg);
   flex-shrink: 0;
+  position: relative;
 }
 
-/* Diagnostic content: scrollable area for folder browse */
+/* Hairline separator instead of border */
+#page-diagnostic .diagnostic-col__header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.33px;
+  background: var(--color-separator);
+}
+
 #page-diagnostic .diagnostic-col__content {
   flex: 1;
-  min-height: 0; /* Allow flex child to shrink below content height for overflow scroll */
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   overscroll-behavior: contain;
 }
 
-/* Diagnostic slide animation lock */
 #page-diagnostic .diagnostic-col__content.is-animating {
   overflow: hidden;
 }
@@ -560,5 +644,5 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   font-size: var(--font-size-base);
 }
 
-/* ═══ Utility ═══ */
+/* === Utility === */
 [hidden] { display: none !important; }
