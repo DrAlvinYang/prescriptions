@@ -646,6 +646,12 @@
       return; // Let billing's swipe.js handle it
     }
 
+    // Check if diagnostic should handle folder-back
+    if (Shell.activePage === "diagnostic" && window.App && window.App.shouldHandleDiagnosticFolderBack &&
+        window.App.shouldHandleDiagnosticFolderBack(touch.clientX)) {
+      return; // Let diagnostic's swipe.js handle it
+    }
+
     // Check if prescriptions should handle folder-back
     if (Shell.activePage === "prescriptions" && window.app && window.app.shouldHandleFolderBack &&
         window.app.shouldHandleFolderBack(touch.clientX)) {

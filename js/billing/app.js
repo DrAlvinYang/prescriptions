@@ -16,6 +16,9 @@
     contextMode: "empty", // 'empty' | 'preview' | 'details'
     previewGroup: null, // group key when right column shows preview
     previewSubgroup: null, // subgroup key when right column shows preview
+    // Diagnostic browse state (mobile only)
+    diagView: "browse", // 'browse' | 'search'
+    diagNavPath: [], // [] = categories, ["Infectious"] = subcategories, ["Infectious", "Tuberculosis"] = codes
   };
 
   // ─── Data ───────────────────────────────────────────────────────
@@ -127,15 +130,21 @@
       // Detect current billing time period
       App.detectTimePeriod();
 
-      // Build folder tree
+      // Build folder trees
       App.buildFolderTree();
+      App.buildDiagnosticTree();
 
       // Check user identity
       App.checkUser();
 
       // Render initial view
       App.renderBrowse();
-      App.renderDiagnosticColumn(null);
+      // Mobile: render diagnostic folder browse; Desktop: keep empty state
+      App.renderDiagnosticBrowse();
+      var desktopDiagList = document.getElementById("diagnostic-list");
+      if (desktopDiagList) {
+        desktopDiagList.innerHTML = '<div class="empty-state">Search to see diagnostic codes</div>';
+      }
 
       // Bind events
       bindEvents();
@@ -179,7 +188,11 @@
       App.state.highlightIndex = -1;
       App.updateColumnHeaders(null, null);
       App.renderBrowse();
+      // Desktop: clear diagnostic search results
       App.renderDiagnosticColumn(null);
+      // Mobile: restore diagnostic folder browse
+      App.state.diagView = "browse";
+      App.renderDiagnosticBrowse();
       return { billing: [], diagnostic: [], billingTotal: 0, diagnosticTotal: 0 };
     }
 
@@ -195,6 +208,9 @@
 
     App.updateColumnHeaders(results.billingTotal, results.diagnosticTotal);
     App.renderBillingSearchResults(results.billing);
+    // Switch mobile diagnostic to search mode
+    App.state.diagView = "search";
+    App.updateDiagnosticMobileHeader(results.diagnosticTotal);
     App.renderDiagnosticColumn(results.diagnostic);
 
     return results;
@@ -408,6 +424,31 @@
         return;
       }
     });
+
+    // ── Event delegation on mobile diagnostic list ──
+    var diagListMobile = document.getElementById("diagnostic-list-mobile");
+    if (diagListMobile) {
+      diagListMobile.addEventListener("click", function (e) {
+        if (this.classList.contains("is-animating")) return;
+        if (App.state.diagView !== "browse") return;
+
+        // Folder item click
+        var folderItem = e.target.closest(".folder-item");
+        if (folderItem) {
+          var cat = folderItem.dataset.diagCategory;
+          var sub = folderItem.dataset.diagSubcategory;
+          if (cat) {
+            App.state.diagNavPath = [cat];
+          } else if (sub) {
+            App.state.diagNavPath = App.state.diagNavPath.concat([sub]);
+          }
+          App.animateDiagnosticBrowse("forward");
+          return;
+        }
+
+        // Diagnostic item click: no action for now (future: inline expand for suggested billing codes)
+      });
+    }
 
     // ── Event delegation on context panel (preview clicks) ──
     document.getElementById("context-panel").addEventListener("click", function (e) {

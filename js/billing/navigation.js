@@ -758,6 +758,250 @@
     });
   };
 
+  // ─── Diagnostic Folder Tree (Mobile Browse) ────────────────────
+
+  /**
+   * Build diagnostic folder tree from diagnostic codes.
+   * tree[category] = { subcategories: { subName: [codes] }, flatCodes: [codes], totalCount }
+   */
+  App.buildDiagnosticTree = function () {
+    var tree = {};
+
+    App.data.diagnosticCodes.forEach(function (code) {
+      var cat = code.category || "Other";
+      if (!tree[cat]) {
+        tree[cat] = { subcategories: {}, flatCodes: [], totalCount: 0 };
+      }
+      tree[cat].totalCount++;
+
+      var sub = code.subcategory;
+      if (!sub || sub.trim() === "") {
+        tree[cat].flatCodes.push(code);
+      } else {
+        if (!tree[cat].subcategories[sub]) {
+          tree[cat].subcategories[sub] = [];
+        }
+        tree[cat].subcategories[sub].push(code);
+      }
+    });
+
+    // Sort codes within each group alphabetically by name
+    Object.keys(tree).forEach(function (cat) {
+      tree[cat].flatCodes.sort(function (a, b) {
+        return a.name.localeCompare(b.name);
+      });
+      Object.keys(tree[cat].subcategories).forEach(function (sub) {
+        tree[cat].subcategories[sub].sort(function (a, b) {
+          return a.name.localeCompare(b.name);
+        });
+      });
+    });
+
+    App.data.diagnosticTree = tree;
+  };
+
+  /** Build a diagnostic item element */
+  function buildDiagnosticItem(code) {
+    var item = App.utils.el("div", "diagnostic-item");
+    item.dataset.code = code.code;
+
+    var codeSpan = App.utils.el("span", "diagnostic-item__code", code.code);
+    var nameSpan = App.utils.el("span", "diagnostic-item__name", code.name);
+
+    item.appendChild(codeSpan);
+    item.appendChild(nameSpan);
+    return item;
+  }
+
+  /** Render the diagnostic browse view based on current diagNavPath (mobile only) */
+  App.renderDiagnosticBrowse = function () {
+    var container = document.getElementById("diagnostic-list-mobile");
+    if (!container) return;
+    var navPath = App.state.diagNavPath;
+    container.innerHTML = "";
+
+    // Update header breadcrumb
+    renderDiagnosticHeader(navPath);
+
+    if (navPath.length === 0) {
+      // Top level: show category folders alphabetically
+      var categories = Object.keys(App.data.diagnosticTree).sort();
+      categories.forEach(function (cat) {
+        var catData = App.data.diagnosticTree[cat];
+        var item = App.utils.el("div", "folder-item folder-item--group");
+        item.dataset.diagCategory = cat;
+
+        var name = App.utils.el("span", "folder-item__name", cat);
+        var count = App.utils.el("span", "folder-item__count", String(catData.totalCount));
+        var arrow = App.utils.el("span", "folder-item__arrow", "\u203A");
+
+        item.appendChild(name);
+        item.appendChild(count);
+        item.appendChild(arrow);
+        container.appendChild(item);
+      });
+    } else if (navPath.length === 1) {
+      var cat = navPath[0];
+      var catData = App.data.diagnosticTree[cat];
+      if (!catData) return;
+
+      var subNames = Object.keys(catData.subcategories).sort();
+
+      if (subNames.length > 0) {
+        // Show subcategory folders
+        subNames.forEach(function (sub) {
+          var codes = catData.subcategories[sub];
+          var item = App.utils.el("div", "folder-item folder-item--subgroup");
+          item.dataset.diagSubcategory = sub;
+
+          var name = App.utils.el("span", "folder-item__name", sub);
+          var count = App.utils.el("span", "folder-item__count", String(codes.length));
+          var arrow = App.utils.el("span", "folder-item__arrow", "\u203A");
+
+          item.appendChild(name);
+          item.appendChild(count);
+          item.appendChild(arrow);
+          container.appendChild(item);
+        });
+      }
+
+      // Show flat codes (codes with no subcategory)
+      if (catData.flatCodes.length > 0) {
+        catData.flatCodes.forEach(function (code) {
+          container.appendChild(buildDiagnosticItem(code));
+        });
+      }
+    } else if (navPath.length === 2) {
+      var cat2 = navPath[0];
+      var sub2 = navPath[1];
+      var catData2 = App.data.diagnosticTree[cat2];
+      if (!catData2 || !catData2.subcategories[sub2]) return;
+
+      catData2.subcategories[sub2].forEach(function (code) {
+        container.appendChild(buildDiagnosticItem(code));
+      });
+    }
+  };
+
+  /** Render breadcrumb path into the diagnostic column header (mobile) */
+  function renderDiagnosticHeader(navPath) {
+    var header = document.getElementById("diagnostic-header-mobile");
+    if (!header) return;
+    header.innerHTML = "";
+    header.classList.toggle("diagnostic-col__header--nav", navPath.length > 0);
+
+    if (navPath.length === 0) {
+      header.textContent = "Diagnostic Codes";
+      return;
+    }
+
+    // Root link
+    var home = App.utils.el("span", "breadcrumb__item", "Diagnostic Codes");
+    home.addEventListener("click", function () {
+      App.state.diagNavPath = [];
+      App.animateDiagnosticBrowse("back");
+    });
+    header.appendChild(home);
+
+    navPath.forEach(function (segment, i) {
+      var sep = App.utils.el("span", "breadcrumb__sep", "\u203A");
+      header.appendChild(sep);
+
+      var isLast = i === navPath.length - 1;
+      var cls = isLast ? "breadcrumb__item breadcrumb__item--current" : "breadcrumb__item";
+      var crumb = App.utils.el("span", cls, segment);
+
+      if (!isLast) {
+        (function (idx) {
+          crumb.addEventListener("click", function () {
+            App.state.diagNavPath = navPath.slice(0, idx + 1);
+            App.animateDiagnosticBrowse("back");
+          });
+        })(i);
+      }
+
+      header.appendChild(crumb);
+    });
+  }
+
+  /** Animated diagnostic folder navigation transition (mobile only) */
+  App.animateDiagnosticBrowse = function (direction, onComplete) {
+    var container = document.getElementById("diagnostic-list-mobile");
+    if (!container) {
+      App.renderDiagnosticBrowse();
+      if (onComplete) onComplete();
+      return;
+    }
+
+    // Skip animation if empty, already animating, or reduced motion
+    if (
+      !container.children.length ||
+      container.classList.contains("is-animating") ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      App.renderDiagnosticBrowse();
+      if (onComplete) onComplete();
+      return;
+    }
+
+    // Capture old content
+    var scrollTop = container.scrollTop;
+    var oldPanel = document.createElement("div");
+    oldPanel.className = "slide-panel";
+    oldPanel.style.top = -scrollTop + "px";
+    while (container.firstChild) {
+      oldPanel.appendChild(container.firstChild);
+    }
+
+    // Render new content
+    App.renderDiagnosticBrowse();
+
+    // Wrap new content
+    var newPanel = document.createElement("div");
+    newPanel.className = "slide-panel";
+    while (container.firstChild) {
+      newPanel.appendChild(container.firstChild);
+    }
+
+    // Animate
+    container.classList.add("is-animating");
+    container.scrollTop = 0;
+    container.appendChild(oldPanel);
+    container.appendChild(newPanel);
+
+    if (direction === "forward") {
+      oldPanel.classList.add("slide-panel--exit-left");
+      newPanel.classList.add("slide-panel--enter-right");
+    } else {
+      oldPanel.classList.add("slide-panel--exit-right");
+      newPanel.classList.add("slide-panel--enter-left");
+    }
+
+    newPanel.addEventListener("animationend", function () {
+      container.classList.remove("is-animating");
+      if (oldPanel.parentNode) oldPanel.remove();
+      while (newPanel.firstChild) {
+        container.appendChild(newPanel.firstChild);
+      }
+      newPanel.remove();
+      if (onComplete) onComplete();
+    }, { once: true });
+  };
+
+  /** Expose renderDiagnosticHeader for swipe.js folder-back */
+  App.renderDiagnosticHeader = function () {
+    renderDiagnosticHeader(App.state.diagNavPath);
+  };
+
+  /** Update mobile diagnostic header text with optional count (search mode) */
+  App.updateDiagnosticMobileHeader = function (count) {
+    var header = document.getElementById("diagnostic-header-mobile");
+    if (!header) return;
+    header.innerHTML = "";
+    header.classList.remove("diagnostic-col__header--nav");
+    header.textContent = count != null ? "Diagnostic Codes (" + count + ")" : "Diagnostic Codes";
+  };
+
   /** Render diagnostic results into a single container element */
   function renderDiagnosticInto(container, results) {
     container.innerHTML = "";
@@ -798,15 +1042,17 @@
     });
   }
 
-  /** Render diagnostic column — dual-render to desktop + mobile containers */
+  /** Render diagnostic column — desktop always gets search results; mobile only in search mode */
   App.renderDiagnosticColumn = function (results) {
-    // Desktop: render into billing layout's diagnostic column
+    // Desktop: always render search results
     var desktopList = document.getElementById("diagnostic-list");
     if (desktopList) renderDiagnosticInto(desktopList, results);
 
-    // Mobile: also render into standalone diagnostic page
-    var mobileList = document.getElementById("diagnostic-list-mobile");
-    if (mobileList) renderDiagnosticInto(mobileList, results);
+    // Mobile: only render search results when in search mode
+    if (App.state.diagView === "search") {
+      var mobileList = document.getElementById("diagnostic-list-mobile");
+      if (mobileList) renderDiagnosticInto(mobileList, results);
+    }
   };
 
   // ─── Expose helpers for preview rendering ─────────────────────

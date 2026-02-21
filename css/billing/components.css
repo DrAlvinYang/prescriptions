@@ -635,9 +635,26 @@ body.modal-open {
   text-decoration: underline;
 }
 
-/* All breadcrumb segments — normal case */
+/* All breadcrumb segments -- normal case */
 .billing-col__header--nav .breadcrumb__sep,
 .billing-col__header--nav .breadcrumb__item {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+/* Diagnostic header with breadcrumb navigation */
+.diagnostic-col__header--nav {
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.diagnostic-col__header--nav .breadcrumb__item:first-child:hover {
+  text-decoration: underline;
+}
+
+.diagnostic-col__header--nav .breadcrumb__sep,
+.diagnostic-col__header--nav .breadcrumb__item {
   text-transform: none;
   letter-spacing: normal;
   font-weight: 500;
@@ -676,4 +693,25 @@ body.modal-open {
 
 .billing-col__content::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+/* ─── Mobile Touch Targets ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  .folder-item {
+    min-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .code-item {
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .diagnostic-item {
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 }

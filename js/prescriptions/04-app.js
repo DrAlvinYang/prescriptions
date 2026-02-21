@@ -596,6 +596,7 @@ class Application {
     if (!this.renderers.mobileFolder.shouldHandleFolderBack()) return false;
     // Edge zone touches go to Shell for page transitions
     if (touchX <= 25) return false;
+    if (touchX >= window.innerWidth - 25) return false;
     return true;
   }
 

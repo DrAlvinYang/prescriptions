@@ -2197,6 +2197,18 @@ body:has(.help-overlay:not(.hidden)) {
     border-radius: 0;
   }
 
+  .rx-population-item {
+    min-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .rx-folder-item {
+    min-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
   .med-item {
     padding: 12px 14px;
     min-height: 44px;
