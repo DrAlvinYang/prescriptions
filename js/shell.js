@@ -16,19 +16,25 @@
       brandText: "ED Dx Codes",
       placeholder: "Search diagnoses...",
       showTips: false,
-      showRxButtons: false
+      showRxButtons: false,
+      showProvider: false,
+      showLocation: false
     },
     billing: {
       brandText: "ED Billing Codes",
       placeholder: "Search billing codes...",
       showTips: true,
-      showRxButtons: false
+      showRxButtons: false,
+      showProvider: false,
+      showLocation: false
     },
     prescriptions: {
       brandText: "ED Prescriptions",
       placeholder: "Search medications...",
       showTips: false,
-      showRxButtons: true
+      showRxButtons: true,
+      showProvider: true,
+      showLocation: true
     }
   };
 
@@ -132,12 +138,11 @@
     // Search placeholder
     var searchInput = document.getElementById("shell-search-input");
     if (searchInput && !searchInput.value) {
-      // Only update placeholder if Rx page and provider is owner
-      if (page === "prescriptions" && window.app && window.app.managers &&
+      if (Shell.isMobile()) {
+        searchInput.placeholder = "Search here";
+      } else if (page === "prescriptions" && window.app && window.app.managers &&
           window.app.managers.provider && window.app.managers.provider.isOwner()) {
-        searchInput.placeholder = Shell.isMobile()
-          ? "Search indication or med"
-          : "Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)";
+        searchInput.placeholder = "Search indication (e.g. ped otitis media) or med (e.g. keflex 5d)";
       } else {
         searchInput.placeholder = config.placeholder;
       }
@@ -155,6 +160,18 @@
       rxBtns.hidden = !config.showRxButtons;
     }
 
+    // Provider button (prescriptions only)
+    var providerWrapper = document.querySelector(".provider-wrapper");
+    var mobileProviderBtn = document.getElementById("mobileProviderBtn");
+    if (providerWrapper) providerWrapper.hidden = !config.showProvider;
+    if (mobileProviderBtn) mobileProviderBtn.hidden = !config.showProvider;
+
+    // Location button (prescriptions only)
+    var locationWrapper = document.getElementById("locationWrapper");
+    var mobileLocationBtn = document.getElementById("mobileLocationBtn");
+    if (locationWrapper) locationWrapper.hidden = !config.showLocation;
+    if (mobileLocationBtn) mobileLocationBtn.hidden = !config.showLocation;
+
     // Desktop dropdown options
     Shell._updateDropdown(page);
 
@@ -170,13 +187,23 @@
     var searchInput = document.getElementById("shell-search-input");
     var hasText = searchInput && searchInput.value.trim().length > 0;
 
-    if (page === "prescriptions" && !hasText) {
-      actionBtn.hidden = false;
-    } else if (Shell.isMobile() && page === "prescriptions" && document.body.classList.contains("search-focused")) {
-      // Mobile: show as × when focused (even with no text)
-      actionBtn.hidden = false;
+    if (Shell.isMobile()) {
+      if (page === "prescriptions") {
+        // Rx mobile: always show (+ when no text, × when text via CSS)
+        actionBtn.hidden = false;
+      } else if (hasText && document.body.classList.contains("search-focused")) {
+        // Billing/diagnostic mobile: show × only with text while focused
+        actionBtn.hidden = false;
+      } else {
+        actionBtn.hidden = true;
+      }
     } else {
-      actionBtn.hidden = true;
+      // Desktop: only show on Rx with no text (+ New Med button)
+      if (page === "prescriptions" && !hasText) {
+        actionBtn.hidden = false;
+      } else {
+        actionBtn.hidden = true;
+      }
     }
   };
 
@@ -254,36 +281,52 @@
       });
     }
 
-    // Search action button ("+ New Med" on Rx page)
+    // Search action button ("+ New Med" on Rx, "×" clear on all pages)
     var actionBtn = document.getElementById("shell-search-action-btn");
+    var _blurTimeout = null;
     if (actionBtn && searchInput) {
       actionBtn.addEventListener("click", function () {
+        clearTimeout(_blurTimeout);
         var page = Shell.isMobile() ? Shell.activePage : Shell.activeDesktopView;
+        var hasText = searchInput.value.trim().length > 0;
 
-        if (Shell.isMobile() && document.body.classList.contains("search-focused")) {
-          // Mobile focused: clear + blur
+        if (Shell.isMobile() && hasText) {
+          // Mobile × mode: clear and dismiss
           searchInput.value = "";
           Shell._onSearchInput("");
           if (clearBtn) clearBtn.hidden = true;
           document.body.classList.remove("has-search-query");
+          document.body.classList.remove("search-focused");
           searchInput.blur();
+          Shell._updateActionButton();
           return;
         }
 
-        // Desktop or mobile unfocused: open Add New Med modal
+        // + mode (Rx only): open Add New Med modal
         if (page === "prescriptions" && window.app && window.app.managers && window.app.managers.modal) {
           window.app.managers.modal.openAddNewMed();
+        }
+
+        // Dismiss search on mobile
+        if (Shell.isMobile()) {
+          document.body.classList.remove("search-focused");
+          searchInput.blur();
+          Shell._updateActionButton();
         }
       });
 
       // Show/hide action button based on input state
       searchInput.addEventListener("focus", function () {
+        clearTimeout(_blurTimeout);
         document.body.classList.add("search-focused");
         Shell._updateActionButton();
       });
       searchInput.addEventListener("blur", function () {
-        document.body.classList.remove("search-focused");
-        Shell._updateActionButton();
+        // Delay to allow action button click to fire before hiding it
+        _blurTimeout = setTimeout(function () {
+          document.body.classList.remove("search-focused");
+          Shell._updateActionButton();
+        }, 100);
       });
       searchInput.addEventListener("input", function () {
         Shell._updateActionButton();

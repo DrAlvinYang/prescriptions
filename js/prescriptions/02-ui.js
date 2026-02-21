@@ -725,7 +725,7 @@ class MobileFolderRenderer {
 
     // Level 0: Population selection
     if (!nav.population || nav.population === "") {
-      header.textContent = "Population";
+      header.textContent = "Prescriptions";
       POPULATION_ITEMS.forEach(pop => {
         const count = NavigationDataHelper.countMeds(this.state.medications, pop.key);
         const item = this._createMobileFolder(pop.label, count);
@@ -827,14 +827,14 @@ class MobileFolderRenderer {
     nav.navPath.forEach(seg => parts.push(seg));
 
     if (parts.length === 0) {
-      header.textContent = "Population";
+      header.textContent = "Prescriptions";
       header.classList.remove("rx-col__header--nav");
       return;
     }
 
-    // Full path: Population › Adult › ENT
+    // Full path: Prescriptions › Adult › ENT
     // Each segment except the last is clickable (navigates back to that level)
-    const allSegments = ["Population", ...parts];
+    const allSegments = ["Prescriptions", ...parts];
 
     allSegments.forEach((seg, i) => {
       const isLast = i === allSegments.length - 1;

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/opt/homebrew/bin/python3
 """Convert billing_codes.xlsx and diagnostic_codes.xlsx to their JSON files.
 
 Usage:
@@ -14,6 +14,7 @@ Empty cells become empty arrays (for arrays) or appropriate defaults.
 
 from __future__ import annotations
 
+import argparse
 import json
 import logging
 import sys
@@ -128,14 +129,14 @@ def _extract_code(row: tuple, col_map: dict[str, int]) -> str | None:
     return str(val).strip()
 
 
-def _parse_billing_row(row: tuple, group: str) -> dict | None:
+def _parse_billing_row(row: tuple, group: str) -> dict[str, Any] | None:
     """Parse a single billing xlsx row into a code dict. Returns None if empty."""
     code = _extract_code(row, BILLING_COL)
     if not code:
         return None
 
     col = BILLING_COL
-    entry = {
+    entry: dict[str, Any] = {
         "code": code,
         "name": parse_str(_cell(row, col["name"])),
         "fee": parse_fee(_cell(row, col["fee"])),
@@ -160,7 +161,7 @@ def _parse_billing_row(row: tuple, group: str) -> dict | None:
     return entry
 
 
-def _parse_diagnostic_row(row: tuple) -> dict | None:
+def _parse_diagnostic_row(row: tuple) -> dict[str, Any] | None:
     """Parse a single diagnostic xlsx row into a code dict. Returns None if empty."""
     code = _extract_code(row, DIAG_COL)
     if not code:
@@ -179,7 +180,7 @@ def _parse_diagnostic_row(row: tuple) -> dict | None:
 
 # -- Core conversion ----------------------------------------------------------
 
-def _write_json(data: list[dict], path: Path) -> None:
+def _write_json(data: list[dict[str, Any]], path: Path) -> None:
     """Sort by code and write JSON (does not mutate input)."""
     sorted_data = sorted(data, key=lambda c: c["code"])
     path.write_text(
@@ -202,7 +203,7 @@ def convert_billing() -> bool:
         return False
 
     try:
-        codes: list[dict] = []
+        codes: list[dict[str, Any]] = []
         for ws in wb.worksheets:
             group = ws.title
             for row in ws.iter_rows(min_row=2, values_only=True):
@@ -237,7 +238,7 @@ def convert_diagnostic() -> bool:
 
     try:
         ws = wb.active
-        codes: list[dict] = []
+        codes: list[dict[str, Any]] = []
         # Row 1 = headers, Row 2 = description row, Row 3+ = data
         for row in ws.iter_rows(min_row=3, values_only=True):
             entry = _parse_diagnostic_row(row)
@@ -259,10 +260,24 @@ def convert_diagnostic() -> bool:
 
 # -- CLI -----------------------------------------------------------------------
 
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Convert billing and diagnostic xlsx files to JSON.",
+    )
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose debug logging",
+    )
+    return parser.parse_args()
+
+
 def main() -> int:
     """Convert all xlsx files to JSON. Returns 0 on success, 1 on failure."""
+    args = parse_args()
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(levelname)s: %(message)s",
         handlers=[logging.StreamHandler(sys.stdout)],
     )

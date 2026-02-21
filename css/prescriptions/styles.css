@@ -604,9 +604,9 @@ body.is-col-resizing {
 
 /* --- Population Items (Column 1) --- */
 .rx-population-item {
-  padding: 10px 14px;
+  padding: 11px 16px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
   cursor: pointer;
   display: flex;
@@ -621,7 +621,6 @@ body.is-col-resizing {
 
 .rx-population-item.selected {
   background: var(--accent-tint);
-  font-weight: 600;
 }
 
 .rx-population-item__count {
@@ -649,14 +648,14 @@ body.is-col-resizing {
 
 /* --- Folder Items (Column 2) --- */
 .rx-folder-item {
-  padding: 10px 14px;
+  padding: 11px 16px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border-bottom: 1px solid var(--separator);
   transition: background 0.15s ease;
 }
@@ -725,7 +724,9 @@ body.is-col-resizing {
 }
 
 .rx-breadcrumb__item {
+  color: var(--accent);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .rx-breadcrumb__item:hover {
@@ -733,10 +734,11 @@ body.is-col-resizing {
 }
 
 .rx-breadcrumb__item--current {
+  color: var(--text);
   cursor: default;
   text-transform: none;
   letter-spacing: normal;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .rx-breadcrumb__item--current:hover {

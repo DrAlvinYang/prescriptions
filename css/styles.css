@@ -2158,7 +2158,7 @@ body:has(.help-overlay:not(.hidden)) {
   /* Content area: offset for fixed header (48px) + fixed search bar (~52px) */
   .content-scroll {
     padding: 8px 0;
-    padding-top: 108px; /* 48px header + 52px search bar + 8px spacing */
+    padding-top: 100px; /* 48px header + 52px search bar */
     padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     overscroll-behavior-y: contain;
   }

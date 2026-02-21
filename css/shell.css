@@ -372,7 +372,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     flex-shrink: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-top: 108px; /* 48px header + 52px search + 8px gap */
+    padding-top: 100px; /* 48px header + 52px search */
     padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -419,6 +419,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   }
   /* Show mobile-only elements */
   .mobile-only { display: flex !important; }
+  .mobile-only[hidden] { display: none !important; }
 
   /* Consistent brand position: allow wrapper to shrink for text truncation */
   .shell-header__brand-wrapper {
@@ -461,7 +462,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     stroke-width: 1.5;
   }
 
-  /* Mobile search action button: always show icon form, rotate to × when focused */
+  /* Mobile search action button: always show icon form, rotate to × when text entered */
   .shell-search-action-btn .action-btn-label { display: none; }
   .shell-search-action-btn .action-btn-icon { display: flex; align-items: center; justify-content: center; }
   .shell-search-action-btn {
@@ -477,12 +478,13 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
     font-size: 20px;
     transition: transform 0.3s ease;
   }
-  .search-focused .shell-search-action-btn {
+  /* Rotate + to × only when there is search text */
+  .has-search-query .shell-search-action-btn {
     transform: rotate(45deg);
   }
-  /* Hide small clear button on mobile when action × is visible */
-  .search-focused .shell-search-clear {
-    display: none;
+  /* Always hide small clear button on mobile; use action button instead */
+  .shell-search-clear {
+    display: none !important;
   }
 }
 
@@ -514,16 +516,13 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 }
 
 /* ═══ Diagnostic mobile page styling ═══ */
+#page-diagnostic {
+  background: var(--color-surface);
+}
+
+/* Diagnostic header hidden on mobile (brand text identifies the page) */
 #page-diagnostic .diagnostic-col__header {
-  position: sticky;
-  top: 0;
-  padding: 10px var(--space-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-muted);
-  background: var(--color-header-bg);
-  border-bottom: 1px solid var(--color-border);
-  z-index: 1;
+  display: none;
 }
 
 #page-diagnostic .empty-state {

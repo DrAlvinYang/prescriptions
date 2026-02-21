@@ -133,6 +133,7 @@
     // Save state
     folderSavedScrollTop = billingList.scrollTop;
     var savedHeaderHTML = headerEl.innerHTML;
+    var savedHeaderNav = headerEl.classList.contains("billing-col__header--nav");
     var savedHighlightIndex = App.state.browseHighlightIndex;
     var savedNavPath = App.state.navPath.slice();
 
@@ -161,6 +162,7 @@
     App.state.navPath = savedNavPath;
     App.state.browseHighlightIndex = savedHighlightIndex;
     headerEl.innerHTML = savedHeaderHTML;
+    headerEl.classList.toggle("billing-col__header--nav", savedHeaderNav);
 
     // Add panels
     billingList.classList.add("folder-dragging");

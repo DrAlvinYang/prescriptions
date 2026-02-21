@@ -125,6 +125,13 @@ body.is-col-resizing {
     display: none;
   }
 
+  /* Billing header: sticky breadcrumb for folder navigation on mobile */
+  #billing-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
   /* Billing column fills the page */
   .billing-col--billing {
     flex: 1;

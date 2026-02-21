@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/opt/homebrew/bin/python3
 """
 Unit tests for Prescription Excel-to-JSON Converter.
 
